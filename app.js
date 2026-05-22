@@ -4129,6 +4129,14 @@ function hydrateSelects() {
       qty.disabled = true;
       qty.className = "redeem-qty";
       qty.dataset.itemName = item.name;
+      qty.setAttribute("aria-label", `Quantity to redeem for ${item.name}`);
+
+      const qtyWrap = document.createElement("label");
+      qtyWrap.className = "redeem-qty-wrap";
+      const qtyLabel = document.createElement("span");
+      qtyLabel.className = "redeem-qty-label";
+      qtyLabel.textContent = "Qty";
+      qtyWrap.append(qtyLabel, qty);
 
       checkbox.addEventListener("change", () => {
         qty.disabled = !checkbox.checked;
@@ -4143,7 +4151,7 @@ function hydrateSelects() {
       });
 
       label.append(checkbox, text);
-      row.append(label, qty);
+      row.append(label, qtyWrap);
       details.append(row);
     });
 

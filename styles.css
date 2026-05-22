@@ -1402,7 +1402,7 @@ summary::-webkit-details-marker {
 
 .redeem-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 92px;
+  grid-template-columns: minmax(0, 1fr) 104px;
   gap: 12px;
   align-items: center;
   padding: 7px 3px;
@@ -1421,6 +1421,21 @@ summary::-webkit-details-marker {
 .calendar-checklist-row input {
   width: auto;
   min-height: auto;
+}
+
+.redeem-qty-wrap {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.redeem-qty-label {
+  line-height: 1;
 }
 
 .task-buttons {
