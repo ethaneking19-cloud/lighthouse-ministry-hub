@@ -1,0 +1,16 @@
+# Private ministry data and local exports
+Backups/
+*.json
+*.csv
+*.xlsx
+*.xls
+
+# Local OS/editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary screenshots/check artifacts
+nav-check*.png
+scale-check*.png
+visual-check*.png

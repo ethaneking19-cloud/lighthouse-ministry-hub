@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lighthouse Ministry Hub</title>
+    <link rel="stylesheet" href="styles.css?v=20260522-4" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="page-layout">
+        <aside class="page-guide" aria-label="Page guide">
+          <div class="page-guide__card">
+            <p class="page-guide__eyebrow">Operations Menu</p>
+            <h2 class="page-guide__title">Lighthouse Hub</h2>
+            <p class="page-guide__copy">
+              Move through the ministry workflow quickly, from intake to resources to staff records.
+            </p>
+            <nav class="page-guide__nav">
+              <a href="#calendar-card" class="page-guide__link">Calendar & Events</a>
+              <a href="#staff-task-board" class="page-guide__link staff-only">Staff To-Do List</a>
+              <a href="#redeem-card" class="page-guide__link">Redeem Items</a>
+              <a href="#task-award-card" class="page-guide__link">Award Points for Tasks</a>
+              <a href="#custom-award-card" class="page-guide__link staff-only">Award Points (Custom)</a>
+              <a href="#add-member-card" class="page-guide__link">Add Member</a>
+              <a href="#members-card" class="page-guide__link">Members</a>
+              <a href="#summary-card" class="page-guide__link">Daily Summary</a>
+              <a href="#volunteers-card" class="page-guide__link staff-only">Volunteer Directory</a>
+              <a href="#resources-card" class="page-guide__link">Community Resources</a>
+              <a href="#items-card" class="page-guide__link">Items & Point Costs</a>
+              <a href="#staff-logs" class="page-guide__link">Logs & Backups</a>
+              <a href="#admin-log" class="page-guide__link">Admin Actions</a>
+              <a href="#documents-card" class="page-guide__link staff-only">Documents</a>
+              <a href="#donors-card" class="page-guide__link staff-only">Donor List</a>
+              <a href="#undo-section" class="page-guide__link">Undo Last Action</a>
+              <a href="#remove-points-card" class="page-guide__link staff-only">Remove Points</a>
+              <a href="#staff-users-card" class="page-guide__link staff-only">Staff Accounts</a>
+            </nav>
+          </div>
+        </aside>
+
+        <div class="page-main">
+          <header class="hero">
+            <div class="hero__content">
+              <div class="hero__banner" aria-hidden="true"></div>
+              <p class="eyebrow">Englewood Baptist Church</p>
+              <h1>Lighthouse Ministry Hub</h1>
+              <p class="subhead">
+                A calm, organized command center for member care, resources, events, volunteers, and ministry activity.
+              </p>
+              <div class="hero__actions" aria-label="Primary sections">
+                <a class="hero__link" href="#add-member-card">Add a member</a>
+                <a class="hero__link" href="#resources-card">Find resources</a>
+                <a class="hero__link" href="#summary-card">View summary</a>
+              </div>
+            </div>
+            <div class="hero__card">
+              <p class="hero__card-label">Today at a glance</p>
+              <div class="hero__stat">
+                <span class="hero__label">Members</span>
+                <span id="stat-people" class="hero__value">0</span>
+              </div>
+              <div class="hero__stat">
+                <span class="hero__label">Date</span>
+                <span id="stat-date" class="hero__value">0</span>
+              </div>
+              <div class="hero__stat">
+                <span class="hero__label">Average Points</span>
+                <span id="stat-average" class="hero__value">0</span>
+              </div>
+              <div class="hero__staff">
+                <button id="staff-toggle" type="button" class="btn secondary">
+                  Login
+                </button>
+                <span id="staff-status" class="hint">Off</span>
+              </div>
+            </div>
+          </header>
+
+          <main class="grid">
+        <section id="calendar-card" class="card span-2">
+          <div class="card__header">
+            <h2>Calendar & Events</h2>
+            <div class="calendar-nav">
+              <button id="calendar-prev" type="button" class="btn secondary">Previous</button>
+              <span id="calendar-title" class="calendar-title">Month</span>
+              <button id="calendar-next" type="button" class="btn secondary">Next</button>
+            </div>
+          </div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+          <div id="calendar-events" class="calendar-events"></div>
+          <form id="event-form" class="form staff-only">
+            <div class="split-fields">
+              <label>
+                Event Title
+                <input type="text" name="title" required />
+              </label>
+              <label>
+                Date
+                <input type="date" name="date" required />
+              </label>
+            </div>
+            <label>
+              Description
+              <input type="text" name="description" placeholder="Short event details shown on hover" />
+            </label>
+            <label>
+              Checklist Items
+              <input type="text" name="checklist" placeholder="Comma separated: tables, snacks, prayer cards" />
+            </label>
+            <button type="submit" class="btn primary">Add Event</button>
+          </form>
+          <div id="event-list" class="people event-list staff-only"></div>
+        </section>
+
+        <section id="staff-task-board" class="card span-2 staff-only">
+          <div class="card__header">
+            <h2>Staff To-Do List</h2>
+          </div>
+          <div id="staff-task-list" class="todo-list"></div>
+          <form id="staff-task-form" class="todo-composer">
+            <input id="staff-task-input" type="text" name="title" placeholder="Add staff reminder or follow-up" required />
+            <div class="form-actions compact">
+              <button id="staff-task-cancel" type="button" class="btn secondary" hidden>Cancel</button>
+              <button id="staff-task-save" type="submit" class="btn secondary">Add Task</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="redeem-card" class="card card--action">
+          <h2>Redeem Items</h2>
+          <form id="redeem-form" class="form">
+            <label>
+              Member
+              <select name="personId" required></select>
+            </label>
+            <p id="redeem-points" class="hint"></p>
+            <label>
+              Items
+              <div id="redeem-items" class="redeem-items"></div>
+            </label>
+            <button id="redeem-button" type="submit" class="btn accent">Redeem (0 pts)</button>
+            <p id="redeem-error" class="error" hidden></p>
+          </form>
+        </section>
+
+        <section id="task-award-card" class="card card--action">
+          <div class="card__header">
+            <h2>Award Points for Tasks</h2>
+            <button id="add-task-toggle" type="button" class="btn secondary staff-only">
+              Add Task
+            </button>
+          </div>
+          <form id="task-form" class="form">
+            <label>
+              Member
+              <select name="personId" required></select>
+            </label>
+            <div id="add-task-form" class="form item-form staff-only">
+              <label>
+                Task Name
+                <input id="add-task-name" type="text" name="taskName" required />
+              </label>
+              <label>
+                Points
+                <input id="add-task-points" type="number" name="taskPoints" min="1" required />
+              </label>
+              <p id="add-task-error" class="error form-error" hidden></p>
+              <div class="form-actions">
+                <button id="add-task-cancel" type="button" class="btn secondary">Cancel</button>
+                <button id="add-task-save" type="button" class="btn primary">Save Task</button>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field__label">Tasks</span>
+              <div id="task-buttons" class="task-buttons"></div>
+            </div>
+            <p id="task-error" class="error" hidden></p>
+          </form>
+        </section>
+
+        <section id="custom-award-card" class="card card--action staff-only">
+          <h2>Award Points (Custom)</h2>
+          <form id="award-form" class="form" novalidate>
+            <label>
+              Member
+              <select name="personId" required></select>
+            </label>
+            <label>
+              Points
+              <input type="number" name="points" min="1" required />
+            </label>
+            <label>
+              Note
+              <input id="award-note" type="text" name="note" placeholder="Task completed" required />
+            </label>
+            <p id="award-note-error" class="error form-error" hidden>Note is required.</p>
+            <button type="submit" class="btn primary">Add Points</button>
+          </form>
+        </section>
+
+        <section id="add-member-card" class="card card--action">
+          <h2>Add Member</h2>
+          <form id="person-form" class="form">
+            <label>
+              First Name
+              <input type="text" name="firstName" required />
+            </label>
+            <label>
+              Last Name
+              <input type="text" name="lastName" required />
+            </label>
+            <label>
+              Points
+              <input type="number" name="startingPoints" min="0" value="0" required />
+            </label>
+            <details class="form-details">
+              <summary>Personal Information</summary>
+              <label>
+                Date Joined
+                <input id="member-date-joined" type="date" name="dateJoined" />
+              </label>
+              <label>
+                Home
+                <input type="text" name="home" placeholder="Camp, housing site, apartment, or details" />
+              </label>
+              <label>
+                Residence Tag
+                <select name="residenceTag">
+                  <option value="Homeless">Homeless</option>
+                  <option value="Studio 45">Studio 45</option>
+                  <option value="Temp Housing">Temp Housing</option>
+                  <option value="Shelter">Shelter</option>
+                  <option value="With Family">With Family</option>
+                  <option value="Own Home">Own Home</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+              <div class="form-field">
+                <span class="field-label">Profile Photo</span>
+                <div class="file-control">
+                  <input
+                    id="member-photo"
+                    class="file-input"
+                    type="file"
+                    name="profilePhoto"
+                    accept="image/*"
+                  />
+                  <label
+                    id="member-photo-button"
+                    for="member-photo"
+                    class="btn secondary small file-button"
+                  >
+                    Choose Photo
+                  </label>
+                  <span id="member-photo-name" class="hint"></span>
+                </div>
+                <p id="member-photo-error" class="error form-error" hidden></p>
+              </div>
+              <div class="form-section-title">Contact Information</div>
+              <label>
+                Phone
+                <input id="member-phone" type="tel" name="phone" inputmode="numeric" pattern="[0-9]*" maxlength="15" />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" />
+              </label>
+              <label>
+                Emergency Contact Name
+                <input type="text" name="emergencyContactName" />
+              </label>
+              <label>
+                Emergency Contact Phone
+                <input type="tel" name="emergencyContactPhone" inputmode="numeric" pattern="[0-9]*" maxlength="15" />
+              </label>
+              <label>
+                Emergency Contact Address
+                <input type="text" name="emergencyContactAddress" />
+              </label>
+              <label>
+                Notes
+                <input type="text" name="memberNotes" placeholder="Allergies, sizes, etc." />
+              </label>
+            </details>
+            <button type="submit" class="btn primary">Add Member</button>
+          </form>
+        </section>
+
+        <section id="members-card" class="card card--directory span-2">
+          <div class="card__header">
+            <h2>Members</h2>
+            <div class="member-toolbar">
+              <input id="member-search" class="search-input" type="search" placeholder="Search members or tags..." />
+              <select id="member-tag-filter" class="toolbar-select">
+                <option value="">All Tags</option>
+              </select>
+              <select id="member-sort" class="toolbar-select">
+                <option value="name">Sort: A-Z</option>
+                <option value="visits">Sort: Most Regular</option>
+                <option value="recent">Sort: Most Recent Visit</option>
+              </select>
+              <button id="print-signin" type="button" class="btn secondary">Print Sign-In Sheets</button>
+            </div>
+          </div>
+          <p class="hint">Search by member name or housing tag, then log visits or check profiles.</p>
+          <div id="people-list" class="people"></div>
+        </section>
+
+        <section id="summary-card" class="card card--summary span-2">
+          <h2>Daily Summary</h2>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Members Served</span>
+              <span id="summary-members" class="summary-value">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Items Redeemed</span>
+              <span id="summary-items" class="summary-value">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Most Popular Category</span>
+              <span id="summary-category" class="summary-value">-</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="volunteers-card" class="card card--directory span-2 staff-only">
+          <div class="card__header">
+            <h2>Volunteer Directory</h2>
+            <select id="volunteer-sort" class="toolbar-select">
+              <option value="name">Sort: A-Z</option>
+              <option value="regular">Sort: Most Regular</option>
+            </select>
+          </div>
+          <form id="volunteer-form" class="form">
+            <div class="split-fields">
+              <label>
+                Volunteer Name
+                <input type="text" name="name" required />
+              </label>
+              <div class="form-field">
+                <span class="field-label">Volunteer Photo</span>
+                <div class="file-control">
+                  <input
+                    id="volunteer-photo"
+                    class="file-input"
+                    type="file"
+                    name="profilePhoto"
+                    accept="image/*"
+                  />
+                  <label for="volunteer-photo" class="btn secondary small file-button">
+                    Choose Photo
+                  </label>
+                  <span id="volunteer-photo-name" class="hint"></span>
+                </div>
+              </div>
+            </div>
+            <div class="split-fields">
+              <label>
+                Areas Covered
+                <input type="text" name="areas" placeholder="Outreach, meals, transportation" />
+              </label>
+            </div>
+            <div class="split-fields split-fields--three">
+              <label>
+                Leadership Role
+                <input type="text" name="role" placeholder="Coordinator, team lead, etc." />
+              </label>
+              <label>
+                Ministry Safe
+                <select name="ministrySafe">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </label>
+              <label>
+                Service Count
+                <input type="number" name="serviceCount" min="0" value="0" />
+              </label>
+            </div>
+            <div class="split-fields">
+              <label>
+                Phone
+                <input type="tel" name="phone" inputmode="numeric" pattern="[0-9]*" maxlength="15" />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button id="volunteer-cancel" type="button" class="btn secondary" hidden>Cancel</button>
+              <button id="volunteer-save" type="submit" class="btn primary">Add Volunteer</button>
+            </div>
+          </form>
+          <div id="volunteer-list" class="people volunteer-list"></div>
+        </section>
+
+        <section id="resources-card" class="card card--reference span-2">
+          <div class="card__header">
+            <h2>Community Resources</h2>
+            <div class="member-toolbar">
+              <input id="resource-search" class="search-input" type="search" placeholder="Search resources..." />
+              <button id="print-resources" type="button" class="btn secondary">Print Resources</button>
+              <button id="add-resource-toggle" type="button" class="btn secondary staff-only">Add Resource</button>
+            </div>
+          </div>
+          <form id="resource-form" class="form item-form staff-only">
+            <div class="split-fields split-fields--three">
+              <label>
+                Resource Name
+                <input id="resource-name" type="text" name="name" required />
+              </label>
+              <label>
+                Category
+                <input id="resource-category" type="text" name="category" placeholder="Shelter, food, legal, housing, etc." required />
+              </label>
+              <label>
+                Phone
+                <input id="resource-phone" type="tel" name="phone" inputmode="numeric" pattern="[0-9]*" maxlength="15" />
+              </label>
+            </div>
+            <div class="split-fields">
+              <label>
+                Address
+                <input id="resource-address" type="text" name="address" />
+              </label>
+              <label>
+                Email
+                <input id="resource-email" type="email" name="email" />
+              </label>
+            </div>
+            <div class="split-fields">
+              <label>
+                Website
+                <input id="resource-website" type="url" name="website" placeholder="https://..." />
+              </label>
+              <div class="form-field">
+                <span class="field-label">Photo</span>
+                <div class="file-control">
+                  <input id="resource-photo" class="file-input" type="file" name="photo" accept="image/*" />
+                  <label for="resource-photo" class="btn secondary small file-button">Choose Photo</label>
+                  <span id="resource-photo-name" class="hint"></span>
+                </div>
+              </div>
+            </div>
+            <label>
+              Services
+              <textarea id="resource-services" name="services" rows="3" placeholder="What help they provide" required></textarea>
+            </label>
+            <label>
+              Drop-Off / Notes
+              <textarea id="resource-dropoff" name="dropoff" rows="3" placeholder="Donation drop-off info, appointment notes, pantry details, etc."></textarea>
+            </label>
+            <div class="form-actions">
+              <button id="resource-cancel" type="button" class="btn secondary">Cancel</button>
+              <button id="resource-save" type="submit" class="btn primary">Save Resource</button>
+            </div>
+            <p id="resource-error" class="error form-error" hidden></p>
+          </form>
+          <div id="resource-list" class="people"></div>
+        </section>
+
+        <section id="items-card" class="card card--reference span-2">
+          <div class="card__header">
+            <h2>All Items and Point Costs</h2>
+            <button id="add-item-toggle" type="button" class="btn secondary staff-only">
+              Add New Item
+            </button>
+          </div>
+          <p class="hint">
+            Update point values and add new items with staff-mode only. Changes save automatically.
+          </p>
+          <p class="hint staff-only">
+            <strong>To change points, simply select the item under the list and change the value.</strong>
+          </p>
+          <form id="add-item-form" class="form item-form staff-only" novalidate>
+            <label>
+              Item Name
+              <input id="add-item-name" type="text" name="itemName" required />
+            </label>
+            <label>
+              Points
+              <input id="add-item-points" type="number" name="itemPoints" min="0" required />
+            </label>
+            <label>
+              Group
+              <select id="add-item-group" name="itemGroup" required></select>
+            </label>
+            <p id="add-item-error" class="error form-error" hidden></p>
+            <div class="form-actions">
+              <button id="add-item-cancel" type="button" class="btn secondary">Cancel</button>
+              <button type="submit" class="btn primary">Save Item</button>
+            </div>
+          </form>
+          <div id="items-table" class="table"></div>
+        </section>
+
+        <section id="staff-logs" class="card span-2">
+          <details class="section-collapse">
+            <summary>Logs & Backups</summary>
+            <div class="section-collapse__content">
+              <div class="card__header">
+                <div id="staff-actions" class="header-actions staff-only">
+                  <button id="export-data" type="button" class="btn secondary">Backup Data (JSON)</button>
+                  <button id="import-data" type="button" class="btn secondary">Restore Data</button>
+                  <button id="export-logs" type="button" class="btn secondary">Export Logs (CSV)</button>
+                </div>
+              </div>
+              <div id="activity-table" class="table"></div>
+            </div>
+          </details>
+        </section>
+
+        <section id="admin-log" class="card span-2">
+          <details class="section-collapse">
+            <summary>Admin Actions & Failed Attempts</summary>
+            <div class="section-collapse__content">
+              <div id="admin-table" class="table"></div>
+            </div>
+          </details>
+        </section>
+
+        <section id="documents-card" class="card card--admin span-2 staff-only">
+          <div class="card__header">
+            <h2>Documents</h2>
+          </div>
+          <form id="document-form" class="form">
+            <div class="split-fields">
+              <label>
+                Document Title
+                <input type="text" name="title" required />
+              </label>
+              <label>
+                Category
+                <input type="text" name="category" placeholder="Intake, forms, handouts, etc." />
+              </label>
+            </div>
+            <div class="form-field">
+              <span class="field-label">Upload File</span>
+              <div class="file-control">
+                <input
+                  id="document-file"
+                  class="file-input"
+                  type="file"
+                  name="documentFile"
+                  accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.bmp,.txt,.md,.json,.xml,.csv,.tsv,.xlsx,.xls,.docx"
+                  required
+                />
+                <label for="document-file" class="btn secondary small file-button">
+                  Choose Document
+                </label>
+                <span id="document-file-name" class="hint"></span>
+              </div>
+              <p class="hint">Supported: PDF, images, text files, Excel files, and DOCX.</p>
+              <p id="document-error" class="error form-error" hidden></p>
+            </div>
+            <button type="submit" class="btn primary">Upload Document</button>
+          </form>
+          <div id="document-list" class="table"></div>
+        </section>
+
+        <section id="donors-card" class="card card--admin span-2 staff-only">
+          <div class="card__header">
+            <h2>Donor List</h2>
+          </div>
+          <form id="donor-form" class="form">
+            <div class="split-fields split-fields--three">
+              <label>
+                Donor Name
+                <input type="text" name="name" required />
+              </label>
+              <label>
+                Phone
+                <input type="tel" name="phone" inputmode="numeric" pattern="[0-9]*" maxlength="15" />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" />
+              </label>
+            </div>
+            <label>
+              What They Donated
+              <textarea name="donation" rows="3" placeholder="Food, clothes, hygiene items, gift cards, etc." required></textarea>
+            </label>
+            <div class="form-actions">
+              <button id="donor-cancel" type="button" class="btn secondary" hidden>Cancel</button>
+              <button id="donor-save" type="submit" class="btn primary">Add Donor</button>
+            </div>
+          </form>
+          <div id="donor-list" class="table"></div>
+        </section>
+
+        <section id="undo-section" class="card card--admin span-2">
+          <div class="card__header">
+            <h2>Undo Last Action</h2>
+          </div>
+          <p class="hint">Reverts the most recent log entry and restores points.</p>
+          <button id="undo-last" type="button" class="btn danger wide">Undo Last</button>
+        </section>
+
+        <section id="remove-points-card" class="card card--admin span-2 staff-only">
+          <h2>Remove Points</h2>
+          <form id="remove-form" class="form" novalidate>
+            <label>
+              Member
+              <select name="personId" required></select>
+            </label>
+            <label>
+              Points
+              <input type="number" name="points" min="1" required />
+            </label>
+            <label>
+              Note
+              <input id="remove-note" type="text" name="note" placeholder="Reason" required />
+            </label>
+            <p id="remove-note-error" class="error form-error" hidden>Note is required.</p>
+            <button type="submit" class="btn danger">Remove Points</button>
+          </form>
+        </section>
+
+        <section id="staff-users-card" class="card span-2 staff-only">
+          <div class="card__header">
+            <h2>Staff Accounts</h2>
+          </div>
+          <form id="staff-user-form" class="form">
+            <div class="split-fields split-fields--three">
+              <label>
+                Display Name
+                <input type="text" name="displayName" required />
+              </label>
+              <label>
+                Username
+                <input type="text" name="username" required />
+              </label>
+              <label>
+                Password
+                <input type="password" name="password" required />
+              </label>
+            </div>
+            <button type="submit" class="btn primary">Add Staff Account</button>
+            <p id="staff-user-error" class="error form-error" hidden></p>
+          </form>
+          <div id="staff-user-list" class="table"></div>
+        </section>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div id="staff-login-modal" class="modal" hidden>
+      <div class="modal__scrim" data-close-login="true"></div>
+      <div class="modal__panel">
+        <h2>Staff Login</h2>
+        <p class="hint">Sign in with your own staff account so activity is tied to the right person.</p>
+        <form id="staff-login-form" class="form">
+          <label>
+            Username
+            <input id="staff-login-username" type="text" name="username" autocomplete="username" required />
+          </label>
+          <label>
+            Password
+            <input id="staff-login-password" type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <p id="staff-login-error" class="error form-error" hidden></p>
+          <div class="form-actions">
+            <button id="staff-login-cancel" type="button" class="btn secondary">Cancel</button>
+            <button type="submit" class="btn primary">Sign In</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="xlsx.full.min.js"></script>
+    <script src="mammoth.browser.min.js"></script>
+    <script src="app.js?v=20260522-4"></script>
+  </body>
+</html>
