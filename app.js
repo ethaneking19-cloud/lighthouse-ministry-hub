@@ -2319,7 +2319,6 @@ function renderItems() {
       input.min = "0";
       input.value = item.cost;
       input.disabled = !staffMode;
-      input.className = "point-input";
       input.addEventListener("change", () => {
         if (!staffMode) return;
         const nextValue = Number(input.value);
@@ -4121,12 +4120,7 @@ function hydrateSelects() {
       checkbox.dataset.itemName = item.name;
 
       const text = document.createElement("span");
-      text.className = "redeem-name";
-      text.textContent = item.name;
-
-      const cost = document.createElement("span");
-      cost.className = "point-pill redeem-point-pill";
-      cost.textContent = `${item.cost} pts`;
+      text.textContent = `${item.name} (${item.cost} pts)`;
 
       const qty = document.createElement("input");
       qty.type = "number";
@@ -4148,7 +4142,7 @@ function hydrateSelects() {
         updateRedeemGroupCounts();
       });
 
-      label.append(checkbox, text, cost);
+      label.append(checkbox, text);
       row.append(label, qty);
       details.append(row);
     });
@@ -4173,15 +4167,9 @@ function hydrateTasks() {
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "btn small primary task-award-button";
+    button.className = "btn small primary";
+    button.textContent = `${task.label} (${task.points} pts)`;
     button.dataset.taskId = task.id;
-    const taskName = document.createElement("span");
-    taskName.className = "task-award-name";
-    taskName.textContent = task.label;
-    const taskPoints = document.createElement("span");
-    taskPoints.className = "point-pill task-point-pill";
-    taskPoints.textContent = `${task.points} pts`;
-    button.append(taskName, taskPoints);
 
     const status = document.createElement("span");
     status.className = "task-status";
@@ -4274,14 +4262,9 @@ function renderRedeemPoints() {
   if (!personSelect) return;
   const personId = personSelect.value;
   const person = state.people.find((entry) => entry.id === personId);
-  elements.redeemPoints.innerHTML = "";
-  if (!person) return;
-  const label = document.createElement("span");
-  label.textContent = "Current points";
-  const value = document.createElement("span");
-  value.className = "point-pill balance-point-pill";
-  value.textContent = String(person.points);
-  elements.redeemPoints.append(label, value);
+  elements.redeemPoints.textContent = person
+    ? `Current points: ${person.points}`
+    : "";
 }
 
 function getRedeemSelections() {
