@@ -4105,6 +4105,11 @@ function hydrateSelects() {
     summary.dataset.baseLabel = group.label;
     details.append(summary);
 
+    const rowHeader = document.createElement("div");
+    rowHeader.className = "redeem-row redeem-row--header";
+    rowHeader.innerHTML = "<div>Item</div><div>Quantity</div>";
+    details.append(rowHeader);
+
     group.items.forEach((itemName) => {
       const item = state.items.find((entry) => entry.name === itemName);
       if (!item) return;
@@ -4131,13 +4136,6 @@ function hydrateSelects() {
       qty.dataset.itemName = item.name;
       qty.setAttribute("aria-label", `Quantity to redeem for ${item.name}`);
 
-      const qtyWrap = document.createElement("label");
-      qtyWrap.className = "redeem-qty-wrap";
-      const qtyLabel = document.createElement("span");
-      qtyLabel.className = "redeem-qty-label";
-      qtyLabel.textContent = "Qty";
-      qtyWrap.append(qtyLabel, qty);
-
       checkbox.addEventListener("change", () => {
         qty.disabled = !checkbox.checked;
         if (!checkbox.checked) qty.value = "1";
@@ -4151,7 +4149,7 @@ function hydrateSelects() {
       });
 
       label.append(checkbox, text);
-      row.append(label, qtyWrap);
+      row.append(label, qty);
       details.append(row);
     });
 
