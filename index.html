@@ -4,9 +4,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lighthouse Ministry Hub</title>
-    <link rel="stylesheet" href="styles.css?v=20260522-12" />
+    <link rel="stylesheet" href="styles.css?v=20260523-locked-local" />
   </head>
   <body>
+    <section id="login-gate" class="login-gate" aria-label="Staff sign in">
+      <div class="login-gate__panel">
+        <p class="eyebrow">Englewood Baptist Church</p>
+        <h1>Lighthouse Ministry Hub</h1>
+        <p class="subhead">
+          Sign in to access member records, points, resources, logs, and backups.
+        </p>
+        <form id="gate-login-form" class="form login-gate__form">
+          <label>
+            Username
+            <input id="gate-login-username" type="text" name="username" autocomplete="username" required />
+          </label>
+          <label>
+            Password
+            <input id="gate-login-password" type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <p id="gate-login-error" class="error form-error" hidden></p>
+          <button type="submit" class="btn primary wide">Sign In</button>
+        </form>
+      </div>
+    </section>
+
     <div class="page">
       <div class="page-layout">
         <aside class="page-guide" aria-label="Page guide">
@@ -18,23 +40,23 @@
             </p>
             <nav class="page-guide__nav">
               <a href="#calendar-card" class="page-guide__link">Calendar & Events</a>
-              <a href="#staff-task-board" class="page-guide__link staff-only">Staff To-Do List</a>
+              <a href="#staff-task-board" class="page-guide__link">Staff To-Do List</a>
               <a href="#redeem-card" class="page-guide__link">Redeem Items</a>
               <a href="#task-award-card" class="page-guide__link">Award Points for Tasks</a>
-              <a href="#custom-award-card" class="page-guide__link staff-only">Award Points (Custom)</a>
+              <a href="#custom-award-card" class="page-guide__link">Award Points (Custom)</a>
               <a href="#add-member-card" class="page-guide__link">Add Member</a>
               <a href="#members-card" class="page-guide__link">Members</a>
               <a href="#summary-card" class="page-guide__link">Daily Summary</a>
-              <a href="#volunteers-card" class="page-guide__link staff-only">Volunteer Directory</a>
+              <a href="#volunteers-card" class="page-guide__link">Volunteer Directory</a>
               <a href="#resources-card" class="page-guide__link">Community Resources</a>
               <a href="#items-card" class="page-guide__link">Items & Point Costs</a>
               <a href="#staff-logs" class="page-guide__link">Logs & Backups</a>
               <a href="#admin-log" class="page-guide__link">Admin Actions</a>
-              <a href="#documents-card" class="page-guide__link staff-only">Documents</a>
-              <a href="#donors-card" class="page-guide__link staff-only">Donor List</a>
+              <a href="#documents-card" class="page-guide__link">Documents</a>
+              <a href="#donors-card" class="page-guide__link">Donor List</a>
               <a href="#undo-section" class="page-guide__link">Undo Last Action</a>
-              <a href="#remove-points-card" class="page-guide__link staff-only">Remove Points</a>
-              <a href="#staff-users-card" class="page-guide__link staff-only">Staff Accounts</a>
+              <a href="#remove-points-card" class="page-guide__link">Remove Points</a>
+              <a href="#staff-users-card" class="page-guide__link">Staff Accounts</a>
             </nav>
           </div>
         </aside>
@@ -70,7 +92,7 @@
               </div>
               <div class="hero__staff">
                 <button id="staff-toggle" type="button" class="btn secondary">
-                  Login
+                  Sign Out
                 </button>
                 <span id="staff-status" class="hint">Off</span>
               </div>
@@ -89,7 +111,7 @@
           </div>
           <div id="calendar-grid" class="calendar-grid"></div>
           <div id="calendar-events" class="calendar-events"></div>
-          <form id="event-form" class="form staff-only">
+          <form id="event-form" class="form">
             <div class="split-fields">
               <label>
                 Event Title
@@ -110,10 +132,10 @@
             </label>
             <button type="submit" class="btn primary">Add Event</button>
           </form>
-          <div id="event-list" class="people event-list staff-only"></div>
+          <div id="event-list" class="people event-list"></div>
         </section>
 
-        <section id="staff-task-board" class="card span-2 staff-only">
+        <section id="staff-task-board" class="card span-2">
           <div class="card__header">
             <h2>Staff To-Do List</h2>
           </div>
@@ -147,7 +169,7 @@
         <section id="task-award-card" class="card card--action">
           <div class="card__header">
             <h2>Award Points for Tasks</h2>
-            <button id="add-task-toggle" type="button" class="btn secondary staff-only">
+            <button id="add-task-toggle" type="button" class="btn secondary">
               Add Task
             </button>
           </div>
@@ -156,7 +178,7 @@
               Member
               <select name="personId" required></select>
             </label>
-            <div id="add-task-form" class="form item-form staff-only">
+            <div id="add-task-form" class="form item-form">
               <label>
                 Task Name
                 <input id="add-task-name" type="text" name="taskName" required />
@@ -179,7 +201,7 @@
           </form>
         </section>
 
-        <section id="custom-award-card" class="card card--action staff-only">
+        <section id="custom-award-card" class="card card--action">
           <h2>Award Points (Custom)</h2>
           <form id="award-form" class="form" novalidate>
             <label>
@@ -325,7 +347,7 @@
           </div>
         </section>
 
-        <section id="volunteers-card" class="card card--directory span-2 staff-only">
+        <section id="volunteers-card" class="card card--directory span-2">
           <div class="card__header">
             <h2>Volunteer Directory</h2>
             <select id="volunteer-sort" class="toolbar-select">
@@ -403,10 +425,10 @@
             <div class="member-toolbar">
               <input id="resource-search" class="search-input" type="search" placeholder="Search resources..." />
               <button id="print-resources" type="button" class="btn secondary">Print Resources</button>
-              <button id="add-resource-toggle" type="button" class="btn secondary staff-only">Add Resource</button>
+              <button id="add-resource-toggle" type="button" class="btn secondary">Add Resource</button>
             </div>
           </div>
-          <form id="resource-form" class="form item-form staff-only">
+          <form id="resource-form" class="form item-form">
             <div class="split-fields split-fields--three">
               <label>
                 Resource Name
@@ -465,17 +487,17 @@
         <section id="items-card" class="card card--reference span-2">
           <div class="card__header">
             <h2>All Items and Point Costs</h2>
-            <button id="add-item-toggle" type="button" class="btn secondary staff-only">
+            <button id="add-item-toggle" type="button" class="btn secondary">
               Add New Item
             </button>
           </div>
           <p class="hint">
             Update point values and add new items with staff-mode only. Changes save automatically.
           </p>
-          <p class="hint staff-only">
+          <p class="hint">
             <strong>To change points, simply select the item under the list and change the value.</strong>
           </p>
-          <form id="add-item-form" class="form item-form staff-only" novalidate>
+          <form id="add-item-form" class="form item-form" novalidate>
             <label>
               Item Name
               <input id="add-item-name" type="text" name="itemName" required />
@@ -502,7 +524,7 @@
             <summary>Logs & Backups</summary>
             <div class="section-collapse__content">
               <div class="card__header">
-                <div id="staff-actions" class="header-actions staff-only">
+                <div id="staff-actions" class="header-actions">
                   <button id="export-data" type="button" class="btn secondary">Backup Data (JSON)</button>
                   <button id="import-data" type="button" class="btn secondary">Restore Data</button>
                   <button id="export-logs" type="button" class="btn secondary">Export Logs (CSV)</button>
@@ -522,7 +544,7 @@
           </details>
         </section>
 
-        <section id="documents-card" class="card card--admin span-2 staff-only">
+        <section id="documents-card" class="card card--admin span-2">
           <div class="card__header">
             <h2>Documents</h2>
           </div>
@@ -561,7 +583,7 @@
           <div id="document-list" class="table"></div>
         </section>
 
-        <section id="donors-card" class="card card--admin span-2 staff-only">
+        <section id="donors-card" class="card card--admin span-2">
           <div class="card__header">
             <h2>Donor List</h2>
           </div>
@@ -600,7 +622,7 @@
           <button id="undo-last" type="button" class="btn danger wide">Undo Last</button>
         </section>
 
-        <section id="remove-points-card" class="card card--admin span-2 staff-only">
+        <section id="remove-points-card" class="card card--admin span-2">
           <h2>Remove Points</h2>
           <form id="remove-form" class="form" novalidate>
             <label>
@@ -620,7 +642,7 @@
           </form>
         </section>
 
-        <section id="staff-users-card" class="card span-2 staff-only">
+        <section id="staff-users-card" class="card span-2">
           <div class="card__header">
             <h2>Staff Accounts</h2>
           </div>
@@ -648,32 +670,8 @@
         </div>
       </div>
     </div>
-
-    <div id="staff-login-modal" class="modal" hidden>
-      <div class="modal__scrim" data-close-login="true"></div>
-      <div class="modal__panel">
-        <h2>Staff Login</h2>
-        <p class="hint">Sign in with your own staff account so activity is tied to the right person.</p>
-        <form id="staff-login-form" class="form">
-          <label>
-            Username
-            <input id="staff-login-username" type="text" name="username" autocomplete="username" required />
-          </label>
-          <label>
-            Password
-            <input id="staff-login-password" type="password" name="password" autocomplete="current-password" required />
-          </label>
-          <p id="staff-login-error" class="error form-error" hidden></p>
-          <div class="form-actions">
-            <button id="staff-login-cancel" type="button" class="btn secondary">Cancel</button>
-            <button type="submit" class="btn primary">Sign In</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
     <script src="xlsx.full.min.js"></script>
     <script src="mammoth.browser.min.js"></script>
-    <script src="app.js?v=20260522-12"></script>
+    <script src="app.js?v=20260523-locked-local"></script>
   </body>
 </html>

@@ -249,6 +249,10 @@ state.activity = (state.activity || []).map((entry) => ({
   ...entry,
   actor: entry.actor || "Unknown Staff",
 }));
+state.visits = (state.visits || []).map((entry) => ({
+  ...entry,
+  actor: entry.actor || "Unknown Staff",
+}));
 state.adminLog = (state.adminLog || []).map((entry) => ({
   ...entry,
   actor: entry.actor || "Unknown Staff",
@@ -315,10 +319,7 @@ const elements = {
   addItemError: document.querySelector("#add-item-error"),
   staffToggle: document.querySelector("#staff-toggle"),
   staffStatus: document.querySelector("#staff-status"),
-  staffLogs: document.querySelector("#staff-logs"),
-  staffActions: document.querySelector("#staff-actions"),
   adminTable: document.querySelector("#admin-table"),
-  undoSection: document.querySelector("#undo-section"),
   addTaskToggle: document.querySelector("#add-task-toggle"),
   addTaskForm: document.querySelector("#add-task-form"),
   addTaskName: document.querySelector("#add-task-name"),
@@ -378,12 +379,9 @@ const elements = {
   staffUserForm: document.querySelector("#staff-user-form"),
   staffUserList: document.querySelector("#staff-user-list"),
   staffUserError: document.querySelector("#staff-user-error"),
-  staffLoginModal: document.querySelector("#staff-login-modal"),
-  staffLoginForm: document.querySelector("#staff-login-form"),
-  staffLoginUsername: document.querySelector("#staff-login-username"),
-  staffLoginPassword: document.querySelector("#staff-login-password"),
-  staffLoginError: document.querySelector("#staff-login-error"),
-  staffLoginCancel: document.querySelector("#staff-login-cancel"),
+  loginGate: document.querySelector("#login-gate"),
+  gateLoginForm: document.querySelector("#gate-login-form"),
+  gateLoginError: document.querySelector("#gate-login-error"),
 };
 
 // ---- Initial render / bindings ----
@@ -409,11 +407,7 @@ if (didLegacyTodoMigration) {
 
 if (elements.staffToggle) {
   elements.staffToggle.addEventListener("click", () => {
-    if (staffMode) {
-      setStaffMode(false, null);
-      return;
-    }
-    openStaffLogin();
+    setStaffMode(false, null);
   });
 }
 
@@ -440,8 +434,10 @@ if (elements.undoLast) {
       before: person ? person.points : null,
       after: person ? person.points : null,
       note: `Undid: ${noteLabel}`,
+      actor: getCurrentActorName(),
       timestamp: new Date().toISOString(),
     });
+    logAdminAction("Undo", `Undid activity: ${noteLabel}`);
     saveState();
     renderAll();
   });
@@ -602,6 +598,7 @@ if (elements.exportData) {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+    logAdminAction("Backup Exported", "Exported full backup JSON");
   });
 }
 
@@ -646,6 +643,10 @@ if (elements.importData) {
           ...entry,
           actor: entry.actor || "Unknown Staff",
         }));
+        state.visits = state.visits.map((entry) => ({
+          ...entry,
+          actor: entry.actor || "Unknown Staff",
+        }));
         state.volunteers = state.volunteers.map((volunteer) => ({
           ...volunteer,
           profilePhoto: volunteer.profilePhoto || "",
@@ -671,6 +672,10 @@ if (elements.importData) {
           ...entry,
           actor: entry.actor || "Unknown Staff",
         }));
+        logAdminAction(
+          "Backup Restored",
+          `Restored backup from ${file.name || "selected file"}`
+        );
         saveState();
         renderAll();
       } catch (error) {
@@ -958,13 +963,16 @@ if (elements.staffTaskForm) {
     if (editingStaffTodoId) {
       const todo = state.staffTodosGlobal.find((entry) => entry.id === editingStaffTodoId);
       if (todo) todo.title = title;
+      logAdminAction("Staff Reminder Updated", `Updated staff reminder "${title}"`);
     } else {
       state.staffTodosGlobal.unshift({
         id: crypto.randomUUID(),
         title,
         done: false,
         ownerId: currentStaffUser ? currentStaffUser.id : null,
+        actor: getCurrentActorName(),
       });
+      logAdminAction("Staff Reminder Added", `Added staff reminder "${title}"`);
     }
     saveState();
     resetStaffTodoForm();
@@ -1042,6 +1050,7 @@ if (elements.documentForm) {
       dataUrl,
       uploadedAt: new Date().toISOString(),
     });
+    logAdminAction("Document Uploaded", `Uploaded document ${file.name}`);
     setError(elements.documentError, "");
     saveState();
     elements.documentForm.reset();
@@ -1233,12 +1242,7 @@ function getPageGuideEntries() {
       const section = sectionId ? document.getElementById(sectionId) : null;
       return { link, section };
     })
-    .filter(({ link, section }) => {
-      if (!section || link.hidden) return false;
-      if (section.hidden) return false;
-      const hiddenAncestor = section.closest("[hidden]");
-      return !hiddenAncestor;
-    });
+    .filter(({ section }) => Boolean(section));
 }
 
 function updatePageGuideHighlight() {
@@ -1308,6 +1312,7 @@ function logVisit(personId) {
   state.visits.unshift({
     id: crypto.randomUUID(),
     personId,
+    actor: getCurrentActorName(),
     timestamp: new Date().toISOString(),
   });
   state.activity.unshift({
@@ -1476,31 +1481,28 @@ function renderPeople() {
     detailStack.className = "member-card__details-stack";
     info.append(avatar, infoText, detailStack);
 
-    let actions = null;
-    if (staffMode) {
-      actions = document.createElement("div");
-      actions.className = "person__actions";
-      const removeButton = document.createElement("button");
-      removeButton.type = "button";
-      removeButton.className = "btn small danger";
-      removeButton.textContent = "Remove Member";
-      removeButton.addEventListener("click", () => {
-        const confirmed = confirm(
-          `Remove ${person.firstName} ${person.lastName}? This cannot be undone.`
-        );
-        if (!confirmed) return;
-        state.people = state.people.filter((entry) => entry.id !== person.id);
-        state.activity = state.activity.filter((entry) => entry.personId !== person.id);
-        state.visits = state.visits.filter((entry) => entry.personId !== person.id);
-        logAdminAction(
-          "Member Removed",
-          `Removed ${person.firstName} ${person.lastName}`
-        );
-        saveState();
-        renderAll();
-      });
-      actions.append(removeButton);
-    }
+    const actions = document.createElement("div");
+    actions.className = "person__actions";
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "btn small danger";
+    removeButton.textContent = "Remove Member";
+    removeButton.addEventListener("click", () => {
+      const confirmed = confirm(
+        `Remove ${person.firstName} ${person.lastName}? This cannot be undone.`
+      );
+      if (!confirmed) return;
+      state.people = state.people.filter((entry) => entry.id !== person.id);
+      state.activity = state.activity.filter((entry) => entry.personId !== person.id);
+      state.visits = state.visits.filter((entry) => entry.personId !== person.id);
+      logAdminAction(
+        "Member Removed",
+        `Removed ${person.firstName} ${person.lastName}`
+      );
+      saveState();
+      renderAll();
+    });
+    actions.append(removeButton);
 
     const visitButton = document.createElement("button");
     visitButton.type = "button";
@@ -1563,7 +1565,9 @@ function renderPeople() {
         const row = document.createElement("div");
         row.className = "person__entry";
         const when = new Date(entry.timestamp);
-        row.textContent = `${index + 1}. ${when.toLocaleString()}`;
+        row.textContent = `${index + 1}. ${when.toLocaleString()} by ${
+          entry.actor || "Unknown Staff"
+        }`;
         visitList.append(row);
       });
     }
@@ -1883,6 +1887,10 @@ function renderPeople() {
         }
         pendingPhoto = null;
       }
+      logAdminAction(
+        "Member Profile Updated",
+        `Updated profile for ${person.firstName} ${person.lastName}`
+      );
       saveState();
       setEditing(false);
       reopenProfileId = person.id;
@@ -1893,15 +1901,8 @@ function renderPeople() {
     profileList.append(actionsRow);
     profileDetails.append(profileList);
 
-    if (actions) {
-      actions.append(visitButton);
-      card.append(info, actions);
-    } else {
-      const visitWrap = document.createElement("div");
-      visitWrap.className = "person__actions";
-      visitWrap.append(visitButton);
-      card.append(info, visitWrap);
-    }
+    actions.append(visitButton);
+    card.append(info, actions);
     detailStack.append(profileDetails, activityDetails, visitDetails);
 
     return card;
@@ -1986,12 +1987,14 @@ if (elements.addTaskSave) {
         existingTask.label = name;
         existingTask.points = points;
       }
+      logAdminAction("Task Updated", `Updated task ${name} (${points} pts)`);
     } else {
       state.customTasks.push({
         id: `custom-${crypto.randomUUID()}`,
         label: name,
         points,
       });
+      logAdminAction("Task Added", `Added task ${name} (${points} pts)`);
     }
     saveState();
     closeTaskEditor();
@@ -2318,11 +2321,14 @@ function renderItems() {
       input.type = "number";
       input.min = "0";
       input.value = item.cost;
-      input.disabled = !staffMode;
       input.addEventListener("change", () => {
-        if (!staffMode) return;
+        const previousValue = item.cost;
         const nextValue = Number(input.value);
         item.cost = Number.isFinite(nextValue) && nextValue >= 0 ? nextValue : 0;
+        logAdminAction(
+          "Item Points Updated",
+          `Changed ${item.name} from ${previousValue} pts to ${item.cost} pts`
+        );
         saveState();
         renderAll();
       });
@@ -2600,6 +2606,10 @@ function renderCalendar() {
           checkbox.checked = Boolean(entry.done);
           checkbox.addEventListener("change", () => {
             entry.done = checkbox.checked;
+            logAdminAction(
+              "Event Checklist Updated",
+              `${entry.done ? "Completed" : "Reopened"} "${entry.title}" for ${eventItem.title}`
+            );
             saveState();
             renderEvents();
           });
@@ -2649,6 +2659,10 @@ function renderStaffTaskBoard() {
     checkbox.checked = Boolean(todo.done);
     checkbox.addEventListener("change", () => {
       todo.done = checkbox.checked;
+      logAdminAction(
+        "Staff Reminder Updated",
+        `${todo.done ? "Completed" : "Reopened"} staff reminder "${todo.title}"`
+      );
       saveState();
     });
     const text = document.createElement("span");
@@ -2670,6 +2684,7 @@ function renderStaffTaskBoard() {
     });
     remove.addEventListener("click", () => {
       state.staffTodosGlobal = state.staffTodosGlobal.filter((entry) => entry.id !== todo.id);
+      logAdminAction("Staff Reminder Removed", `Removed staff reminder "${todo.title}"`);
       saveState();
       resetStaffTodoForm();
       renderStaffTaskBoard();
@@ -2702,29 +2717,28 @@ function renderDonors() {
     contact.innerHTML = `${escapeHtml(formatPhone(donor.phone) || "No phone")}<br /><span class="hint">${escapeHtml(donor.email || "No email")}</span>`;
     const donation = document.createElement("div");
     donation.innerHTML = `${escapeHtml(donor.donation)}<br />`;
-    if (staffMode) {
-      const actionWrap = document.createElement("div");
-      actionWrap.className = "inline-actions";
-      const edit = document.createElement("button");
-      edit.type = "button";
-      edit.className = "btn small secondary";
-      edit.textContent = "Edit";
-      edit.addEventListener("click", () => {
-        populateDonorForm(donor);
-      });
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "btn small danger";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", () => {
-        state.donors = state.donors.filter((entry) => entry.id !== donor.id);
-        saveState();
-        resetDonorForm();
-        renderDonors();
-      });
-      actionWrap.append(edit, remove);
-      donation.append(actionWrap);
-    }
+    const actionWrap = document.createElement("div");
+    actionWrap.className = "inline-actions";
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "btn small secondary";
+    edit.textContent = "Edit";
+    edit.addEventListener("click", () => {
+      populateDonorForm(donor);
+    });
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "btn small danger";
+    remove.textContent = "Remove";
+    remove.addEventListener("click", () => {
+      state.donors = state.donors.filter((entry) => entry.id !== donor.id);
+      logAdminAction("Donor Removed", `Removed donor ${donor.name}`);
+      saveState();
+      resetDonorForm();
+      renderDonors();
+    });
+    actionWrap.append(edit, remove);
+    donation.append(actionWrap);
     row.append(name, contact, donation);
     elements.donorList.append(row);
   });
@@ -2768,18 +2782,20 @@ function renderDocuments() {
       downloadDataUrl(documentItem.fileName || documentItem.title, documentItem.dataUrl);
     });
     actions.append(view, download);
-    if (staffMode) {
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "btn small danger";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", () => {
-        state.documents = state.documents.filter((entry) => entry.id !== documentItem.id);
-        saveState();
-        renderDocuments();
-      });
-      actions.append(remove);
-    }
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "btn small danger";
+    remove.textContent = "Remove";
+    remove.addEventListener("click", () => {
+      state.documents = state.documents.filter((entry) => entry.id !== documentItem.id);
+      logAdminAction(
+        "Document Removed",
+        `Removed document ${documentItem.title || documentItem.fileName || "Untitled"}`
+      );
+      saveState();
+      renderDocuments();
+    });
+    actions.append(remove);
     row.append(info, category, actions);
     elements.documentList.append(row);
   });
@@ -2819,30 +2835,28 @@ function renderVolunteers() {
       </div>
     `;
     card.append(info);
-    if (staffMode) {
-      const editButton = document.createElement("button");
-      editButton.type = "button";
-      editButton.className = "btn small secondary";
-      editButton.textContent = "Edit";
-      editButton.addEventListener("click", () => {
-        populateVolunteerForm(volunteer);
-      });
-      const removeButton = document.createElement("button");
-      removeButton.type = "button";
-      removeButton.className = "btn small danger";
-      removeButton.textContent = "Remove";
-      removeButton.addEventListener("click", () => {
-        state.volunteers = state.volunteers.filter((entry) => entry.id !== volunteer.id);
-        logAdminAction("Volunteer Removed", `Removed volunteer ${volunteer.name}`);
-        saveState();
-        resetVolunteerForm();
-        renderVolunteers();
-      });
-      const actionWrap = document.createElement("div");
-      actionWrap.className = "person__actions";
-      actionWrap.append(editButton, removeButton);
-      card.append(actionWrap);
-    }
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "btn small secondary";
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", () => {
+      populateVolunteerForm(volunteer);
+    });
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "btn small danger";
+    removeButton.textContent = "Remove";
+    removeButton.addEventListener("click", () => {
+      state.volunteers = state.volunteers.filter((entry) => entry.id !== volunteer.id);
+      logAdminAction("Volunteer Removed", `Removed volunteer ${volunteer.name}`);
+      saveState();
+      resetVolunteerForm();
+      renderVolunteers();
+    });
+    const actionWrap = document.createElement("div");
+    actionWrap.className = "person__actions";
+    actionWrap.append(editButton, removeButton);
+    card.append(actionWrap);
     return card;
   };
 
@@ -2920,30 +2934,29 @@ function renderResources() {
       }</div>
       <div class="person__entry"><strong>Drop-Off / Notes:</strong> ${escapeHtml(resource.dropoff || "None listed")}</div>
     `;
-    if (staffMode) {
-      const actions = document.createElement("div");
-      actions.className = "inline-actions";
-      const edit = document.createElement("button");
-      edit.type = "button";
-      edit.className = "btn small secondary";
-      edit.textContent = "Edit";
-      edit.addEventListener("click", (event) => {
-        event.preventDefault();
-        populateResourceForm(resource);
-      });
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "btn small danger";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", (event) => {
-        event.preventDefault();
-        state.resources = state.resources.filter((entry) => entry.id !== resource.id);
-        saveState();
-        renderResources();
-      });
-      actions.append(edit, remove);
-      details.append(actions);
-    }
+    const actions = document.createElement("div");
+    actions.className = "inline-actions";
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "btn small secondary";
+    edit.textContent = "Edit";
+    edit.addEventListener("click", (event) => {
+      event.preventDefault();
+      populateResourceForm(resource);
+    });
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "btn small danger";
+    remove.textContent = "Remove";
+    remove.addEventListener("click", (event) => {
+      event.preventDefault();
+      state.resources = state.resources.filter((entry) => entry.id !== resource.id);
+      logAdminAction("Resource Removed", `Removed resource ${resource.name}`);
+      saveState();
+      renderResources();
+    });
+    actions.append(edit, remove);
+    details.append(actions);
     body.append(details);
     card.append(body);
     elements.resourceList.append(card);
@@ -2984,6 +2997,10 @@ function renderEvents() {
       checkbox.checked = Boolean(entry.done);
       checkbox.addEventListener("change", () => {
         entry.done = checkbox.checked;
+        logAdminAction(
+          "Event Checklist Updated",
+          `${entry.done ? "Completed" : "Reopened"} "${entry.title}" for ${eventItem.title}`
+        );
         saveState();
       });
       const text = document.createElement("span");
@@ -3082,6 +3099,7 @@ function parseRedeemNote(note) {
 }
 
 function updateStaffVisibility() {
+  updateLoginGate();
   if (elements.staffStatus) {
     elements.staffStatus.textContent = staffMode
       ? currentStaffUser
@@ -3089,42 +3107,37 @@ function updateStaffVisibility() {
         : "On"
       : "Off";
   }
-  setStaffOnlyVisibility();
-  if (!staffMode) {
-    closeStaffOnlyDetails();
-    closeStaffForms();
-  }
-  if (elements.undoSection) {
-    elements.undoSection.classList.toggle("span-2", staffMode);
+  if (elements.staffToggle) {
+    elements.staffToggle.textContent = "Sign Out";
   }
 }
 
-function setStaffOnlyVisibility() {
-  const staffOnly = document.querySelectorAll(".staff-only");
-  staffOnly.forEach((element) => {
-    element.hidden = !staffMode;
-  });
-}
-
-function closeStaffForms() {
-  if (elements.addTaskForm) {
-    elements.addTaskForm.classList.remove("show");
-    elements.addTaskForm.style.display = "none";
-    setError(elements.addTaskError, "");
+function updateLoginGate() {
+  document.body.classList.toggle("is-locked", !staffMode);
+  if (elements.loginGate) {
+    elements.loginGate.hidden = staffMode;
   }
-  if (elements.addItemForm) {
-    elements.addItemForm.classList.remove("show");
-    elements.addItemForm.style.display = "none";
-    setError(elements.addItemError, "");
+  const appPage = document.querySelector(".page");
+  if (appPage) {
+    appPage.hidden = !staffMode;
   }
 }
 
-function closeStaffOnlyDetails() {
-  if (!elements.staffLogs) return;
-  const details = elements.staffLogs.querySelectorAll("details");
-  details.forEach((entry) => {
-    entry.open = false;
-  });
+function handleStaffLoginSubmit(form, errorElement) {
+  const formData = new FormData(form);
+  const username = normalizeLabel(formData.get("username"));
+  const password = String(formData.get("password") || "").trim();
+  const match = state.staffUsers.find(
+    (entry) => entry.username === username && entry.password === password
+  );
+  if (!match) {
+    setError(errorElement, "Invalid username or password.");
+    logAdminAction("Staff Login", `Denied login for ${username || "unknown"}`, "Denied");
+    return;
+  }
+  setError(errorElement, "");
+  setStaffMode(true, match);
+  logAdminAction("Staff Login", `Signed in as ${match.displayName}`);
 }
 
 function setStaffMode(enabled, user) {
@@ -3213,56 +3226,12 @@ function attachCalendarControls() {
 }
 
 function attachStaffLogin() {
-  if (!elements.staffLoginForm || !elements.staffLoginModal) return;
-  elements.staffLoginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(elements.staffLoginForm);
-    const username = normalizeLabel(formData.get("username"));
-    const password = String(formData.get("password") || "").trim();
-    const match = state.staffUsers.find(
-      (entry) => entry.username === username && entry.password === password
-    );
-    if (!match) {
-      setError(elements.staffLoginError, "Invalid username or password.");
-      logAdminAction("Staff Login", `Denied login for ${username || "unknown"}`, "Denied");
-      return;
-    }
-    setError(elements.staffLoginError, "");
-    closeStaffLogin();
-    setStaffMode(true, match);
-    logAdminAction("Staff Login", `Signed in as ${match.displayName}`);
-  });
-  if (elements.staffLoginCancel) {
-    elements.staffLoginCancel.addEventListener("click", () => {
-      closeStaffLogin();
+  if (elements.gateLoginForm) {
+    elements.gateLoginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      handleStaffLoginSubmit(elements.gateLoginForm, elements.gateLoginError);
     });
   }
-  if (elements.staffLoginModal) {
-    elements.staffLoginModal.addEventListener("click", (event) => {
-      if (event.target && event.target.dataset.closeLogin === "true") {
-        closeStaffLogin();
-      }
-    });
-  }
-}
-
-function openStaffLogin() {
-  if (!elements.staffLoginModal) return;
-  elements.staffLoginModal.hidden = false;
-  elements.staffLoginModal.style.display = "grid";
-  setError(elements.staffLoginError, "");
-  if (elements.staffLoginForm) {
-    elements.staffLoginForm.reset();
-  }
-  if (elements.staffLoginUsername) {
-    elements.staffLoginUsername.focus();
-  }
-}
-
-function closeStaffLogin() {
-  if (!elements.staffLoginModal) return;
-  elements.staffLoginModal.hidden = true;
-  elements.staffLoginModal.style.display = "none";
 }
 
 function getCurrentActorName() {
@@ -4207,7 +4176,7 @@ function hydrateTasks() {
 
     leftGroup.append(button, status);
 
-    if (staffMode && task.id) {
+    if (task.id) {
       const actionGroup = document.createElement("div");
       actionGroup.className = "task-actions";
       if (String(task.id).startsWith("custom-")) {
@@ -4233,6 +4202,7 @@ function hydrateTasks() {
         if (!state.hiddenTasks.includes(task.id)) {
           state.hiddenTasks.push(task.id);
         }
+        logAdminAction("Task Removed", `Removed task ${task.label}`);
         saveState();
         hydrateTasks();
       });
