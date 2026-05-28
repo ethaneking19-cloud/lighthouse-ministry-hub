@@ -2,6 +2,10 @@
 const STORAGE_KEY = "ministryPointsStateV1";
 const STAFF_MODE_KEY = "ministryStaffModeV1";
 const STAFF_USER_KEY = "ministryStaffUserV1";
+const SAFETY_BACKUP_KEY = "ministrySafetyBackupsV1";
+const MAX_SAFETY_BACKUPS = 3;
+const MAX_ACTIVITY_LOG_ENTRIES = 1000;
+const MAX_ADMIN_LOG_ENTRIES = 1000;
 const MAX_PROFILE_PHOTO_BYTES = 3 * 1024 * 1024;
 const TARGET_PROFILE_PHOTO_BYTES = 600 * 1024;
 const PROFILE_PHOTO_MAX_DIMENSION = 512;
@@ -17,6 +21,12 @@ const DEFAULT_RESIDENCE_TAGS = [
   "Own Home",
   "Other",
 ];
+const DEFAULT_SETTINGS = {
+  organizationName: "Englewood Baptist Church",
+  hubName: "Lighthouse Ministry Hub",
+  subtitle:
+    "A calm, organized command center for member care, resources, events, volunteers, and ministry activity.",
+};
 
 // ---- Default tasks & items ----
 const TASKS = [
@@ -184,6 +194,7 @@ const state = loadState();
 if (!state.customItems) state.customItems = [];
 if (!state.customTasks) state.customTasks = [];
 if (!state.hiddenTasks) state.hiddenTasks = [];
+if (!state.hiddenItems) state.hiddenItems = [];
 if (!state.adminLog) state.adminLog = [];
 if (!state.visits) state.visits = [];
 if (!state.volunteers) state.volunteers = [];
@@ -193,6 +204,8 @@ if (!state.staffUsers) state.staffUsers = [];
 if (!state.donors) state.donors = [];
 if (!state.documents) state.documents = [];
 if (!state.resources) state.resources = DEFAULT_RESOURCES.map((entry) => ({ ...entry }));
+if (!state.lastSafetyBackupAt) state.lastSafetyBackupAt = "";
+state.settings = { ...DEFAULT_SETTINGS, ...(state.settings || {}) };
 ensureStarterStaffAccount();
 let didLegacyTodoMigration = false;
 state.people = (state.people || []).map((person) => ({
@@ -200,6 +213,8 @@ state.people = (state.people || []).map((person) => ({
   home: person.home || person.address || "",
   residenceTag: person.residenceTag || "Homeless",
   email: person.email || "",
+  followUpNeeded: Boolean(person.followUpNeeded),
+  followUpNote: person.followUpNote || "",
   staffTodos: Array.isArray(person.staffTodos)
     ? person.staffTodos.map((todo) => ({
         ...todo,
@@ -269,12 +284,22 @@ let editingVolunteerId = null;
 let editingDonorId = null;
 let editingResourceId = null;
 let pageGuideFrame = null;
+let pendingSensitiveAction = null;
+let logSearchTerm = "";
+let logTypeFilter = "";
+let logRangeFilter = "";
+let adminLogSearchTerm = "";
+let selectedCheckinMemberId = "";
+let taskRemoveMode = false;
 let currentStaffUser =
   state.staffUsers.find((entry) => entry.id === sessionStorage.getItem(STAFF_USER_KEY)) ||
   null;
 
 // ---- Element references ----
 const elements = {
+  quickBackup: document.querySelector("#quick-backup"),
+  quickReport: document.querySelector("#quick-report"),
+  dashboardAlerts: document.querySelector("#dashboard-alerts"),
   personForm: document.querySelector("#person-form"),
   calendarGrid: document.querySelector("#calendar-grid"),
   calendarEvents: document.querySelector("#calendar-events"),
@@ -292,13 +317,31 @@ const elements = {
   removeNoteError: document.querySelector("#remove-note-error"),
   undoLast: document.querySelector("#undo-last"),
   exportLogs: document.querySelector("#export-logs"),
+  printLogs: document.querySelector("#print-logs"),
   exportData: document.querySelector("#export-data"),
   importData: document.querySelector("#import-data"),
+  restoreSafetyBackup: document.querySelector("#restore-safety-backup"),
+  backupStatus: document.querySelector("#backup-status"),
+  logCountActivity: document.querySelector("#log-count-activity"),
+  logCountAdmin: document.querySelector("#log-count-admin"),
+  logCountBackups: document.querySelector("#log-count-backups"),
+  logSearch: document.querySelector("#log-search"),
+  logTypeFilter: document.querySelector("#log-type-filter"),
+  logRangeFilter: document.querySelector("#log-range-filter"),
+  logFilterStatus: document.querySelector("#log-filter-status"),
+  adminLogSearch: document.querySelector("#admin-log-search"),
   redeemForm: document.querySelector("#redeem-form"),
   redeemError: document.querySelector("#redeem-error"),
   redeemButton: document.querySelector("#redeem-button"),
   redeemPoints: document.querySelector("#redeem-points"),
   peopleList: document.querySelector("#people-list"),
+  checkinForm: document.querySelector("#checkin-form"),
+  checkinMember: document.querySelector("#checkin-member"),
+  checkinSummary: document.querySelector("#checkin-summary"),
+  checkinHistory: document.querySelector("#checkin-history"),
+  checkinLogVisit: document.querySelector("#checkin-log-visit"),
+  checkinFollowupToggle: document.querySelector("#checkin-followup-toggle"),
+  inactiveMembersList: document.querySelector("#inactive-members-list"),
   memberTagFilter: document.querySelector("#member-tag-filter"),
   memberSort: document.querySelector("#member-sort"),
   printSignin: document.querySelector("#print-signin"),
@@ -321,6 +364,7 @@ const elements = {
   staffStatus: document.querySelector("#staff-status"),
   adminTable: document.querySelector("#admin-table"),
   addTaskToggle: document.querySelector("#add-task-toggle"),
+  removeTaskToggle: document.querySelector("#remove-task-toggle"),
   addTaskForm: document.querySelector("#add-task-form"),
   addTaskName: document.querySelector("#add-task-name"),
   addTaskPoints: document.querySelector("#add-task-points"),
@@ -330,6 +374,7 @@ const elements = {
   summaryMembers: document.querySelector("#summary-members"),
   summaryItems: document.querySelector("#summary-items"),
   summaryCategory: document.querySelector("#summary-category"),
+  printReport: document.querySelector("#print-report"),
   memberDateJoined: document.querySelector("#member-date-joined"),
   memberPhone: document.querySelector("#member-phone"),
   memberPhoto: document.querySelector("#member-photo"),
@@ -379,9 +424,28 @@ const elements = {
   staffUserForm: document.querySelector("#staff-user-form"),
   staffUserList: document.querySelector("#staff-user-list"),
   staffUserError: document.querySelector("#staff-user-error"),
+  settingsForm: document.querySelector("#settings-form"),
+  settingsOrgName: document.querySelector("#settings-org-name"),
+  settingsHubName: document.querySelector("#settings-hub-name"),
+  settingsSubtitle: document.querySelector("#settings-subtitle"),
+  settingsStatus: document.querySelector("#settings-status"),
+  restoreTaskList: document.querySelector("#restore-task-list"),
+  restoreItemList: document.querySelector("#restore-item-list"),
   loginGate: document.querySelector("#login-gate"),
   gateLoginForm: document.querySelector("#gate-login-form"),
   gateLoginError: document.querySelector("#gate-login-error"),
+  sensitiveModal: document.querySelector("#sensitive-modal"),
+  sensitiveForm: document.querySelector("#sensitive-form"),
+  sensitiveTitle: document.querySelector("#sensitive-title"),
+  sensitiveMessage: document.querySelector("#sensitive-message"),
+  sensitiveUsername: document.querySelector("#sensitive-username"),
+  sensitivePassword: document.querySelector("#sensitive-password"),
+  sensitiveNewPasswordFields: document.querySelector("#sensitive-new-password-fields"),
+  sensitiveNewPassword: document.querySelector("#sensitive-new-password"),
+  sensitiveConfirmPassword: document.querySelector("#sensitive-confirm-password"),
+  sensitiveError: document.querySelector("#sensitive-error"),
+  sensitiveSubmit: document.querySelector("#sensitive-submit"),
+  sensitiveCancel: document.querySelector("#sensitive-cancel"),
 };
 
 // ---- Initial render / bindings ----
@@ -401,6 +465,9 @@ attachVolunteerSort();
 attachCalendarControls();
 attachResourceSearch();
 attachPageGuideSpy();
+attachSensitiveConfirmation();
+ensureDailySafetyBackup();
+renderBackupStatus();
 if (didLegacyTodoMigration) {
   saveState();
 }
@@ -413,198 +480,351 @@ if (elements.staffToggle) {
 
 if (elements.undoLast) {
   elements.undoLast.addEventListener("click", () => {
-    const confirmed = confirm("Undo the most recent action?");
-    if (!confirmed) return;
     const entry = state.activity[0];
     if (!entry) return;
-    const person = state.people.find((p) => p.id === entry.personId);
-    if (person) {
-      if (Number.isFinite(entry.before)) {
-        person.points = entry.before;
-      } else {
-        person.points = Math.max(0, person.points - entry.delta);
-      }
-    }
     const noteLabel = entry.note || entry.type;
-    state.activity.unshift({
-      id: crypto.randomUUID(),
-      personId: entry.personId || "",
-      type: "undo",
-      delta: 0,
-      before: person ? person.points : null,
-      after: person ? person.points : null,
-      note: `Undid: ${noteLabel}`,
-      actor: getCurrentActorName(),
-      timestamp: new Date().toISOString(),
+    requestSensitiveConfirmation({
+      title: "Undo Last Action",
+      message:
+        "This will reverse the most recent point change. Enter staff credentials to continue.",
+      actionLabel: "Undo Action",
+      backupReason: "Before undoing latest activity",
+      onConfirm: ({ confirmedBy }) => {
+        const person = state.people.find((p) => p.id === entry.personId);
+        if (person) {
+          if (Number.isFinite(entry.before)) {
+            person.points = entry.before;
+          } else {
+            person.points = Math.max(0, person.points - entry.delta);
+          }
+        }
+        state.activity.unshift({
+          id: crypto.randomUUID(),
+          personId: entry.personId || "",
+          type: "undo",
+          delta: 0,
+          before: person ? person.points : null,
+          after: person ? person.points : null,
+          note: `Undid: ${noteLabel}`,
+          actor: confirmedBy.displayName || confirmedBy.username,
+          timestamp: new Date().toISOString(),
+        });
+        state.activity = state.activity.slice(0, MAX_ACTIVITY_LOG_ENTRIES);
+        logAdminAction(
+          "Undo",
+          `Undid activity: ${noteLabel} after confirmation by ${
+            confirmedBy.displayName || confirmedBy.username
+          }`
+        );
+        saveState();
+        renderAll();
+      }
     });
-    logAdminAction("Undo", `Undid activity: ${noteLabel}`);
-    saveState();
-    renderAll();
   });
 }
 
 if (elements.exportLogs) {
   elements.exportLogs.addEventListener("click", () => {
-    // Build a single CSV with activity, member summary, top tasks, and admin actions.
-    const rows = [
-      ["Staff Mode Required", "Yes"],
-      [
-        "Date",
-        "Member",
-        "Type",
-        "Points Change",
-        "Points Before",
-        "Points After",
-        "Note (Preview)",
-        "Note (Full)",
-        "Updated By",
-        "",
-        "Member Summary",
-        "Total Points",
-        "",
-        "Top Tasks (Last 30 Days)",
-        "Frequency",
-        "",
-        "Admin Actions",
-        "Actor",
-        "Status",
-        "Time",
-        "",
-        "Sign-In Sheet",
-        "Residence Tag",
-      ],
-    ];
-
-    const summary = state.people.map((person) => [
-      `${person.firstName} ${person.lastName}`,
-      String(person.points),
-    ]);
-
-    const topTasks = getTopTasks(30);
-    const adminLog = state.adminLog || [];
-    const maxRows = Math.max(
-      state.activity.length,
-      summary.length,
-      topTasks.length,
-      adminLog.length
-    );
-
-    for (let i = 0; i < maxRows; i += 1) {
-      const entry = state.activity[i];
-      if (entry) {
-        const person = state.people.find((p) => p.id === entry.personId);
-        const name = person ? `${person.firstName} ${person.lastName}` : "Unknown";
-        const when = new Date(entry.timestamp).toLocaleString();
-        const fullNote = entry.note || "";
-        const preview =
-          fullNote.length > 80 ? `${fullNote.slice(0, 77)}...` : fullNote;
-        const row = [
-          when,
-          name,
-          entry.type,
-          String(entry.delta),
-          String(Number.isFinite(entry.before) ? entry.before : ""),
-          String(Number.isFinite(entry.after) ? entry.after : ""),
-          preview,
-          fullNote,
-          entry.actor || "",
-          "",
-        ];
-        rows.push(row);
-      } else {
-        rows.push(["", "", "", "", "", "", "", "", "", ""]);
-      }
-
-      const summaryRow = summary[i];
-      if (summaryRow) {
-        rows[rows.length - 1].push(summaryRow[0], summaryRow[1]);
-      } else {
-        rows[rows.length - 1].push("", "");
-      }
-
-      rows[rows.length - 1].push("");
-
-      const taskRow = topTasks[i];
-      if (taskRow) {
-        rows[rows.length - 1].push(taskRow.label, String(taskRow.count));
-      } else {
-        rows[rows.length - 1].push("", "");
-      }
-
-      rows[rows.length - 1].push("");
-
-      const adminRow = adminLog[i];
-      if (adminRow) {
-        rows[rows.length - 1].push(
-          adminRow.detail || adminRow.type || "Admin action",
-          adminRow.actor || "",
-          adminRow.status || "Success",
-          new Date(adminRow.timestamp).toLocaleString()
-        );
-      } else {
-        rows[rows.length - 1].push("", "", "", "");
-      }
-
-      const personRow = state.people[i];
-      if (personRow) {
-        rows[rows.length - 1].push(
-          "",
-          `${personRow.firstName} ${personRow.lastName}`,
-          personRow.residenceTag || ""
-        );
-      } else {
-        rows[rows.length - 1].push("", "", "");
-      }
-    }
-
-    const csv = rows
-      .map((row) =>
-        row
-          .map((value) => {
-            const safe = String(value ?? "").replace(/"/g, '""');
-            return `"${safe}"`;
-          })
-          .join(",")
-      )
-      .join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `ministry-logs-${new Date().toISOString().slice(0, 10)}.csv`;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    logAdminAction("Export", "Exported logs CSV");
+    exportLogsWorkbook();
   });
+}
+
+if (elements.printLogs) {
+  elements.printLogs.addEventListener("click", () => {
+    printLogsReport();
+  });
+}
+
+if (elements.logSearch) {
+  elements.logSearch.addEventListener("input", () => {
+    logSearchTerm = elements.logSearch.value.trim().toLowerCase();
+    renderActivity();
+  });
+}
+
+if (elements.logTypeFilter) {
+  elements.logTypeFilter.addEventListener("change", () => {
+    logTypeFilter = elements.logTypeFilter.value;
+    renderActivity();
+  });
+}
+
+if (elements.logRangeFilter) {
+  elements.logRangeFilter.addEventListener("change", () => {
+    logRangeFilter = elements.logRangeFilter.value;
+    renderActivity();
+  });
+}
+
+if (elements.adminLogSearch) {
+  elements.adminLogSearch.addEventListener("input", () => {
+    adminLogSearchTerm = elements.adminLogSearch.value.trim().toLowerCase();
+    renderAdminLog();
+  });
+}
+
+if (elements.quickBackup) {
+  elements.quickBackup.addEventListener("click", () => {
+    if (elements.exportData) elements.exportData.click();
+  });
+}
+
+if (elements.quickReport) {
+  elements.quickReport.addEventListener("click", () => {
+    printWeeklyReport();
+  });
+}
+
+if (elements.checkinMember) {
+  elements.checkinMember.addEventListener("change", () => {
+    selectedCheckinMemberId = elements.checkinMember.value;
+    renderCheckin();
+  });
+}
+
+if (elements.checkinLogVisit) {
+  elements.checkinLogVisit.addEventListener("click", () => {
+    const personId = elements.checkinMember ? elements.checkinMember.value : "";
+    if (!personId) return;
+    logVisit(personId);
+    selectedCheckinMemberId = personId;
+    renderAll();
+  });
+}
+
+if (elements.checkinFollowupToggle) {
+  elements.checkinFollowupToggle.addEventListener("click", () => {
+    const personId = elements.checkinMember ? elements.checkinMember.value : "";
+    const person = state.people.find((entry) => entry.id === personId);
+    if (!person) return;
+    person.followUpNeeded = !person.followUpNeeded;
+    if (person.followUpNeeded && !person.followUpNote) {
+      person.followUpNote = "Needs staff follow-up";
+    }
+    logAdminAction(
+      "Follow-Up Updated",
+      `${person.followUpNeeded ? "Marked" : "Cleared"} follow-up for ${person.firstName} ${person.lastName}`
+    );
+    saveState();
+    selectedCheckinMemberId = personId;
+    renderAll();
+  });
+}
+
+function cloneStateForBackup() {
+  return JSON.parse(JSON.stringify(state));
+}
+
+function buildBackupPayload(reason) {
+  return {
+    exportedAt: new Date().toISOString(),
+    reason,
+    state: cloneStateForBackup(),
+  };
+}
+
+function downloadBackupPayload(payload, prefix = "ministry-backup") {
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
+  downloadBlobFile(
+    `${prefix}-${new Date(payload.exportedAt).toISOString().slice(0, 10)}.json`,
+    blob
+  );
+}
+
+function downloadBlobFile(filename, blob) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename || "download";
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function getSafetyBackups() {
+  try {
+    const raw = localStorage.getItem(SAFETY_BACKUP_KEY);
+    const backups = raw ? JSON.parse(raw) : [];
+    return Array.isArray(backups) ? backups : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function createSafetyBackup(reason, options = {}) {
+  const payload = buildBackupPayload(reason);
+  const entry = {
+    id: crypto.randomUUID(),
+    exportedAt: payload.exportedAt,
+    reason,
+    payload,
+  };
+  const backups = [entry, ...getSafetyBackups()].slice(0, MAX_SAFETY_BACKUPS);
+  try {
+    localStorage.setItem(SAFETY_BACKUP_KEY, JSON.stringify(backups));
+    state.lastSafetyBackupAt = entry.exportedAt;
+    if (!options.silent) saveState();
+    renderBackupStatus();
+    return entry;
+  } catch (error) {
+    if (!options.silent) {
+      alert(
+        "Unable to save the automatic safety backup. Please use Backup Data (JSON) before continuing."
+      );
+    }
+    return null;
+  }
+}
+
+function ensureDailySafetyBackup() {
+  const latest = getSafetyBackups()[0];
+  const today = new Date().toISOString().slice(0, 10);
+  if (latest && String(latest.exportedAt || "").slice(0, 10) === today) return;
+  createSafetyBackup("Daily automatic safety snapshot", { silent: true });
+}
+
+function getLatestSafetyBackup() {
+  return getSafetyBackups()[0] || null;
+}
+
+function renderBackupStatus() {
+  const backups = getSafetyBackups();
+  if (elements.logCountActivity) elements.logCountActivity.textContent = String(state.activity.length);
+  if (elements.logCountAdmin) elements.logCountAdmin.textContent = String(state.adminLog.length);
+  if (elements.logCountBackups) elements.logCountBackups.textContent = String(backups.length);
+  if (!elements.backupStatus) return;
+  const latest = getLatestSafetyBackup();
+  if (!latest) {
+    elements.backupStatus.textContent =
+      "Latest safety backup: none yet. Use Backup Data (JSON) before major changes.";
+    return;
+  }
+  elements.backupStatus.textContent = `Latest safety backup: ${new Date(
+    latest.exportedAt
+  ).toLocaleString()} (${latest.reason || "Automatic snapshot"})`;
+}
+
+function renderLogControls() {
+  if (!elements.logTypeFilter) return;
+  const current = elements.logTypeFilter.value;
+  const types = [...new Set((state.activity || []).map((entry) => entry.type).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+  elements.logTypeFilter.innerHTML = '<option value="">All Activity Types</option>';
+  types.forEach((type) => {
+    const option = document.createElement("option");
+    option.value = type;
+    option.textContent = titleCase(type);
+    elements.logTypeFilter.append(option);
+  });
+  elements.logTypeFilter.value = types.includes(current) ? current : "";
+  logTypeFilter = elements.logTypeFilter.value;
+}
+
+function applyImportedState(importedState) {
+  state.people = importedState.people || [];
+  state.items = importedState.items || defaultItems.map((item) => ({ ...item }));
+  state.customItems = importedState.customItems || [];
+  state.customTasks = importedState.customTasks || [];
+  state.hiddenTasks = importedState.hiddenTasks || [];
+  state.hiddenItems = importedState.hiddenItems || [];
+  state.settings = { ...DEFAULT_SETTINGS, ...(importedState.settings || {}) };
+  state.adminLog = importedState.adminLog || [];
+  state.activity = importedState.activity || [];
+  state.visits = importedState.visits || [];
+  state.volunteers = importedState.volunteers || [];
+  state.donors = importedState.donors || [];
+  state.documents = importedState.documents || [];
+  state.events = importedState.events || [];
+  state.resources = importedState.resources || DEFAULT_RESOURCES.map((entry) => ({ ...entry }));
+  state.staffTodosGlobal = importedState.staffTodosGlobal || [];
+  state.staffUsers = importedState.staffUsers || state.staffUsers;
+  state.lastSafetyBackupAt = importedState.lastSafetyBackupAt || state.lastSafetyBackupAt || "";
+  state.people = state.people.map((person) => ({
+    ...person,
+    home: person.home || person.address || "",
+    residenceTag: person.residenceTag || "Homeless",
+    email: person.email || "",
+    followUpNeeded: Boolean(person.followUpNeeded),
+    followUpNote: person.followUpNote || "",
+    staffTodos: Array.isArray(person.staffTodos) ? person.staffTodos : [],
+  }));
+  state.activity = state.activity.map((entry) => ({
+    ...entry,
+    actor: entry.actor || "Unknown Staff",
+  }));
+  state.visits = state.visits.map((entry) => ({
+    ...entry,
+    actor: entry.actor || "Unknown Staff",
+  }));
+  state.volunteers = state.volunteers.map((volunteer) => ({
+    ...volunteer,
+    profilePhoto: volunteer.profilePhoto || "",
+  }));
+  state.donors = state.donors.map((donor) => ({
+    ...donor,
+    email: donor.email || "",
+    phone: donor.phone || "",
+    donation: donor.donation || "",
+  }));
+  state.documents = state.documents.map((documentItem) => ({
+    ...documentItem,
+    category: documentItem.category || "",
+  }));
+  state.resources = state.resources.map((resource) => ({
+    ...resource,
+    email: resource.email || "",
+    phone: resource.phone || "",
+    website: resource.website || "",
+    photo: resource.photo || "",
+  }));
+  state.adminLog = state.adminLog.map((entry) => ({
+    ...entry,
+    actor: entry.actor || "Unknown Staff",
+  }));
+  ensureStarterStaffAccount();
 }
 
 if (elements.exportData) {
   elements.exportData.addEventListener("click", () => {
-    // JSON backup of the entire state.
-    const payload = {
-      exportedAt: new Date().toISOString(),
-      state,
-    };
-    const json = JSON.stringify(payload, null, 2);
-    const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `ministry-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    const payload = buildBackupPayload("Manual full backup export");
+    downloadBackupPayload(payload);
+    state.lastSafetyBackupAt = payload.exportedAt;
+    saveState();
+    renderBackupStatus();
     logAdminAction("Backup Exported", "Exported full backup JSON");
+  });
+}
+
+if (elements.restoreSafetyBackup) {
+  elements.restoreSafetyBackup.addEventListener("click", () => {
+    const latest = getLatestSafetyBackup();
+    if (!latest || !latest.payload || !latest.payload.state) {
+      alert("No safety backup is available to restore.");
+      return;
+    }
+    requestSensitiveConfirmation({
+      title: "Restore Safety Backup",
+      message:
+        "This will replace the current app data with the latest safety backup. Enter staff credentials to continue.",
+      actionLabel: "Restore Backup",
+      backupReason: "Before restoring latest safety backup",
+      onConfirm: () => {
+        applyImportedState(latest.payload.state);
+        logAdminAction(
+          "Safety Backup Restored",
+          `Restored safety backup from ${new Date(latest.exportedAt).toLocaleString()}`
+        );
+        saveState();
+        renderAll();
+      },
+    });
   });
 }
 
 if (elements.importData) {
   elements.importData.addEventListener("click", () => {
-    // Restore state from a JSON backup file.
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "application/json";
@@ -618,71 +838,46 @@ if (elements.importData) {
           alert("Invalid backup file.");
           return;
         }
-        state.people = parsed.state.people || [];
-        state.items = parsed.state.items || defaultItems.map((item) => ({ ...item }));
-        state.customItems = parsed.state.customItems || [];
-        state.customTasks = parsed.state.customTasks || [];
-        state.adminLog = parsed.state.adminLog || [];
-        state.activity = parsed.state.activity || [];
-        state.visits = parsed.state.visits || [];
-        state.volunteers = parsed.state.volunteers || [];
-        state.donors = parsed.state.donors || [];
-        state.documents = parsed.state.documents || [];
-        state.events = parsed.state.events || [];
-        state.resources = parsed.state.resources || DEFAULT_RESOURCES.map((entry) => ({ ...entry }));
-        state.staffTodosGlobal = parsed.state.staffTodosGlobal || [];
-        state.staffUsers = parsed.state.staffUsers || state.staffUsers;
-        state.people = state.people.map((person) => ({
-          ...person,
-          home: person.home || person.address || "",
-          residenceTag: person.residenceTag || "Homeless",
-          email: person.email || "",
-          staffTodos: Array.isArray(person.staffTodos) ? person.staffTodos : [],
-        }));
-        state.activity = state.activity.map((entry) => ({
-          ...entry,
-          actor: entry.actor || "Unknown Staff",
-        }));
-        state.visits = state.visits.map((entry) => ({
-          ...entry,
-          actor: entry.actor || "Unknown Staff",
-        }));
-        state.volunteers = state.volunteers.map((volunteer) => ({
-          ...volunteer,
-          profilePhoto: volunteer.profilePhoto || "",
-        }));
-        state.donors = state.donors.map((donor) => ({
-          ...donor,
-          email: donor.email || "",
-          phone: donor.phone || "",
-          donation: donor.donation || "",
-        }));
-        state.documents = state.documents.map((documentItem) => ({
-          ...documentItem,
-          category: documentItem.category || "",
-        }));
-        state.resources = state.resources.map((resource) => ({
-          ...resource,
-          email: resource.email || "",
-          phone: resource.phone || "",
-          website: resource.website || "",
-          photo: resource.photo || "",
-        }));
-        state.adminLog = state.adminLog.map((entry) => ({
-          ...entry,
-          actor: entry.actor || "Unknown Staff",
-        }));
-        logAdminAction(
-          "Backup Restored",
-          `Restored backup from ${file.name || "selected file"}`
-        );
-        saveState();
-        renderAll();
+        requestSensitiveConfirmation({
+          title: "Restore Data Backup",
+          message:
+            "This will replace the current app data with the selected backup file. Enter staff credentials to continue.",
+          actionLabel: "Restore Data",
+          backupReason: "Before manual backup restore",
+          onConfirm: ({ confirmedBy }) => {
+            applyImportedState(parsed.state);
+            logAdminAction(
+              "Backup Restored",
+              `Restored backup from ${file.name || "selected file"} after confirmation by ${
+                confirmedBy.displayName || confirmedBy.username
+              }`
+            );
+            saveState();
+            renderAll();
+          },
+        });
       } catch (error) {
         alert("Unable to restore backup.");
       }
     });
     input.click();
+  });
+}
+
+if (elements.settingsForm) {
+  elements.settingsForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    state.settings = {
+      organizationName: elements.settingsOrgName.value.trim() || DEFAULT_SETTINGS.organizationName,
+      hubName: elements.settingsHubName.value.trim() || DEFAULT_SETTINGS.hubName,
+      subtitle: elements.settingsSubtitle.value.trim() || DEFAULT_SETTINGS.subtitle,
+    };
+    logAdminAction("Settings Updated", "Updated dashboard organization settings");
+    saveState();
+    renderAll();
+    if (elements.settingsStatus) {
+      elements.settingsStatus.textContent = "Settings saved.";
+    }
   });
 }
 
@@ -794,6 +989,8 @@ elements.personForm.addEventListener("submit", async (event) => {
     emergencyContactAddress,
     memberNotes,
     profilePhoto,
+    followUpNeeded: false,
+    followUpNote: "",
     staffTodos: [],
   });
   state.activity.unshift({
@@ -941,6 +1138,7 @@ if (elements.staffUserForm) {
       setError(elements.staffUserError, "That username already exists.");
       return;
     }
+    createSafetyBackup(`Before adding staff account ${username}`, { silent: true });
     state.staffUsers.push({
       id: crypto.randomUUID(),
       displayName: formData.get("displayName").trim(),
@@ -1144,6 +1342,12 @@ if (elements.printResources) {
   });
 }
 
+if (elements.printReport) {
+  elements.printReport.addEventListener("click", () => {
+    printWeeklyReport();
+  });
+}
+
 elements.redeemForm.addEventListener("keydown", (event) => {
   if (event.key !== "Enter") return;
   if (event.target && event.target.tagName === "BUTTON") return;
@@ -1206,18 +1410,25 @@ function adjustPoints(personId, delta, type, note) {
     actor: getCurrentActorName(),
     timestamp: new Date().toISOString(),
   });
-  state.activity = state.activity.slice(0, 50);
+  state.activity = state.activity.slice(0, MAX_ACTIVITY_LOG_ENTRIES);
   saveState();
 }
 
 function renderAll() {
+  renderSettings();
+  renderBranding();
+  renderDashboardAlerts();
   renderMemberTagFilter();
+  hydrateSelects();
   renderCalendar();
   renderPeople();
+  renderCheckin();
+  renderInactiveMembers();
   renderItems();
   renderActivity();
   renderStats();
   renderSummary();
+  renderLogControls();
   renderStaffTaskBoard();
   renderVolunteers();
   renderDonors();
@@ -1225,9 +1436,10 @@ function renderAll() {
   renderResources();
   renderEvents();
   renderStaffUsers();
+  renderRestoreControls();
   renderRedeemPoints();
   renderAdminLog();
-  hydrateSelects();
+  renderBackupStatus();
   hydrateTasks();
   updateRedeemTotal();
   updateRedeemGroupCounts();
@@ -1326,17 +1538,12 @@ function logVisit(personId) {
     actor: getCurrentActorName(),
     timestamp: new Date().toISOString(),
   });
+  state.activity = state.activity.slice(0, MAX_ACTIVITY_LOG_ENTRIES);
   saveState();
 }
 
 function refreshAfterPointsChange() {
-  renderPeople();
-  renderActivity();
-  renderStats();
-  renderSummary();
-  hydrateSelects();
-  updateRedeemTotal();
-  updateRedeemGroupCounts();
+  renderAll();
 }
 
 function getTopTasks(days) {
@@ -1370,7 +1577,9 @@ function ensureStarterStaffAccount() {
   if (ethanAccount) {
     ethanAccount.displayName = "Ethan";
     ethanAccount.username = normalizedTarget;
-    ethanAccount.password = "2019";
+    if (!ethanAccount.password) {
+      ethanAccount.password = "2019";
+    }
     return;
   }
 
@@ -1408,6 +1617,110 @@ function getResidenceTagOptions() {
     if (person.residenceTag) found.add(person.residenceTag);
   });
   return [...found];
+}
+
+function getSettings() {
+  state.settings = { ...DEFAULT_SETTINGS, ...(state.settings || {}) };
+  return state.settings;
+}
+
+function renderBranding() {
+  const settings = getSettings();
+  document.title = settings.hubName || DEFAULT_SETTINGS.hubName;
+  document.querySelectorAll(".eyebrow").forEach((entry) => {
+    if (entry.closest(".sensitive-modal")) return;
+    entry.textContent = settings.organizationName;
+  });
+  const heroTitle = document.querySelector(".hero h1");
+  if (heroTitle) heroTitle.textContent = settings.hubName;
+  const gateTitle = document.querySelector(".login-gate h1");
+  if (gateTitle) gateTitle.textContent = settings.hubName;
+  const heroSubtitle = document.querySelector(".hero .subhead");
+  if (heroSubtitle) heroSubtitle.textContent = settings.subtitle;
+}
+
+function renderSettings() {
+  if (!elements.settingsForm) return;
+  const settings = getSettings();
+  if (elements.settingsOrgName) elements.settingsOrgName.value = settings.organizationName;
+  if (elements.settingsHubName) elements.settingsHubName.value = settings.hubName;
+  if (elements.settingsSubtitle) elements.settingsSubtitle.value = settings.subtitle;
+}
+
+function getInactiveMembers(days = 30) {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return (state.people || [])
+    .filter((person) => {
+      const lastVisit = Date.parse(getLastVisitTimestamp(person.id));
+      return !Number.isFinite(lastVisit) || lastVisit < cutoff;
+    })
+    .sort((a, b) => {
+      const aLast = Date.parse(getLastVisitTimestamp(a.id) || 0);
+      const bLast = Date.parse(getLastVisitTimestamp(b.id) || 0);
+      return aLast - bLast;
+    });
+}
+
+function getUpcomingEvents(days = 7) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(today);
+  end.setDate(end.getDate() + days);
+  return (state.events || []).filter((eventItem) => {
+    const eventTime = Date.parse(eventItem.date);
+    return Number.isFinite(eventTime) && eventTime >= today.getTime() && eventTime <= end.getTime();
+  });
+}
+
+function renderDashboardAlerts() {
+  if (!elements.dashboardAlerts) return;
+  const alerts = [];
+  const latestBackup = getLatestSafetyBackup();
+  const today = new Date().toISOString().slice(0, 10);
+  if (!latestBackup || String(latestBackup.exportedAt || "").slice(0, 10) !== today) {
+    alerts.push({
+      title: "No safety backup today",
+      detail: "Use Backup Data before major changes or restores.",
+      type: "warning",
+    });
+  }
+  const followUps = (state.people || []).filter((person) => person.followUpNeeded);
+  if (followUps.length) {
+    alerts.push({
+      title: `${followUps.length} member${followUps.length === 1 ? "" : "s"} need follow-up`,
+      detail: followUps.slice(0, 3).map((person) => `${person.firstName} ${person.lastName}`).join(", "),
+      type: "warning",
+    });
+  }
+  const inactive = getInactiveMembers(30);
+  if (inactive.length) {
+    alerts.push({
+      title: `${inactive.length} inactive member${inactive.length === 1 ? "" : "s"}`,
+      detail: "No visits logged in the last 30 days.",
+    });
+  }
+  const upcoming = getUpcomingEvents(7);
+  if (upcoming.length) {
+    alerts.push({
+      title: `${upcoming.length} event${upcoming.length === 1 ? "" : "s"} this week`,
+      detail: upcoming.slice(0, 2).map((eventItem) => eventItem.title).join(", "),
+    });
+  }
+  if (!alerts.length) {
+    alerts.push({
+      title: "Everything looks current",
+      detail: "Backups, visits, follow-ups, and events are in good shape.",
+    });
+  }
+  elements.dashboardAlerts.innerHTML = alerts
+    .map(
+      (alert) => `
+        <div class="alert-card ${alert.type || ""}">
+          <div><strong>${escapeHtml(alert.title)}</strong><span>${escapeHtml(alert.detail)}</span></div>
+        </div>
+      `
+    )
+    .join("");
 }
 
 function renderPeople() {
@@ -1477,6 +1790,12 @@ function renderPeople() {
       <div class="person__meta">${person.residenceTag || "No tag"}${person.home ? ` | ${person.home}` : ""}</div>
       <div class="person__meta">Visits: ${visitCount}${lastVisit ? ` | Last: ${new Date(lastVisit).toLocaleDateString()}` : ""}</div>
     `;
+    if (person.followUpNeeded) {
+      const badges = document.createElement("div");
+      badges.className = "member-badges";
+      badges.innerHTML = `<span class="member-badge">Needs Follow-Up${person.followUpNote ? `: ${escapeHtml(person.followUpNote)}` : ""}</span>`;
+      infoText.append(badges);
+    }
     const detailStack = document.createElement("div");
     detailStack.className = "member-card__details-stack";
     info.append(avatar, infoText, detailStack);
@@ -1488,19 +1807,25 @@ function renderPeople() {
     removeButton.className = "btn small danger";
     removeButton.textContent = "Remove Member";
     removeButton.addEventListener("click", () => {
-      const confirmed = confirm(
-        `Remove ${person.firstName} ${person.lastName}? This cannot be undone.`
-      );
-      if (!confirmed) return;
-      state.people = state.people.filter((entry) => entry.id !== person.id);
-      state.activity = state.activity.filter((entry) => entry.personId !== person.id);
-      state.visits = state.visits.filter((entry) => entry.personId !== person.id);
-      logAdminAction(
-        "Member Removed",
-        `Removed ${person.firstName} ${person.lastName}`
-      );
-      saveState();
-      renderAll();
+      requestSensitiveConfirmation({
+        title: "Remove Member",
+        message: `Enter staff credentials to permanently remove ${person.firstName} ${person.lastName}. A safety backup will be saved first.`,
+        actionLabel: "Remove Member",
+        backupReason: `Before removing member ${person.firstName} ${person.lastName}`,
+        onConfirm: ({ confirmedBy }) => {
+          state.people = state.people.filter((entry) => entry.id !== person.id);
+          state.activity = state.activity.filter((entry) => entry.personId !== person.id);
+          state.visits = state.visits.filter((entry) => entry.personId !== person.id);
+          logAdminAction(
+            "Member Removed",
+            `Removed ${person.firstName} ${person.lastName} after confirmation by ${
+              confirmedBy.displayName || confirmedBy.username
+            }`
+          );
+          saveState();
+          renderAll();
+        },
+      });
     });
     actions.append(removeButton);
 
@@ -1510,6 +1835,23 @@ function renderPeople() {
     visitButton.textContent = "Log Visit";
     visitButton.addEventListener("click", () => {
       logVisit(person.id);
+      renderAll();
+    });
+
+    const followUpButton = document.createElement("button");
+    followUpButton.type = "button";
+    followUpButton.className = person.followUpNeeded ? "btn small accent" : "btn small secondary";
+    followUpButton.textContent = person.followUpNeeded ? "Clear Follow-Up" : "Needs Follow-Up";
+    followUpButton.addEventListener("click", () => {
+      person.followUpNeeded = !person.followUpNeeded;
+      if (person.followUpNeeded && !person.followUpNote) {
+        person.followUpNote = "Needs staff follow-up";
+      }
+      logAdminAction(
+        "Follow-Up Updated",
+        `${person.followUpNeeded ? "Marked" : "Cleared"} follow-up for ${person.firstName} ${person.lastName}`
+      );
+      saveState();
       renderAll();
     });
 
@@ -1747,6 +2089,7 @@ function renderPeople() {
     createSectionTitle("Notes");
     Object.assign(inputs, {
       memberNotes: createField("Notes", person.memberNotes),
+      followUpNote: createField("Follow-Up Note", person.followUpNote),
     });
 
     const actionsRow = document.createElement("div");
@@ -1793,6 +2136,7 @@ function renderPeople() {
       original.emergencyContactPhone = inputs.emergencyContactPhone.value;
       original.emergencyContactAddress = inputs.emergencyContactAddress.value;
       original.memberNotes = inputs.memberNotes.value;
+      original.followUpNote = inputs.followUpNote.value;
       original.profilePhoto = person.profilePhoto || "";
     };
 
@@ -1806,6 +2150,7 @@ function renderPeople() {
       inputs.emergencyContactPhone.value = original.emergencyContactPhone || "";
       inputs.emergencyContactAddress.value = original.emergencyContactAddress || "";
       inputs.memberNotes.value = original.memberNotes || "";
+      inputs.followUpNote.value = original.followUpNote || "";
       pendingPhoto = null;
       photoInput.value = "";
       photoName.textContent = "";
@@ -1880,6 +2225,8 @@ function renderPeople() {
       person.emergencyContactPhone = sanitizePhone(inputs.emergencyContactPhone.value);
       person.emergencyContactAddress = inputs.emergencyContactAddress.value.trim();
       person.memberNotes = inputs.memberNotes.value.trim();
+      person.followUpNote = inputs.followUpNote.value.trim();
+      person.followUpNeeded = Boolean(person.followUpNeeded || person.followUpNote);
       if (pendingPhoto !== null) {
         person.profilePhoto = pendingPhoto;
         if (!person.profilePhoto) {
@@ -1901,7 +2248,7 @@ function renderPeople() {
     profileList.append(actionsRow);
     profileDetails.append(profileList);
 
-    actions.append(visitButton);
+    actions.append(visitButton, followUpButton);
     card.append(info, actions);
     detailStack.append(profileDetails, activityDetails, visitDetails);
 
@@ -1933,6 +2280,8 @@ function renderPeople() {
 
 if (elements.addTaskToggle) {
   elements.addTaskToggle.addEventListener("click", () => {
+    taskRemoveMode = false;
+    updateTaskRemoveMode();
     if (!elements.addTaskForm) return;
     const isOpen = elements.addTaskForm.classList.contains("show");
     if (isOpen) {
@@ -2022,7 +2371,12 @@ function openTaskEditor(task) {
 function closeTaskEditor() {
   if (!elements.addTaskForm) return;
   editingTaskId = null;
-  elements.addTaskForm.reset();
+  if (typeof elements.addTaskForm.reset === "function") {
+    elements.addTaskForm.reset();
+  } else {
+    if (elements.addTaskName) elements.addTaskName.value = "";
+    if (elements.addTaskPoints) elements.addTaskPoints.value = "";
+  }
   elements.addTaskForm.classList.remove("show");
   elements.addTaskForm.style.display = "none";
   setError(elements.addTaskError, "");
@@ -2037,6 +2391,10 @@ function getAllTasks() {
   const customs = (state.customTasks || []).filter((task) => !hidden.has(task.id));
   if (customs.length === 0) return defaults;
   return [...defaults, ...customs];
+}
+
+function getAllTasksIncludingHidden() {
+  return [...TASKS, ...(state.customTasks || [])];
 }
 
 function normalizeLabel(value) {
@@ -2276,13 +2634,15 @@ function findItemGroup(normalizedName) {
 }
 
 function getGroupedItems() {
+  const hiddenItems = new Set(state.hiddenItems || []);
   const groups = ITEM_GROUPS.map((group) => ({
     label: group.label,
-    items: [...group.items],
+    items: group.items.filter((itemName) => !hiddenItems.has(itemName)),
   }));
 
   if (state.customItems && state.customItems.length > 0) {
     state.customItems.forEach((item) => {
+      if (hiddenItems.has(item.name)) return;
       const target = groups.find((group) => group.label === item.group) || groups[0];
       if (!target.items.includes(item.name)) {
         target.items.push(item.name);
@@ -2333,7 +2693,23 @@ function renderItems() {
         renderAll();
       });
 
-      row.append(name, input);
+      const controls = document.createElement("div");
+      controls.className = "inline-actions";
+      const hide = document.createElement("button");
+      hide.type = "button";
+      hide.className = "btn small danger";
+      hide.textContent = "Hide";
+      hide.addEventListener("click", () => {
+        if (!state.hiddenItems.includes(item.name)) {
+          state.hiddenItems.push(item.name);
+        }
+        logAdminAction("Item Hidden", `Hid item ${item.name}`);
+        saveState();
+        renderAll();
+      });
+      controls.append(input, hide);
+
+      row.append(name, controls);
       details.append(row);
     });
 
@@ -2348,6 +2724,38 @@ function renderActivity() {
   header.innerHTML = "<div>Activity</div><div>Points</div>";
   elements.activityTable.append(header);
 
+  const cutoff = logRangeFilter
+    ? Date.now() - Number(logRangeFilter) * 24 * 60 * 60 * 1000
+    : null;
+  const entries = (state.activity || []).filter((entry) => {
+    if (logTypeFilter && entry.type !== logTypeFilter) return false;
+    const timestamp = Date.parse(entry.timestamp);
+    if (cutoff && (!Number.isFinite(timestamp) || timestamp < cutoff)) return false;
+    if (!logSearchTerm) return true;
+    const personName = entry.personId ? getPersonName(entry.personId) : "Unknown";
+    const haystack = [
+      personName,
+      entry.type,
+      entry.note,
+      entry.actor,
+      entry.delta,
+      Number.isFinite(timestamp) ? new Date(timestamp).toLocaleString() : "",
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(logSearchTerm);
+  });
+
+  if (elements.logFilterStatus) {
+    const filters = [];
+    if (logSearchTerm) filters.push(`matching "${elements.logSearch.value.trim()}"`);
+    if (logTypeFilter) filters.push(titleCase(logTypeFilter));
+    if (logRangeFilter) filters.push(`last ${logRangeFilter} days`);
+    elements.logFilterStatus.textContent = `Showing ${entries.length} of ${
+      state.activity.length
+    } activity logs${filters.length ? ` (${filters.join(", ")})` : ""}.`;
+  }
+
   if (state.activity.length === 0) {
     const empty = document.createElement("div");
     empty.className = "table__row";
@@ -2356,14 +2764,20 @@ function renderActivity() {
     return;
   }
 
-  const recent = state.activity.slice(0, 5);
-  const rest = state.activity.slice(5);
+  if (entries.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "table__row";
+    empty.innerHTML = "<div>No activity matches those filters.</div><div>-</div>";
+    elements.activityTable.append(empty);
+    return;
+  }
+
+  const recent = entries.slice(0, 8);
+  const rest = entries.slice(8);
 
   const renderEntryRow = (entry) => {
     const person = state.people.find((p) => p.id === entry.personId);
-    const name = person
-      ? `${person.firstName} ${person.lastName}`
-      : "Unknown";
+    const name = person ? `${person.firstName} ${person.lastName}` : "Unknown";
     const when = new Date(entry.timestamp);
     const row = document.createElement("div");
     row.className = "table__row";
@@ -2428,6 +2842,20 @@ function renderAdminLog() {
   header.innerHTML = "<div>Action</div><div>By / Status</div><div>Time</div>";
   elements.adminTable.append(header);
 
+  const adminEntries = (state.adminLog || []).filter((entry) => {
+    if (!adminLogSearchTerm) return true;
+    const haystack = [
+      entry.type,
+      entry.detail,
+      entry.actor,
+      entry.status,
+      formatLogDate(entry.timestamp),
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(adminLogSearchTerm);
+  });
+
   if (!state.adminLog || state.adminLog.length === 0) {
     const empty = document.createElement("div");
     empty.className = "table__row";
@@ -2436,7 +2864,15 @@ function renderAdminLog() {
     return;
   }
 
-  state.adminLog.slice(0, 20).forEach((entry) => {
+  if (adminEntries.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "table__row";
+    empty.innerHTML = "<div>No admin actions match that search.</div><div>-</div><div>-</div>";
+    elements.adminTable.append(empty);
+    return;
+  }
+
+  adminEntries.slice(0, 50).forEach((entry) => {
     const row = document.createElement("div");
     row.className = "table__row";
     const left = document.createElement("div");
@@ -2448,6 +2884,416 @@ function renderAdminLog() {
     row.append(left, status, right);
     elements.adminTable.append(row);
   });
+
+  if (adminEntries.length > 50) {
+    const footer = document.createElement("div");
+    footer.className = "table__row";
+    footer.innerHTML = `<div>Showing newest 50 matching admin actions. Export logs for all ${adminEntries.length}.</div><div>-</div><div>-</div>`;
+    elements.adminTable.append(footer);
+  }
+}
+
+function renderCheckin() {
+  if (!elements.checkinMember || !elements.checkinSummary || !elements.checkinHistory) return;
+  if (!state.people.length) {
+    elements.checkinSummary.innerHTML = "<p class='hint'>Add a member before using check-in.</p>";
+    elements.checkinHistory.innerHTML = "<p class='hint'>No member selected.</p>";
+    return;
+  }
+  if (selectedCheckinMemberId && state.people.some((person) => person.id === selectedCheckinMemberId)) {
+    elements.checkinMember.value = selectedCheckinMemberId;
+  }
+  const personId = elements.checkinMember.value || state.people[0].id;
+  selectedCheckinMemberId = personId;
+  const person = state.people.find((entry) => entry.id === personId);
+  if (!person) return;
+  const visits = getVisitEntriesForPerson(person.id);
+  const lastVisit = visits[0] ? new Date(visits[0].timestamp).toLocaleString() : "No visits yet";
+  elements.checkinSummary.innerHTML = `
+    <div class="checkin-stat"><strong>${escapeHtml(`${person.firstName} ${person.lastName}`)}</strong><br />${person.points || 0} points</div>
+    <div class="checkin-stat"><strong>Last Visit</strong><br />${escapeHtml(lastVisit)}</div>
+    <div class="checkin-stat"><strong>Follow-Up</strong><br />${person.followUpNeeded ? escapeHtml(person.followUpNote || "Needed") : "Not flagged"}</div>
+  `;
+  if (elements.checkinFollowupToggle) {
+    elements.checkinFollowupToggle.textContent = person.followUpNeeded
+      ? "Clear Follow-Up"
+      : "Mark Follow-Up";
+  }
+  const recentActivity = (state.activity || [])
+    .filter((entry) => entry.personId === person.id)
+    .slice(0, 6);
+  elements.checkinHistory.innerHTML = `
+    <h3>Recent History</h3>
+    ${
+      recentActivity.length
+        ? recentActivity
+            .map(
+              (entry) =>
+                `<div class="person__entry"><strong>${escapeHtml(entry.note || entry.type)}</strong><br /><span class="hint">${formatLogDate(entry.timestamp)}${entry.actor ? ` by ${escapeHtml(entry.actor)}` : ""}</span></div>`
+            )
+            .join("")
+        : "<p class='hint'>No recent activity for this member.</p>"
+    }
+  `;
+}
+
+function renderInactiveMembers() {
+  if (!elements.inactiveMembersList) return;
+  const inactive = getInactiveMembers(30);
+  if (!inactive.length) {
+    elements.inactiveMembersList.innerHTML = "<p class='hint'>No inactive members right now.</p>";
+    return;
+  }
+  elements.inactiveMembersList.innerHTML = inactive
+    .slice(0, 20)
+    .map((person) => {
+      const lastVisit = getLastVisitTimestamp(person.id);
+      return `
+        <div class="person__entry">
+          <strong>${escapeHtml(`${person.firstName} ${person.lastName}`)}</strong><br />
+          <span class="hint">${lastVisit ? `Last visit: ${formatLogDate(lastVisit)}` : "No visits logged"}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderRestoreControls() {
+  if (elements.restoreTaskList) {
+    const hiddenTasks = getAllTasksIncludingHidden().filter((task) =>
+      (state.hiddenTasks || []).includes(task.id)
+    );
+    elements.restoreTaskList.innerHTML = hiddenTasks.length
+      ? hiddenTasks
+          .map(
+            (task) => `
+              <button class="btn small secondary" type="button" data-restore-task="${escapeHtml(task.id)}">
+                Restore ${escapeHtml(task.label)}
+              </button>
+            `
+          )
+          .join("")
+      : "<p class='hint'>No hidden tasks.</p>";
+    elements.restoreTaskList.querySelectorAll("[data-restore-task]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const taskId = button.getAttribute("data-restore-task");
+        state.hiddenTasks = (state.hiddenTasks || []).filter((id) => id !== taskId);
+        logAdminAction("Task Restored", `Restored task ${taskId}`);
+        saveState();
+        renderAll();
+      });
+    });
+  }
+  if (elements.restoreItemList) {
+    const hiddenItems = (state.hiddenItems || []).filter((name) =>
+      state.items.some((item) => item.name === name)
+    );
+    elements.restoreItemList.innerHTML = hiddenItems.length
+      ? hiddenItems
+          .map(
+            (name) => `
+              <button class="btn small secondary" type="button" data-restore-item="${escapeHtml(name)}">
+                Restore ${escapeHtml(name)}
+              </button>
+            `
+          )
+          .join("")
+      : "<p class='hint'>No hidden items.</p>";
+    elements.restoreItemList.querySelectorAll("[data-restore-item]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const itemName = button.getAttribute("data-restore-item");
+        state.hiddenItems = (state.hiddenItems || []).filter((name) => name !== itemName);
+        logAdminAction("Item Restored", `Restored item ${itemName}`);
+        saveState();
+        renderAll();
+      });
+    });
+  }
+}
+
+function formatLogDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+}
+
+function titleCase(value) {
+  return String(value || "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function getPersonName(personId) {
+  const person = state.people.find((entry) => entry.id === personId);
+  return person ? `${person.firstName} ${person.lastName}`.trim() : "Unknown";
+}
+
+function buildLogExportTables() {
+  const latestBackup = getLatestSafetyBackup();
+  const activity = (state.activity || []).map((entry) => [
+    formatLogDate(entry.timestamp),
+    entry.personId ? getPersonName(entry.personId) : "",
+    entry.type || "",
+    Number.isFinite(entry.delta) ? entry.delta : "",
+    Number.isFinite(entry.before) ? entry.before : "",
+    Number.isFinite(entry.after) ? entry.after : "",
+    entry.note || "",
+    entry.actor || "",
+  ]);
+  const adminActions = (state.adminLog || []).map((entry) => [
+    formatLogDate(entry.timestamp),
+    entry.type || "",
+    entry.detail || "",
+    entry.actor || "",
+    entry.status || "Success",
+  ]);
+  const memberSummary = (state.people || []).map((person) => {
+    const lastVisit = getLastVisitTimestamp(person.id);
+    return [
+      `${person.firstName} ${person.lastName}`.trim(),
+      person.points || 0,
+      person.residenceTag || "",
+      person.home || person.address || "",
+      formatPhone(person.phone) || "",
+      person.email || "",
+      getVisitCount(person.id),
+      lastVisit ? formatLogDate(lastVisit) : "",
+    ];
+  });
+  const redeemedItems = [];
+  (state.activity || []).forEach((entry) => {
+    if (entry.type !== "redeem") return;
+    parseRedeemNote(entry.note || "").forEach((item) => {
+      redeemedItems.push([
+        formatLogDate(entry.timestamp),
+        entry.personId ? getPersonName(entry.personId) : "",
+        item.name,
+        item.quantity,
+        findItemGroup(item.name.toLowerCase()) || "Other",
+        Math.abs(Number(entry.delta) || 0),
+        entry.actor || "",
+      ]);
+    });
+  });
+  const topTasks = getTopTasks(30).map((task) => [task.label, task.count]);
+  const signInRows = (state.people || []).map((person) => [
+    `${person.firstName} ${person.lastName}`.trim(),
+    person.residenceTag || "",
+    formatPhone(person.phone) || "",
+    "",
+    "",
+  ]);
+
+  return {
+    overview: [
+      ["Lighthouse Ministry Hub - Logs Export"],
+      ["Generated", formatLogDate(new Date().toISOString())],
+      ["Members", state.people.length],
+      ["Activity Entries", state.activity.length],
+      ["Admin Actions", state.adminLog.length],
+      [
+        "Latest Safety Backup",
+        latestBackup
+          ? `${formatLogDate(latestBackup.exportedAt)} (${latestBackup.reason || "Snapshot"})`
+          : "None",
+      ],
+    ],
+    activity: [
+      [
+        "Date / Time",
+        "Member",
+        "Action Type",
+        "Points Change",
+        "Before",
+        "After",
+        "Note",
+        "Updated By",
+      ],
+      ...activity,
+    ],
+    adminActions: [["Date / Time", "Action", "Detail", "Actor", "Status"], ...adminActions],
+    memberSummary: [
+      [
+        "Member",
+        "Points",
+        "Residence Tag",
+        "Address / Home",
+        "Phone",
+        "Email",
+        "Visits",
+        "Last Visit",
+      ],
+      ...memberSummary,
+    ],
+    redeemedItems: [
+      ["Date / Time", "Member", "Item", "Quantity", "Category", "Points Used", "Updated By"],
+      ...redeemedItems,
+    ],
+    topTasks: [["Task", "Times Awarded - Last 30 Days"], ...topTasks],
+    signInSheet: [["Member", "Residence Tag", "Phone", "Signature", "Notes"], ...signInRows],
+  };
+}
+
+function makeWorksheet(rows, widths) {
+  const sheet = window.XLSX.utils.aoa_to_sheet(rows);
+  sheet["!cols"] = widths.map((width) => ({ wch: width }));
+  const maxColumns = Math.max(1, ...rows.map((row) => row.length));
+  sheet["!autofilter"] = {
+    ref: window.XLSX.utils.encode_range({
+      s: { r: 0, c: 0 },
+      e: { r: Math.max(0, rows.length - 1), c: maxColumns - 1 },
+    }),
+  };
+  return sheet;
+}
+
+function exportLogsWorkbook() {
+  if (!window.XLSX || !window.XLSX.utils || !window.XLSX.writeFile) {
+    exportLogsHtmlWorkbook();
+    return;
+  }
+  const tables = buildLogExportTables();
+  const workbook = window.XLSX.utils.book_new();
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.overview, [32, 55]),
+    "Overview"
+  );
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.activity, [22, 24, 16, 14, 10, 10, 52, 18]),
+    "Activity Log"
+  );
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.adminActions, [22, 22, 58, 18, 14]),
+    "Admin Actions"
+  );
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.memberSummary, [26, 10, 18, 32, 16, 28, 10, 22]),
+    "Member Summary"
+  );
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.redeemedItems, [22, 26, 26, 10, 18, 12, 18]),
+    "Redeemed Items"
+  );
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.topTasks, [34, 18]),
+    "Top Tasks"
+  );
+  window.XLSX.utils.book_append_sheet(
+    workbook,
+    makeWorksheet(tables.signInSheet, [28, 18, 16, 22, 32]),
+    "Sign-In Sheet"
+  );
+  window.XLSX.writeFile(
+    workbook,
+    `lighthouse-logs-${new Date().toISOString().slice(0, 10)}.xlsx`
+  );
+  logAdminAction("Export", "Exported organized Excel logs workbook");
+}
+
+function logsTableHtml(title, rows, emptyMessage, options = {}) {
+  const headings = rows[0] || [];
+  const bodyRows = rows.slice(1);
+  const visibleRows = options.limit ? bodyRows.slice(0, options.limit) : bodyRows;
+  const hiddenCount = options.limit ? Math.max(0, bodyRows.length - visibleRows.length) : 0;
+  return `
+    <h2>${escapeHtml(title)}</h2>
+    ${
+      hiddenCount
+        ? `<p class="section-note">Showing the newest ${visibleRows.length} of ${bodyRows.length} rows. Export to Excel for the full log.</p>`
+        : ""
+    }
+    <table>
+      <thead><tr>${headings.map((heading) => `<th>${escapeHtml(heading)}</th>`).join("")}</tr></thead>
+      <tbody>${tableRowsHtml(visibleRows, emptyMessage, Math.max(1, headings.length))}</tbody>
+    </table>
+  `;
+}
+
+function buildLogsReportHtml(options = {}) {
+  const tables = buildLogExportTables();
+  const latestBackup = getLatestSafetyBackup();
+  const fullReport = options.full === true;
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <title>Lighthouse Logs Report</title>
+        <style>
+          body { font-family: Georgia, "Times New Roman", serif; color: #173226; padding: 32px; background: #fffdf8; }
+          h1 { margin: 0 0 4px; font-size: 34px; }
+          h2 { margin: 30px 0 10px; border-bottom: 2px solid #d7b676; padding-bottom: 8px; color: #173226; }
+          .meta, .section-note { color: #6d5b46; margin-top: 0; }
+          .overview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 22px 0; }
+          .metric { border: 1px solid #dfd2bd; border-radius: 14px; padding: 14px; background: #fff6e6; }
+          .metric span { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6d5b46; }
+          .metric strong { display: block; margin-top: 4px; font-size: 24px; color: #19743a; }
+          table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; background: #ffffff; }
+          th, td { border: 1px solid #dfd2bd; padding: 9px; text-align: left; vertical-align: top; }
+          th { background: #173226; color: #fffaf0; font-weight: 700; }
+          tr:nth-child(even) td { background: #fffaf2; }
+          @media print {
+            body { padding: 18px; background: #ffffff; }
+            .overview { grid-template-columns: repeat(2, 1fr); }
+            h2 { break-after: avoid; }
+            table { break-inside: auto; }
+            tr { break-inside: avoid; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Lighthouse Logs Report</h1>
+        <p class="meta">
+          Generated ${formatLogDate(new Date().toISOString())}
+          ${fullReport ? " | Complete export" : " | Print summary"}
+        </p>
+        <div class="overview">
+          <div class="metric"><span>Members</span><strong>${state.people.length}</strong></div>
+          <div class="metric"><span>Activity Entries</span><strong>${state.activity.length}</strong></div>
+          <div class="metric"><span>Admin Actions</span><strong>${state.adminLog.length}</strong></div>
+          <div class="metric"><span>Latest Safety Backup</span><strong>${
+            latestBackup ? formatLogDate(latestBackup.exportedAt) : "None"
+          }</strong></div>
+        </div>
+        ${logsTableHtml(
+          fullReport ? "Activity Log" : "Recent Activity",
+          tables.activity,
+          "No activity logged yet.",
+          fullReport ? {} : { limit: 25 }
+        )}
+        ${logsTableHtml(
+          fullReport ? "Admin Actions" : "Recent Admin Actions",
+          tables.adminActions,
+          "No admin actions logged yet.",
+          fullReport ? {} : { limit: 20 }
+        )}
+        ${logsTableHtml("Redeemed Items", tables.redeemedItems, "No redeemed items logged yet.", fullReport ? {} : { limit: 30 })}
+        ${logsTableHtml("Top Tasks", tables.topTasks, "No task awards logged yet.", fullReport ? {} : { limit: 10 })}
+        ${
+          fullReport
+            ? `${logsTableHtml("Member Summary", tables.memberSummary, "No members found.")}
+               ${logsTableHtml("Sign-In Sheet", tables.signInSheet, "No members found.")}`
+            : ""
+        }
+      </body>
+    </html>
+  `;
+}
+
+function exportLogsHtmlWorkbook() {
+  const html = buildLogsReportHtml({ full: true });
+  const blob = new Blob(["\ufeff", html], {
+    type: "application/vnd.ms-excel;charset=utf-8;",
+  });
+  downloadBlobFile(
+    `lighthouse-logs-report-${new Date().toISOString().slice(0, 10)}.xls`,
+    blob
+  );
+  logAdminAction("Export", "Exported formatted Excel-compatible logs report");
 }
 
 function renderSummary() {
@@ -2455,6 +3301,7 @@ function renderSummary() {
     return;
   }
   const start = new Date();
+  start.setDate(start.getDate() - 6);
   start.setHours(0, 0, 0, 0);
   const startTime = start.getTime();
   const membersServed = new Set();
@@ -3030,13 +3877,85 @@ function renderStaffUsers() {
   elements.staffUserList.innerHTML = "";
   const header = document.createElement("div");
   header.className = "table__row header";
-  header.innerHTML = "<div>Staff Account</div><div>Username</div>";
+  header.innerHTML = "<div>Staff Account</div><div>Username</div><div>Actions</div>";
   elements.staffUserList.append(header);
   state.staffUsers.forEach((user) => {
     const row = document.createElement("div");
     row.className = "table__row";
-    row.innerHTML = `<div>${user.displayName}</div><div>${user.username}</div>`;
+    const displayName = document.createElement("div");
+    displayName.textContent = user.displayName;
+    const username = document.createElement("div");
+    username.textContent = user.username;
+    const actions = document.createElement("div");
+    actions.className = "inline-actions";
+    const changePassword = document.createElement("button");
+    changePassword.type = "button";
+    changePassword.className = "btn small secondary";
+    changePassword.textContent = "Change Password";
+    changePassword.addEventListener("click", () => {
+      requestSensitiveConfirmation({
+        title: "Change Staff Password",
+        message: `Enter staff credentials and the new password for ${user.displayName}. A safety backup will be saved first.`,
+        actionLabel: "Change Password",
+        backupReason: `Before changing password for staff account ${user.username}`,
+        requiresNewPassword: true,
+        onConfirm: ({ confirmedBy, newPassword }) => {
+          user.password = newPassword;
+          logAdminAction(
+            "Staff Password Changed",
+            `Changed password for ${user.username} after confirmation by ${
+              confirmedBy.displayName || confirmedBy.username
+            }`
+          );
+          saveState();
+          renderStaffUsers();
+        },
+      });
+    });
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "btn small danger";
+    remove.textContent = "Delete";
+    remove.addEventListener("click", () => {
+      if (state.staffUsers.length <= 1) {
+        alert("You must keep at least one staff account.");
+        return;
+      }
+      if (currentStaffUser && currentStaffUser.id === user.id) {
+        alert("You cannot delete the account that is currently signed in.");
+        return;
+      }
+      requestSensitiveConfirmation({
+        title: "Delete Staff Account",
+        message: `Enter staff credentials to delete ${user.displayName}'s staff account. A safety backup will be saved first.`,
+        actionLabel: "Delete Staff",
+        backupReason: `Before deleting staff account ${user.username}`,
+        onConfirm: ({ confirmedBy }) => {
+          state.staffUsers = state.staffUsers.filter((entry) => entry.id !== user.id);
+          logAdminAction(
+            "Staff Account Deleted",
+            `Deleted staff account ${user.username} after confirmation by ${
+              confirmedBy.displayName || confirmedBy.username
+            }`
+          );
+          saveState();
+          renderStaffUsers();
+        },
+      });
+    });
+    actions.append(changePassword, remove);
+    row.append(displayName, username, actions);
     elements.staffUserList.append(row);
+  });
+}
+
+if (elements.removeTaskToggle) {
+  elements.removeTaskToggle.addEventListener("click", () => {
+    taskRemoveMode = !taskRemoveMode;
+    if (taskRemoveMode) {
+      closeTaskEditor();
+    }
+    updateTaskRemoveMode();
   });
 }
 
@@ -3079,9 +3998,10 @@ function logAdminAction(type, detail, status) {
     status: status || "Success",
     timestamp: new Date().toISOString(),
   });
-  state.adminLog = state.adminLog.slice(0, 100);
+  state.adminLog = state.adminLog.slice(0, MAX_ADMIN_LOG_ENTRIES);
   saveState();
   renderAdminLog();
+  renderBackupStatus();
 }
 
 function parseRedeemNote(note) {
@@ -3230,6 +4150,88 @@ function attachStaffLogin() {
     elements.gateLoginForm.addEventListener("submit", (event) => {
       event.preventDefault();
       handleStaffLoginSubmit(elements.gateLoginForm, elements.gateLoginError);
+    });
+  }
+}
+
+function requestSensitiveConfirmation(config) {
+  if (!elements.sensitiveModal || !elements.sensitiveForm) {
+    if (config.backupReason && !createSafetyBackup(config.backupReason)) return;
+    config.onConfirm({ confirmedBy: currentStaffUser });
+    return;
+  }
+  pendingSensitiveAction = config;
+  elements.sensitiveTitle.textContent = config.title || "Confirm Staff Login";
+  elements.sensitiveMessage.textContent =
+    config.message || "Enter a staff username and password to continue.";
+  elements.sensitiveSubmit.textContent = config.actionLabel || "Confirm";
+  const needsNewPassword = Boolean(config.requiresNewPassword);
+  if (elements.sensitiveNewPasswordFields) {
+    elements.sensitiveNewPasswordFields.hidden = !needsNewPassword;
+  }
+  if (elements.sensitiveNewPassword) {
+    elements.sensitiveNewPassword.required = needsNewPassword;
+  }
+  if (elements.sensitiveConfirmPassword) {
+    elements.sensitiveConfirmPassword.required = needsNewPassword;
+  }
+  setError(elements.sensitiveError, "");
+  elements.sensitiveForm.reset();
+  elements.sensitiveModal.hidden = false;
+  if (elements.sensitiveUsername) elements.sensitiveUsername.focus();
+}
+
+function closeSensitiveConfirmation() {
+  pendingSensitiveAction = null;
+  if (!elements.sensitiveModal) return;
+  elements.sensitiveModal.hidden = true;
+}
+
+function attachSensitiveConfirmation() {
+  if (!elements.sensitiveForm) return;
+  elements.sensitiveForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!pendingSensitiveAction) return;
+    const formData = new FormData(elements.sensitiveForm);
+    const username = normalizeLabel(formData.get("username"));
+    const password = String(formData.get("password") || "").trim();
+    const newPassword = String(formData.get("newPassword") || "").trim();
+    const confirmPassword = String(formData.get("confirmPassword") || "").trim();
+    if (pendingSensitiveAction.requiresNewPassword) {
+      if (!newPassword) {
+        setError(elements.sensitiveError, "Enter a new password.");
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        setError(elements.sensitiveError, "New passwords do not match.");
+        return;
+      }
+    }
+    const match = state.staffUsers.find(
+      (entry) => entry.username === username && entry.password === password
+    );
+    if (!match) {
+      setError(elements.sensitiveError, "Invalid username or password.");
+      logAdminAction(
+        "Protected Action",
+        `Denied protected action: ${pendingSensitiveAction.title || "Unknown action"}`,
+        "Denied"
+      );
+      return;
+    }
+    const action = pendingSensitiveAction;
+    closeSensitiveConfirmation();
+    if (action.backupReason && !createSafetyBackup(action.backupReason)) return;
+    action.onConfirm({ confirmedBy: match, newPassword });
+  });
+  if (elements.sensitiveCancel) {
+    elements.sensitiveCancel.addEventListener("click", closeSensitiveConfirmation);
+  }
+  if (elements.sensitiveModal) {
+    elements.sensitiveModal.addEventListener("click", (event) => {
+      if (event.target && event.target.dataset.closeSensitive === "true") {
+        closeSensitiveConfirmation();
+      }
     });
   }
 }
@@ -4038,6 +5040,205 @@ function printResources() {
   printWindow.print();
 }
 
+function printWeeklyReport() {
+  const printWindow = window.open("", "_blank", "width=1000,height=800");
+  if (!printWindow) return;
+  const since = new Date();
+  since.setDate(since.getDate() - 6);
+  since.setHours(0, 0, 0, 0);
+  const sinceTime = since.getTime();
+  const served = new Set();
+  const categoryCounts = {};
+  let pointsAwarded = 0;
+  let pointsRedeemed = 0;
+  let itemsRedeemed = 0;
+
+  (state.visits || []).forEach((entry) => {
+    const timestamp = Date.parse(entry.timestamp);
+    if (Number.isFinite(timestamp) && timestamp >= sinceTime && entry.personId) {
+      served.add(entry.personId);
+    }
+  });
+
+  (state.activity || []).forEach((entry) => {
+    const timestamp = Date.parse(entry.timestamp);
+    if (!Number.isFinite(timestamp) || timestamp < sinceTime) return;
+    if (entry.personId) served.add(entry.personId);
+    if (entry.delta > 0) pointsAwarded += entry.delta;
+    if (entry.delta < 0) pointsRedeemed += Math.abs(entry.delta);
+    if (entry.type !== "redeem") return;
+    parseRedeemNote(entry.note || "").forEach((item) => {
+      itemsRedeemed += item.quantity;
+      const label = findItemGroup(item.name.toLowerCase()) || "Other";
+      categoryCounts[label] = (categoryCounts[label] || 0) + item.quantity;
+    });
+  });
+
+  const topCategories = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  const newMembers = (state.people || []).filter((person) => {
+    const joined = Date.parse(person.dateJoined);
+    return Number.isFinite(joined) && joined >= sinceTime;
+  });
+  const topTasks = getTopTasks(7).slice(0, 5);
+  const followUpMembers = (state.people || []).filter((person) => person.followUpNeeded);
+  const inactiveMembers = getInactiveMembers(30);
+  const adminActions = (state.adminLog || []).filter((entry) => {
+    const timestamp = Date.parse(entry.timestamp);
+    return Number.isFinite(timestamp) && timestamp >= sinceTime;
+  });
+  const categoryMax = Math.max(1, ...topCategories.map((entry) => entry[1]));
+  const rows = [
+    ["Members served", served.size],
+    ["Visits logged", (state.visits || []).filter((entry) => Date.parse(entry.timestamp) >= sinceTime).length],
+    ["New members", newMembers.length],
+    ["Items redeemed", itemsRedeemed],
+    ["Points awarded", pointsAwarded],
+    ["Points redeemed", pointsRedeemed],
+    ["Members needing follow-up", followUpMembers.length],
+    ["Inactive members", inactiveMembers.length],
+  ];
+  printWindow.document.write(`
+    <!doctype html>
+    <html>
+      <head>
+        <title>Lighthouse Weekly Report</title>
+        <style>
+          body { font-family: Georgia, serif; color: #173226; padding: 32px; }
+          h1 { margin-bottom: 4px; font-size: 34px; }
+          h2 { margin-top: 28px; border-bottom: 2px solid #d7b676; padding-bottom: 8px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+          th, td { border: 1px solid #dfd2bd; padding: 10px; text-align: left; }
+          th { background: #173226; color: #fffaf0; }
+          .meta { color: #6d5b46; }
+          .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+          .metric { border: 1px solid #dfd2bd; border-radius: 14px; padding: 14px; background: #fff6e6; }
+          .metric span { display: block; color: #6d5b46; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+          .metric strong { display: block; color: #19743a; font-size: 26px; margin-top: 4px; }
+          .bar { height: 11px; border-radius: 999px; background: #e8d8bd; overflow: hidden; }
+          .bar span { display: block; height: 100%; background: #19743a; }
+        </style>
+      </head>
+      <body>
+        <h1>Lighthouse Ministry Weekly Report</h1>
+        <p class="meta">${since.toLocaleDateString()} - ${new Date().toLocaleDateString()}</p>
+        <div class="metric-grid">
+          <div class="metric"><span>Members Served</span><strong>${served.size}</strong></div>
+          <div class="metric"><span>Items Redeemed</span><strong>${itemsRedeemed}</strong></div>
+          <div class="metric"><span>Points Awarded</span><strong>${pointsAwarded}</strong></div>
+          <div class="metric"><span>Follow-Ups</span><strong>${followUpMembers.length}</strong></div>
+        </div>
+        <h2>Snapshot</h2>
+        <table><tbody>${rows
+          .map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`)
+          .join("")}</tbody></table>
+        <h2>Top Redeemed Categories</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Quantity</th></tr></thead>
+          <tbody>${
+            topCategories.length
+              ? topCategories
+                  .map(([label, count]) => `<tr><td>${escapeHtml(label)}<div class="bar"><span style="width:${Math.round((count / categoryMax) * 100)}%"></span></div></td><td>${count}</td></tr>`)
+                  .join("")
+              : "<tr><td colspan='2'>No redemptions this week.</td></tr>"
+          }</tbody>
+        </table>
+        <h2>Top Point Tasks</h2>
+        <table>
+          <thead><tr><th>Task</th><th>Times Awarded</th></tr></thead>
+          <tbody>${
+            topTasks.length
+              ? topTasks
+                  .map((task) => `<tr><td>${escapeHtml(task.label)}</td><td>${task.count}</td></tr>`)
+                  .join("")
+              : "<tr><td colspan='2'>No task awards this week.</td></tr>"
+          }</tbody>
+        </table>
+        <h2>New Members</h2>
+        <table>
+          <thead><tr><th>Name</th><th>Date Joined</th><th>Tag</th></tr></thead>
+          <tbody>${
+            newMembers.length
+              ? newMembers
+                  .map(
+                    (person) =>
+                      `<tr><td>${escapeHtml(`${person.firstName} ${person.lastName}`)}</td><td>${escapeHtml(
+                        person.dateJoined || ""
+                      )}</td><td>${escapeHtml(person.residenceTag || "")}</td></tr>`
+                  )
+                  .join("")
+              : "<tr><td colspan='3'>No new members this week.</td></tr>"
+          }</tbody>
+        </table>
+        <h2>Follow-Up List</h2>
+        <table>
+          <thead><tr><th>Name</th><th>Note</th><th>Last Visit</th></tr></thead>
+          <tbody>${
+            followUpMembers.length
+              ? followUpMembers
+                  .map(
+                    (person) =>
+                      `<tr><td>${escapeHtml(`${person.firstName} ${person.lastName}`)}</td><td>${escapeHtml(
+                        person.followUpNote || "Needs follow-up"
+                      )}</td><td>${escapeHtml(
+                        getLastVisitTimestamp(person.id)
+                          ? new Date(getLastVisitTimestamp(person.id)).toLocaleDateString()
+                          : "No visits"
+                      )}</td></tr>`
+                  )
+                  .join("")
+              : "<tr><td colspan='3'>No members currently marked for follow-up.</td></tr>"
+          }</tbody>
+        </table>
+        <h2>Admin Actions This Week</h2>
+        <table>
+          <thead><tr><th>Action</th><th>Actor</th><th>Time</th></tr></thead>
+          <tbody>${
+            adminActions.length
+              ? adminActions
+                  .slice(0, 20)
+                  .map(
+                    (entry) =>
+                      `<tr><td>${escapeHtml(entry.detail || entry.type)}</td><td>${escapeHtml(
+                        entry.actor || "Unknown Staff"
+                      )}</td><td>${escapeHtml(formatLogDate(entry.timestamp))}</td></tr>`
+                  )
+                  .join("")
+              : "<tr><td colspan='3'>No admin actions this week.</td></tr>"
+          }</tbody>
+        </table>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  logAdminAction("Weekly Report", "Printed weekly ministry report");
+}
+
+function tableRowsHtml(rows, emptyMessage, columns) {
+  if (!rows.length) return `<tr><td colspan="${columns}">${emptyMessage}</td></tr>`;
+  return rows
+    .map(
+      (row) =>
+        `<tr>${row
+          .map((cell) => `<td>${escapeHtml(String(cell ?? ""))}</td>`)
+          .join("")}</tr>`
+    )
+    .join("");
+}
+
+function printLogsReport() {
+  const printWindow = window.open("", "_blank", "width=1100,height=850");
+  if (!printWindow) return;
+  printWindow.document.write(buildLogsReportHtml({ full: false }));
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  logAdminAction("Logs Report", "Printed logs report");
+}
+
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -4061,6 +5262,13 @@ function hydrateSelects() {
       select.value = current;
     }
   });
+  if (
+    elements.checkinMember &&
+    selectedCheckinMemberId &&
+    state.people.some((person) => person.id === selectedCheckinMemberId)
+  ) {
+    elements.checkinMember.value = selectedCheckinMemberId;
+  }
   renderRedeemPoints();
 
   elements.redeemItems.innerHTML = "";
@@ -4129,8 +5337,8 @@ function hydrateTasks() {
   if (!elements.taskButtons) return;
   elements.taskButtons.innerHTML = "";
   const tasks = getAllTasks();
-  const visible = tasks.slice(0, 5);
-  const hidden = tasks.slice(5);
+  const visible = tasks.slice(0, 12);
+  const hidden = tasks.slice(12);
 
   const renderTaskRow = (task) => {
     const row = document.createElement("div");
@@ -4159,10 +5367,10 @@ function hydrateTasks() {
       const taskId = button.dataset.taskId;
       const selectedTask = getAllTasks().find((entry) => entry.id === taskId);
       if (!personId || !selectedTask) {
-      setError(elements.taskError, "Select a person first.");
-      return;
-    }
-    setError(elements.taskError, "");
+        setError(elements.taskError, "Select a person first.");
+        return;
+      }
+      setError(elements.taskError, "");
       adjustPoints(personId, selectedTask.points, "task", selectedTask.label);
       status.classList.remove("show");
       status.classList.remove("fade");
@@ -4171,7 +5379,7 @@ function hydrateTasks() {
       setTimeout(() => {
         status.classList.add("fade");
       }, 1200);
-      refreshAfterPointsChange();
+      setTimeout(refreshAfterPointsChange, 650);
     });
 
     leftGroup.append(button, status);
@@ -4182,7 +5390,7 @@ function hydrateTasks() {
       if (String(task.id).startsWith("custom-")) {
         const edit = document.createElement("button");
         edit.type = "button";
-        edit.className = "btn small secondary";
+        edit.className = "btn small secondary task-edit-action";
         edit.textContent = "Edit";
         edit.addEventListener("click", () => {
           openTaskEditor(task);
@@ -4191,20 +5399,28 @@ function hydrateTasks() {
       }
       const remove = document.createElement("button");
       remove.type = "button";
-      remove.className = "btn small danger";
+      remove.className = "btn small danger task-remove-action";
       remove.textContent = "Remove";
       remove.addEventListener("click", () => {
-        const confirmed = confirm(`Remove task "${task.label}"?`);
-        if (!confirmed) return;
-        if (String(task.id).startsWith("custom-")) {
-          state.customTasks = state.customTasks.filter((entry) => entry.id !== task.id);
-        }
-        if (!state.hiddenTasks.includes(task.id)) {
-          state.hiddenTasks.push(task.id);
-        }
-        logAdminAction("Task Removed", `Removed task ${task.label}`);
-        saveState();
-        hydrateTasks();
+        requestSensitiveConfirmation({
+          title: "Remove Task",
+          message: `Enter staff credentials to remove "${task.label}" from the award task list.`,
+          actionLabel: "Remove Task",
+          backupReason: `Before removing task ${task.label}`,
+          onConfirm: ({ confirmedBy }) => {
+            if (!state.hiddenTasks.includes(task.id)) {
+              state.hiddenTasks.push(task.id);
+            }
+            logAdminAction(
+              "Task Removed",
+              `Removed task ${task.label} after confirmation by ${
+                confirmedBy.displayName || confirmedBy.username
+              }`
+            );
+            saveState();
+            hydrateTasks();
+          },
+        });
       });
       actionGroup.append(remove);
       row.append(leftGroup, actionGroup);
@@ -4228,6 +5444,18 @@ function hydrateTasks() {
       details.append(renderTaskRow(task));
     });
     elements.taskButtons.append(details);
+  }
+  updateTaskRemoveMode();
+}
+
+function updateTaskRemoveMode() {
+  if (elements.removeTaskToggle) {
+    elements.removeTaskToggle.classList.toggle("danger", taskRemoveMode);
+    elements.removeTaskToggle.classList.toggle("secondary", !taskRemoveMode);
+    elements.removeTaskToggle.setAttribute("aria-pressed", String(taskRemoveMode));
+  }
+  if (elements.taskButtons) {
+    elements.taskButtons.classList.toggle("task-buttons--remove-mode", taskRemoveMode);
   }
 }
 
@@ -4359,6 +5587,8 @@ function loadState() {
     customItems: [],
     customTasks: [],
     hiddenTasks: [],
+    hiddenItems: [],
+    settings: { ...DEFAULT_SETTINGS },
     adminLog: [],
     activity: [],
     visits: [],
@@ -4369,6 +5599,7 @@ function loadState() {
     resources: DEFAULT_RESOURCES.map((entry) => ({ ...entry })),
     staffTodosGlobal: [],
     staffUsers: [],
+    lastSafetyBackupAt: "",
   };
 }
 
