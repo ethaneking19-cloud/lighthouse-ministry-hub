@@ -4,7 +4,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-git add .gitignore README.md DEPLOYMENT.md netlify.toml index.html styles.css app.js lighthouse-banner.png mammoth.browser.min.js xlsx.full.min.js publish-update.ps1
+git add .gitignore README.md DEPLOYMENT.md netlify.toml index.html styles.css app.js supabase-config.js lighthouse-supabase-setup.sql lighthouse-banner.png mammoth.browser.min.js xlsx.full.min.js publish-update.ps1
 
 $changes = git diff --cached --name-only
 if (-not $changes) {

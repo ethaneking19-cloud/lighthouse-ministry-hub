@@ -3,6 +3,8 @@ const STORAGE_KEY = "ministryPointsStateV1";
 const STAFF_MODE_KEY = "ministryStaffModeV1";
 const STAFF_USER_KEY = "ministryStaffUserV1";
 const SAFETY_BACKUP_KEY = "ministrySafetyBackupsV1";
+const REMOTE_STATE_ID = "lighthouse-ministry-hub";
+const REMOTE_SAVE_DEBOUNCE_MS = 900;
 const MAX_SAFETY_BACKUPS = 3;
 const MAX_ACTIVITY_LOG_ENTRIES = 1000;
 const MAX_ADMIN_LOG_ENTRIES = 1000;
@@ -27,6 +29,43 @@ const DEFAULT_SETTINGS = {
   subtitle:
     "A calm, organized command center for member care, resources, events, volunteers, and ministry activity.",
 };
+
+const SUPABASE_SETTINGS = window.LIGHTHOUSE_SUPABASE_CONFIG || {};
+const HAS_SUPABASE_SETTINGS = Boolean(
+  SUPABASE_SETTINGS.url && SUPABASE_SETTINGS.anonKey
+);
+const supabaseClient =
+  HAS_SUPABASE_SETTINGS &&
+  window.supabase &&
+  typeof window.supabase.createClient === "function"
+    ? window.supabase.createClient(SUPABASE_SETTINGS.url, SUPABASE_SETTINGS.anonKey)
+    : null;
+let currentSupabaseUser = null;
+let remoteStateLoaded = false;
+let remoteSaveTimer = null;
+let remoteSaveInFlight = false;
+let remoteSaveQueued = false;
+let isApplyingRemoteState = false;
+
+function isSupabaseMode() {
+  return HAS_SUPABASE_SETTINGS;
+}
+
+function isSupabaseReady() {
+  return Boolean(supabaseClient);
+}
+
+function isLocalAppHost() {
+  return (
+    window.location.protocol === "file:" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  );
+}
+
+function isLocalPasswordMode() {
+  return !isSupabaseMode() && isLocalAppHost();
+}
 
 // ---- Default tasks & items ----
 const TASKS = [
@@ -273,7 +312,7 @@ state.adminLog = (state.adminLog || []).map((entry) => ({
   actor: entry.actor || "Unknown Staff",
 }));
 
-let staffMode = sessionStorage.getItem(STAFF_MODE_KEY) === "true";
+let staffMode = isLocalPasswordMode() && sessionStorage.getItem(STAFF_MODE_KEY) === "true";
 let dailyRefreshTimer = null;
 let dailyRefreshInterval = null;
 let reopenProfileId = null;
@@ -292,6 +331,7 @@ let adminLogSearchTerm = "";
 let selectedCheckinMemberId = "";
 let taskRemoveMode = false;
 let currentStaffUser =
+  isLocalPasswordMode() &&
   state.staffUsers.find((entry) => entry.id === sessionStorage.getItem(STAFF_USER_KEY)) ||
   null;
 
@@ -468,12 +508,17 @@ attachPageGuideSpy();
 attachSensitiveConfirmation();
 ensureDailySafetyBackup();
 renderBackupStatus();
+initializeSupabaseSession();
 if (didLegacyTodoMigration) {
   saveState();
 }
 
 if (elements.staffToggle) {
-  elements.staffToggle.addEventListener("click", () => {
+  elements.staffToggle.addEventListener("click", async () => {
+    if (isSupabaseMode()) {
+      await signOutSupabaseStaff();
+      return;
+    }
     setStaffMode(false, null);
   });
 }
@@ -706,6 +751,137 @@ function renderBackupStatus() {
   ).toLocaleString()} (${latest.reason || "Automatic snapshot"})`;
 }
 
+function getRemoteStatePayload() {
+  const payload = cloneStateForBackup();
+  payload.staffUsers = [];
+  return payload;
+}
+
+function queueRemoteStateSave() {
+  if (!isSupabaseReady() || !staffMode || !remoteStateLoaded || isApplyingRemoteState) return;
+  clearTimeout(remoteSaveTimer);
+  remoteSaveTimer = setTimeout(() => {
+    saveRemoteStateNow();
+  }, REMOTE_SAVE_DEBOUNCE_MS);
+}
+
+async function saveRemoteStateNow(options = {}) {
+  const force = Boolean(options.force);
+  if (!isSupabaseReady() || (!staffMode && !force) || !currentSupabaseUser) return;
+  if (remoteSaveInFlight) {
+    remoteSaveQueued = true;
+    return;
+  }
+  remoteSaveInFlight = true;
+  try {
+    const { error } = await supabaseClient.from("ministry_app_state").upsert({
+      id: REMOTE_STATE_ID,
+      state: getRemoteStatePayload(),
+      updated_by: currentSupabaseUser.id,
+      updated_at: new Date().toISOString(),
+    });
+    if (error) throw error;
+  } catch (error) {
+    console.error("Unable to save shared Supabase state", error);
+    if (elements.backupStatus) {
+      elements.backupStatus.textContent =
+        "Shared save failed. Export a JSON backup before closing this browser.";
+    }
+  } finally {
+    remoteSaveInFlight = false;
+    if (remoteSaveQueued) {
+      remoteSaveQueued = false;
+      queueRemoteStateSave();
+    }
+  }
+}
+
+async function loadRemoteStateAfterSignIn() {
+  if (!isSupabaseReady() || !currentSupabaseUser) return;
+  const { data, error } = await supabaseClient
+    .from("ministry_app_state")
+    .select("state")
+    .eq("id", REMOTE_STATE_ID)
+    .maybeSingle();
+  if (error) throw error;
+
+  remoteStateLoaded = true;
+  if (data && data.state) {
+    isApplyingRemoteState = true;
+    try {
+      applyImportedState(data.state);
+    } finally {
+      isApplyingRemoteState = false;
+    }
+    saveState();
+    renderAll();
+    return;
+  }
+
+  await saveRemoteStateNow({ force: true });
+}
+
+async function getSupabaseStaffUser(user) {
+  const { data, error } = await supabaseClient
+    .from("ministry_staff")
+    .select("display_name,is_active")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data || !data.is_active) {
+    throw new Error("This account is not approved for Lighthouse Ministry Hub.");
+  }
+  return {
+    id: user.id,
+    displayName: data.display_name || user.email || "Staff",
+    username: user.email || user.id,
+    isSupabaseUser: true,
+  };
+}
+
+async function initializeSupabaseSession() {
+  if (!isSupabaseMode()) {
+    if (!isLocalPasswordMode()) {
+      setError(
+        elements.gateLoginError,
+        "Supabase is not configured for this deployed site. Add the Supabase URL and anon key before using it online."
+      );
+    }
+    return;
+  }
+  if (!isSupabaseReady()) {
+    setError(
+      elements.gateLoginError,
+      "Supabase is configured, but the Supabase library did not load."
+    );
+    return;
+  }
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+    if (!data.session || !data.session.user) return;
+    currentSupabaseUser = data.session.user;
+    const staffUser = await getSupabaseStaffUser(currentSupabaseUser);
+    await loadRemoteStateAfterSignIn();
+    setStaffMode(true, staffUser);
+  } catch (error) {
+    console.error("Unable to restore Supabase session", error);
+    await supabaseClient.auth.signOut();
+    setStaffMode(false, null);
+    setError(elements.gateLoginError, error.message || "Please sign in again.");
+  }
+}
+
+async function signOutSupabaseStaff() {
+  if (isSupabaseReady()) {
+    await saveRemoteStateNow();
+    await supabaseClient.auth.signOut();
+  }
+  currentSupabaseUser = null;
+  remoteStateLoaded = false;
+  setStaffMode(false, null);
+}
+
 function renderLogControls() {
   if (!elements.logTypeFilter) return;
   const current = elements.logTypeFilter.value;
@@ -739,7 +915,7 @@ function applyImportedState(importedState) {
   state.events = importedState.events || [];
   state.resources = importedState.resources || DEFAULT_RESOURCES.map((entry) => ({ ...entry }));
   state.staffTodosGlobal = importedState.staffTodosGlobal || [];
-  state.staffUsers = importedState.staffUsers || state.staffUsers;
+  state.staffUsers = isLocalPasswordMode() ? importedState.staffUsers || state.staffUsers : [];
   state.lastSafetyBackupAt = importedState.lastSafetyBackupAt || state.lastSafetyBackupAt || "";
   state.people = state.people.map((person) => ({
     ...person,
@@ -1132,6 +1308,13 @@ if (elements.eventForm) {
 if (elements.staffUserForm) {
   elements.staffUserForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (!isLocalPasswordMode()) {
+      setError(
+        elements.staffUserError,
+        "Staff accounts are managed in Supabase Authentication."
+      );
+      return;
+    }
     const formData = new FormData(elements.staffUserForm);
     const username = normalizeLabel(formData.get("username"));
     if (state.staffUsers.some((entry) => entry.username === username)) {
@@ -1569,6 +1752,10 @@ function getVisitEntriesForPerson(personId) {
 }
 
 function ensureStarterStaffAccount() {
+  if (!isLocalPasswordMode()) {
+    state.staffUsers = [];
+    return;
+  }
   const normalizedTarget = normalizeLabel("Ethan");
   const ethanAccount = state.staffUsers.find(
     (entry) => normalizeLabel(entry.username) === normalizedTarget
@@ -1785,10 +1972,10 @@ function renderPeople() {
     const visitCount = getVisitCount(person.id);
     const lastVisit = getLastVisitTimestamp(person.id);
     infoText.innerHTML = `
-      <div class="person__name">${person.firstName} ${person.lastName}</div>
-      <div class="person__points">${person.points} points</div>
-      <div class="person__meta">${person.residenceTag || "No tag"}${person.home ? ` | ${person.home}` : ""}</div>
-      <div class="person__meta">Visits: ${visitCount}${lastVisit ? ` | Last: ${new Date(lastVisit).toLocaleDateString()}` : ""}</div>
+      <div class="person__name">${escapeHtml(`${person.firstName} ${person.lastName}`)}</div>
+      <div class="person__points">${Number(person.points) || 0} points</div>
+      <div class="person__meta">${escapeHtml(person.residenceTag || "No tag")}${person.home ? ` | ${escapeHtml(person.home)}` : ""}</div>
+      <div class="person__meta">Visits: ${visitCount}${lastVisit ? ` | Last: ${escapeHtml(new Date(lastVisit).toLocaleDateString())}` : ""}</div>
     `;
     if (person.followUpNeeded) {
       const badges = document.createElement("div");
@@ -2792,8 +2979,8 @@ function renderActivity() {
     detailParts.push(when.toLocaleString());
     const detail = detailParts.join(" - ");
     left.innerHTML = `
-      <strong>${name}</strong><br />
-      <span class="hint">${detail}</span>
+      <strong>${escapeHtml(name)}</strong><br />
+      <span class="hint">${escapeHtml(detail)}</span>
     `;
     const right = document.createElement("div");
     const sign = entry.delta >= 0 ? "+" : "";
@@ -2878,7 +3065,7 @@ function renderAdminLog() {
     const left = document.createElement("div");
     left.textContent = entry.detail || entry.type || "Admin action";
     const status = document.createElement("div");
-    status.innerHTML = `<strong>${entry.actor || "Unknown Staff"}</strong><br /><span class="hint">${entry.status || "Success"}</span>`;
+    status.innerHTML = `<strong>${escapeHtml(entry.actor || "Unknown Staff")}</strong><br /><span class="hint">${escapeHtml(entry.status || "Success")}</span>`;
     const right = document.createElement("div");
     right.textContent = new Date(entry.timestamp).toLocaleString();
     row.append(left, status, right);
@@ -3670,15 +3857,15 @@ function renderVolunteers() {
     const info = document.createElement("div");
     info.className = "person__info";
     const avatarContent = volunteer.profilePhoto
-      ? `<img src="${volunteer.profilePhoto}" alt="${escapeHtml(volunteer.name)}" />`
+      ? `<img src="${escapeHtml(volunteer.profilePhoto)}" alt="${escapeHtml(volunteer.name)}" />`
       : getInitials(volunteer.name, "");
     info.innerHTML = `
       <div class="person__avatar volunteer-avatar">${avatarContent}</div>
       <div>
-        <div class="person__name">${volunteer.name}</div>
-        <div class="person__meta">${volunteer.role || "Volunteer"} | Areas: ${volunteer.areas || "Unassigned"}</div>
-        <div class="person__meta">Ministry Safe: ${volunteer.ministrySafe || "No"} | Times Served: ${Number(volunteer.serviceCount) || 0}</div>
-        <div class="person__meta">${volunteer.phone || "No phone"}${volunteer.email ? ` | ${volunteer.email}` : ""}</div>
+        <div class="person__name">${escapeHtml(volunteer.name)}</div>
+        <div class="person__meta">${escapeHtml(volunteer.role || "Volunteer")} | Areas: ${escapeHtml(volunteer.areas || "Unassigned")}</div>
+        <div class="person__meta">Ministry Safe: ${escapeHtml(volunteer.ministrySafe || "No")} | Times Served: ${Number(volunteer.serviceCount) || 0}</div>
+        <div class="person__meta">${escapeHtml(formatPhone(volunteer.phone) || "No phone")}${volunteer.email ? ` | ${escapeHtml(volunteer.email)}` : ""}</div>
       </div>
     `;
     card.append(info);
@@ -3875,6 +4062,19 @@ function renderEvents() {
 function renderStaffUsers() {
   if (!elements.staffUserList) return;
   elements.staffUserList.innerHTML = "";
+  if (!isLocalPasswordMode()) {
+    const row = document.createElement("div");
+    row.className = "table__row";
+    row.innerHTML =
+      "<div>Staff accounts are managed in Supabase Authentication.</div><div>Use the Supabase dashboard to add or remove staff users.</div><div>-</div>";
+    elements.staffUserList.append(row);
+    if (elements.staffUserForm) {
+      elements.staffUserForm.querySelectorAll("input, button").forEach((control) => {
+        control.disabled = true;
+      });
+    }
+    return;
+  }
   const header = document.createElement("div");
   header.className = "table__row header";
   header.innerHTML = "<div>Staff Account</div><div>Username</div><div>Actions</div>";
@@ -4043,10 +4243,49 @@ function updateLoginGate() {
   }
 }
 
-function handleStaffLoginSubmit(form, errorElement) {
+async function handleStaffLoginSubmit(form, errorElement) {
   const formData = new FormData(form);
-  const username = normalizeLabel(formData.get("username"));
+  const username = isSupabaseMode()
+    ? String(formData.get("username") || "").trim().toLowerCase()
+    : normalizeLabel(formData.get("username"));
   const password = String(formData.get("password") || "").trim();
+  if (isSupabaseMode()) {
+    if (!isSupabaseReady()) {
+      setError(errorElement, "Supabase is configured, but the Supabase library did not load.");
+      return;
+    }
+    if (!username || !password) {
+      setError(errorElement, "Enter your staff email and password.");
+      return;
+    }
+    setError(errorElement, "Signing in...");
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: username,
+        password,
+      });
+      if (error) throw error;
+      currentSupabaseUser = data.user;
+      const staffUser = await getSupabaseStaffUser(data.user);
+      await loadRemoteStateAfterSignIn();
+      setError(errorElement, "");
+      setStaffMode(true, staffUser);
+      logAdminAction("Staff Login", `Signed in as ${staffUser.displayName}`);
+      form.reset();
+    } catch (error) {
+      await supabaseClient.auth.signOut();
+      currentSupabaseUser = null;
+      setError(errorElement, error.message || "Invalid staff email or password.");
+    }
+    return;
+  }
+  if (!isLocalPasswordMode()) {
+    setError(
+      errorElement,
+      "Supabase is not configured for this deployed site. Add the Supabase URL and anon key first."
+    );
+    return;
+  }
   const match = state.staffUsers.find(
     (entry) => entry.username === username && entry.password === password
   );
@@ -4063,8 +4302,10 @@ function handleStaffLoginSubmit(form, errorElement) {
 function setStaffMode(enabled, user) {
   staffMode = Boolean(enabled);
   currentStaffUser = staffMode ? user || currentStaffUser : null;
-  sessionStorage.setItem(STAFF_MODE_KEY, staffMode ? "true" : "false");
-  if (currentStaffUser) {
+  if (isLocalPasswordMode()) {
+    sessionStorage.setItem(STAFF_MODE_KEY, staffMode ? "true" : "false");
+  }
+  if (currentStaffUser && isLocalPasswordMode()) {
     sessionStorage.setItem(STAFF_USER_KEY, currentStaffUser.id);
   } else {
     sessionStorage.removeItem(STAFF_USER_KEY);
@@ -4147,9 +4388,9 @@ function attachCalendarControls() {
 
 function attachStaffLogin() {
   if (elements.gateLoginForm) {
-    elements.gateLoginForm.addEventListener("submit", (event) => {
+    elements.gateLoginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      handleStaffLoginSubmit(elements.gateLoginForm, elements.gateLoginError);
+      await handleStaffLoginSubmit(elements.gateLoginForm, elements.gateLoginError);
     });
   }
 }
@@ -4189,11 +4430,13 @@ function closeSensitiveConfirmation() {
 
 function attachSensitiveConfirmation() {
   if (!elements.sensitiveForm) return;
-  elements.sensitiveForm.addEventListener("submit", (event) => {
+  elements.sensitiveForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!pendingSensitiveAction) return;
     const formData = new FormData(elements.sensitiveForm);
-    const username = normalizeLabel(formData.get("username"));
+    const username = isSupabaseMode()
+      ? String(formData.get("username") || "").trim().toLowerCase()
+      : normalizeLabel(formData.get("username"));
     const password = String(formData.get("password") || "").trim();
     const newPassword = String(formData.get("newPassword") || "").trim();
     const confirmPassword = String(formData.get("confirmPassword") || "").trim();
@@ -4206,6 +4449,41 @@ function attachSensitiveConfirmation() {
         setError(elements.sensitiveError, "New passwords do not match.");
         return;
       }
+    }
+    if (isSupabaseMode()) {
+      if (!isSupabaseReady()) {
+        setError(elements.sensitiveError, "Supabase is configured, but the Supabase library did not load.");
+        return;
+      }
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: username,
+          password,
+        });
+        if (error) throw error;
+        currentSupabaseUser = data.user;
+        const confirmingStaffUser = await getSupabaseStaffUser(data.user);
+        const action = pendingSensitiveAction;
+        closeSensitiveConfirmation();
+        setStaffMode(true, confirmingStaffUser);
+        if (action.backupReason && !createSafetyBackup(action.backupReason)) return;
+        action.onConfirm({ confirmedBy: confirmingStaffUser, newPassword });
+      } catch (error) {
+        setError(elements.sensitiveError, error.message || "Invalid staff email or password.");
+        logAdminAction(
+          "Protected Action",
+          `Denied protected action: ${pendingSensitiveAction.title || "Unknown action"}`,
+          "Denied"
+        );
+      }
+      return;
+    }
+    if (!isLocalPasswordMode()) {
+      setError(
+        elements.sensitiveError,
+        "Supabase is not configured for this deployed site."
+      );
+      return;
     }
     const match = state.staffUsers.find(
       (entry) => entry.username === username && entry.password === password
@@ -5607,6 +5885,7 @@ function saveState() {
   try {
     // Local storage can fail if photos are too large.
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    queueRemoteStateSave();
   } catch (error) {
     alert(
       "Unable to save. The photo may be too large for storage. Try a smaller image."

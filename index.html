@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lighthouse Ministry Hub</title>
-    <link rel="stylesheet" href="styles.css?v=20260528-task-remove-toggle" />
+    <link rel="stylesheet" href="styles.css?v=20260721-supabase-auth" />
   </head>
   <body>
     <section id="login-gate" class="login-gate" aria-label="Staff sign in">
@@ -16,7 +16,7 @@
         </p>
         <form id="gate-login-form" class="form login-gate__form">
           <label>
-            Username
+            Email / Username
             <input id="gate-login-username" type="text" name="username" autocomplete="username" required />
           </label>
           <label>
@@ -827,7 +827,7 @@
         </p>
         <form id="sensitive-form" class="form">
           <label>
-            Username
+            Email / Username
             <input id="sensitive-username" type="text" name="username" autocomplete="username" required />
           </label>
           <label>
@@ -856,8 +856,10 @@
     <script>
       var XLSX = (window.XLSX = window.XLSX || {});
     </script>
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="xlsx.full.min.js"></script>
     <script src="mammoth.browser.min.js"></script>
-    <script src="app.js?v=20260528-task-remove-toggle"></script>
+    <script src="app.js?v=20260721-supabase-auth"></script>
   </body>
 </html>

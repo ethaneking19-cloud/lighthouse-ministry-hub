@@ -12,6 +12,11 @@
     Cache-Control = "no-cache"
 
 [[headers]]
+  for = "/supabase-config.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
   for = "/*.css"
   [headers.values]
     Cache-Control = "no-cache"

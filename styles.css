@@ -2017,6 +2017,14 @@ summary::-webkit-details-marker {
     grid-template-columns: 1fr;
   }
 
+  .page-main {
+    order: 1;
+  }
+
+  .page-guide {
+    order: 2;
+  }
+
   .page-guide {
     position: static;
     max-height: none;
