@@ -24,7 +24,7 @@ const DEFAULT_RESIDENCE_TAGS = [
   "Other",
 ];
 const DEFAULT_SETTINGS = {
-  organizationName: "Englewood Baptist Church",
+  organizationName: "Community Outreach Program",
   hubName: "Lighthouse Ministry Hub",
   subtitle:
     "A calm, organized command center for member care, resources, events, volunteers, and ministry activity.",
@@ -829,7 +829,7 @@ async function getSupabaseStaffUser(user) {
     .maybeSingle();
   if (error) throw error;
   if (!data || !data.is_active) {
-    throw new Error("This account is not approved for Lighthouse Ministry Hub.");
+    throw new Error("This account is not approved for the Lighthouse Ministry Hub.");
   }
   return {
     id: user.id,
