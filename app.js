@@ -24,7 +24,7 @@ const DEFAULT_RESIDENCE_TAGS = [
   "Other",
 ];
 const DEFAULT_SETTINGS = {
-  organizationName: "Community Outreach Program",
+  organizationName: "Community Outreach Program", // neutral default for independent demos
   hubName: "Lighthouse Ministry Hub",
   subtitle:
     "A calm, organized command center for member care, resources, events, volunteers, and ministry activity.",
