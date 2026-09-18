@@ -5,6 +5,9 @@ Backups/
 *.xlsx
 *.xls
 
+# Fictional demo data is safe to commit (all records are invented)
+!sample-data/*.json
+
 # Local OS/editor files
 .DS_Store
 Thumbs.db
