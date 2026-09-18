@@ -26,6 +26,12 @@ The project is maintained independently as Ethan King's senior project. It is de
 
 By default, data is stored locally when opened from this computer. A deployed site should be configured with `supabase-config.js` so staff authentication and shared app data use Supabase. See `DEPLOYMENT.md` for setup details and the privacy/data-safety checklist.
 
+## Documentation
+
+- `PROJECT-DOCUMENTATION.md` — purpose, system overview, database design, key workflows, testing results, deployment, user instructions, privacy considerations, and future improvements.
+- `sample-data/` — a fictional dataset and generator for development, testing, and demonstrations. Never use real member records in demos.
+- `tests/static-checks.mjs` — rerunnable element-reference, anchor, and dataset integrity checks: `node tests/static-checks.mjs`.
+
 ## Senior-project milestones
 
 The project plan covers application review and scope definition, database and sample-data preparation, workflow testing, dashboard and records testing, reporting and backup hardening, security/privacy review, documentation, and final presentation testing.
