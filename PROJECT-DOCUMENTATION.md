@@ -4,6 +4,7 @@
 **Project:** Lighthouse Ministry Hub: A Web-Based Ministry Operations and Member-Care Management System
 **Repository:** https://github.com/ethaneking19-cloud/lighthouse-ministry-hub
 **Document status:** Maintained through the Fall 2026 milestone schedule
+**Last updated:** October 2, 2026 — describes the redesigned operations-console interface and the accessibility work
 
 This document describes the purpose, design, workflows, testing evidence, deployment, privacy posture, and planned improvements for Lighthouse Ministry Hub. It is written so that another developer — or a ministry considering adapting the system — can understand and operate it without reading the source first.
 
@@ -31,16 +32,49 @@ Lighthouse Ministry Hub is a **static single-page application** with an optional
 
 | Layer | Technology | Notes |
 |---|---|---|
-| Markup | `index.html` (865 lines) | All views are sections of one page, navigated by in-page anchors |
-| Styling | `styles.css` (2,245 lines) | Custom design system; no CSS framework |
-| Application logic | `app.js` (5,911 lines) | Plain JavaScript, no build step, no bundler |
+| Markup | `index.html` (1,149 lines) | One page holds every view; a hash router shows one view at a time |
+| Styling | `styles.css` (3,520 lines) | Custom design system; no CSS framework |
+| Application logic | `app.js` (7,514 lines) | Plain JavaScript, no build step, no bundler |
 | Spreadsheet export | `xlsx.full.min.js` (vendored SheetJS) | Client-side `.xlsx` generation |
 | DOCX extraction | `mammoth.browser.min.js` (vendored) | Reads uploaded Word documents |
 | Authentication and shared state | Supabase Auth + Postgres | Loaded from CDN, with a local config stub |
 
-Total shipped application source is roughly 9,000 lines across the three primary files.
+Total shipped application source is roughly 12,200 lines across the three primary files.
 
 There is **no build step**. The repository is published as static files, which keeps deployment simple and makes the project inspectable by an instructor or a future maintainer without a toolchain.
+
+### Views and navigation (hash router)
+
+The application is no longer one long scrolling page. A small hash router (`APP_ROUTES` in `app.js`) shows exactly one view at a time and keeps the URL, the page title, the sidebar highlight, and browser history in sync.
+
+| Route | View title | Contents |
+|---|---|---|
+| `#/dashboard` | Dashboard | Today's KPI cards, quick actions, needs attention, follow-up queue, upcoming events, recent activity |
+| `#/members` | Members | Add member, searchable directory, residence-tag filter, A–Z / most regular / most recent sorts, inactive members |
+| `#/members/<id>` | Member Profile | Record details, contact and emergency information, visit history, point activity |
+| `#/check-in` | Member Check-In | Member search, status summary, optional note, confirmation step, success banner |
+| `#/rewards` | Points & Rewards | Award points, redemption cart, recent point activity |
+| `#/calendar` | Calendar & Tasks | Month grid, today view, next 30 days, event composer with checklists, shared staff reminders |
+| `#/resources` | Community Resources | Category groups with counts, search, printable handouts |
+| `#/reports` | Reports | Range and focus reporting, printable reports, spreadsheet exports |
+| `#/admin` | Admin | Logs and backups, security, volunteers, documents, donors, items, corrections, settings |
+
+Routes accept an optional member id (`#/check-in/<member-id>`, `#/rewards/<member-id>`) and preselect that member once per navigation, which is how the dashboard and the directory hand work off to other views. Links that used to jump to an anchor inside the page (`<a href="#some-id">`) were replaced by routes; the only remaining in-page anchor is the skip link.
+
+The layout responds at 1180, 1024, 900, 700, 560, and 420 px. The sidebar is fixed above 1024 px and becomes a scrimmed drawer behind the menu button at or below it, down to a 320 px viewport.
+
+### Accessibility and confirmation model
+
+| Concern | Implementation |
+|---|---|
+| Focus visibility | One `:focus-visible` ring covers every control, with inset rings where a parent clips overflow (hero tiles, login panel) and a proxy ring for the off-screen file inputs. Outlines are suppressed only on the two programmatic targets: `#page-main` and `#app-page-title`. |
+| Keyboard navigation | Skip link to the main landmark; route changes move focus to the view heading; Escape closes the mobile drawer and returns focus to the menu button; dialog Tab order is trapped in both directions. |
+| Accessible names | Every form control has a label, `aria-label`, or `aria-labelledby`; the icon-only menu button is labelled and reports `aria-expanded`; error regions carry `role="alert"`. |
+| Dialogs | The protected-action dialog and the destructive-confirmation dialog are `role="dialog" aria-modal="true"` with `aria-labelledby`/`aria-describedby`, initial focus on the safest control, Escape to cancel, and focus restored to the triggering control (falling back to the view heading when the trigger is re-rendered). |
+| Confirmation before loss | Record deletions (donor, document, volunteer, resource, event, reward item, staff reminder) and point deductions open a confirmation dialog naming the record and showing the effect — for points, `Balance: 120 → 70 points`. High-impact actions (member removal, staff account deletion, task removal, undo, backup restore) additionally require staff re-authentication and a safety backup. |
+| Form feedback | `setError` sets `aria-invalid` and `aria-describedby` on the offending fields and clears them when the value is corrected; submit buttons disable and set `aria-busy` while an asynchronous action is in flight. |
+| Non-color cues | Point deltas are signed (`+40`, `-25`) as well as colored; task states are words ("Overdue by 3 days", "Due today", "Done"); calendar days with scheduled items carry screen-reader text. |
+| Status announcements | `aria-live="polite"` regions report the member count, resource count, check-in result, redemption cart, report results, and dashboard alerts. |
 
 ### Runtime modes
 
@@ -144,6 +178,8 @@ The `state` object contains the following collections.
 
 Activity `type` values in use: `member` (intake), `visit`, `task` (preset award), `award` (custom award), `redeem`, `remove`, `undo`.
 
+One scalar accompanies these collections: `lastSafetyBackupAt`, the timestamp of the most recent safety backup, shown in the backup status panel.
+
 ---
 
 ## 4. Key workflows
@@ -152,24 +188,29 @@ Activity `type` values in use: `member` (intake), `visit`, `task` (preset award)
 Add Member collects name and starting points as required fields, with an expandable **Personal Information** area for date joined, housing description, residence tag, profile photo, contact details, emergency contact, and notes. Photos are compressed client-side (canvas resize, 512 px maximum dimension, ~600 KB target) before storage. Intake writes both the member record and a `member` activity entry, and records an admin log entry.
 
 ### 4.2 Member directory, search, and follow-up
-The Members card provides free-text search across names and housing tags, a residence-tag filter, and three sort modes: **A–Z**, **Most Regular** (visit count), and **Most Recent Visit**. Members with no visit logged in 30 days — or no visit at all — are listed in the collapsed **Inactive Members** panel, which is the practical answer to "who needs follow-up." A **Print Sign-In Sheets** action produces a printable attendance sheet.
+The Members view provides free-text search across names and housing tags, a residence-tag filter, and three sort modes: **A–Z**, **Most Regular** (visit count), and **Most Recent Visit**. A live count reads *Showing 8 of 26 members (matching "ana", tagged Shelter).* so it is always clear how many records a filter is hiding, and a **Clear Filters** button appears whenever a search term or tag filter is active (it also resets the sort to A–Z) — including when the filters match nothing, where the empty state says so instead of looking like a missing feature. Members with no visit logged in 30 days — or no visit at all — are listed in the collapsed **Inactive Members** panel, which is the practical answer to "who needs follow-up." Opening a member goes to their profile route, and a **Print Sign-In Sheets** action produces a printable attendance sheet.
 
 ### 4.3 Check-in
-Member Check-In combines a member selector, a live summary of that member's status, and their visit history in one view. Staff can **Log Visit**, **Toggle Follow-Up** (with a note), or jump directly to **Redeem Items** for that member. Logging a visit writes both a `visits` record and a `visit` activity entry so the check-in appears in the ledger and in reports.
+Member Check-In is built for a busy service night: staff type a name, housing tag, or detail into a search box, pick the member, and see a summary card (points, last visit, follow-up state) and the member's six most recent activity entries before anything is written. An optional note can be attached to the visit, and the visit is confirmed in a small panel that restates the member and note with a **Confirm Check-In** button. The result banner reports success and offers **Open Profile** and **Check In Another Member**. A duplicate-visit guard blocks a second check-in for the same member within 60 seconds, so a double tap or double click cannot double-log a visit. Staff can also **Toggle Follow-Up** (with a note) or jump directly to **Redeem Items** for that member. Logging a visit writes both a `visits` record and a `visit` activity entry, so the check-in appears in the ledger and in reports.
 
 ### 4.4 Point awards
-**Award Points** offers one-tap preset tasks (each with a point value), an inline **Add Task** editor that creates or updates custom tasks, a **Remove Task** control, and a collapsed **Custom Award** form for one-off awards requiring a note. Every award writes an activity entry with the task name or note as the reason.
+**Award Points** offers preset tasks (each with a point value), an inline **Add Task** editor that creates or updates custom tasks, a **Remove Task** control, and a collapsed **Custom Award** form for one-off awards requiring a note. Selecting a member shows their live current balance, and awarding opens a confirmation panel that states the change as `before → after` before it is written. Every award writes an activity entry with the task name or note as the reason, and it appears immediately in the **Point Activity** card, which lists the twelve most recent point changes with signed amounts and the resulting balance.
 
 ### 4.5 Inventory and redemption
-**All Items and Point Costs** displays the catalog grouped by category, allowing staff to edit point values directly with automatic saving and to add new items into a group. **Redeem Items** selects a member, shows their available points, presents the catalog with quantity selectors, computes the running total, and blocks the redemption with an explicit message when the total exceeds the balance. Successful redemptions write a `redeem` activity entry whose note records quantities in `N x Item` form — a format the weekly summary parses to compute items redeemed and the most popular category.
+**All Items and Point Costs** displays the catalog grouped by category, allowing staff to edit point values directly with automatic saving and to add new items into a group; hiding an item requires confirmation because hidden items disappear from the redemption list for everyone. **Redeem Items** selects a member, shows their available points, and presents a searchable catalog with quantity selectors. A cart panel lists the chosen items with a running total and the projected **Balance after** purchase; when the total exceeds the member's balance the cart warns, the submit is blocked, and nothing is written. The redemption is then confirmed in a panel before any state change. Successful redemptions write a `redeem` activity entry whose note records quantities in `N x Item` form — a format the weekly summary parses to compute items redeemed and the most popular category.
 
 ### 4.6 Corrections
-**Corrections** provides two controls. **Undo Last** reverses the most recent point change by restoring the recorded `before` value and logging an `undo` entry. **Remove Points** requires a reason and writes a `remove` activity entry. Both actions pass through staff re-confirmation.
+**Corrections** provides two controls. **Undo Last** reverses the most recent point change by restoring the recorded `before` value and logging an `undo` entry. **Remove Points** requires a written reason, then shows a confirmation dialog naming the member, the balance before and after, and the reason before it writes a `remove` activity entry. Both actions pass through staff re-authentication, and points are never changed silently.
 
-### 4.7 Staff coordination
-The **Staff Dashboard** shows alerts (inactive members, follow-up flags, upcoming events) plus a calendar with month navigation and an event composer supporting checklist items. A shared **Staff To-Do List** lets staff add, edit, and complete reminders. Administrative records group the **Volunteer Directory** (areas covered, leadership role, Ministry Safe status, service count, sortable by regularity), **Documents** (upload, list, view), and the **Donor List**.
+### 4.7 Dashboard home and staff coordination
+The **Dashboard** opens with today's KPI cards (members served today, check-ins this week, items redeemed this week, follow-ups due) and quick actions. Below them sit four working panels: **Needs Attention** (members flagged for follow-up, members inactive for 30 days, events in the next seven days, and a daily reminder when the day's safety backup has not run), a **Follow-Up Queue** whose entries link straight into a preselected check-in, **Upcoming Events** for the next 14 days, and **Recent Activity** (the eight most recent entries, with a link to the full activity log in Admin). Each panel has its own empty state, so an empty panel says what it is waiting for rather than rendering blank.
+
+The **Calendar & Tasks** view offers three ways to read the same schedule: a **Month grid** with previous/next navigation, a **Today** agenda, and a **Next 30 days** agenda. Selecting an event opens its detail card with description, checklist (each item checkable), and a **Remove Event** action. A shared **Staff Reminder** board lets staff add reminders with due dates, edit them, complete them, and remove them; reminders are sorted open-before-done and then by due date, and each one is labelled with a plain-language state such as "Overdue by 3 days", "Due today", "Due tomorrow", or "Done".
+
+Administrative records group the **Volunteer Directory** (areas covered, leadership role, Ministry Safe status, service count, sortable by regularity), **Documents** (upload, list, view), and the **Donor List** in the Admin view.
 
 ### 4.8 Reporting and exports
+- **Reports** — a range control (last 7 days, last 30 days, last 90 days, all time) crossed with a focus control (everything, check-ins, task awards, custom awards, deductions, redemptions) that recomputes six figures: check-ins, members served, points awarded, points redeemed, redemptions, and follow-ups flagged. The headline states exactly what is being shown (for example, *"Showing the last 30 days"* or *"Showing the last 30 days · Check-ins"*) and notes that the follow-up figure reflects the current roster rather than the selected range. A five-column table (date, member, action, points, balance) lists the matching ledger entries, capped at the 40 most recent with an explicit note when more exist.
 - **Weekly Summary** — members served in the last seven days (distinct member ids appearing in visits or activity), items redeemed in that window, and the most popular item category.
 - **Printable reports** — weekly ministry report, member sign-in sheets, community resource list, and logs report, each generated as a print-ready document.
 - **Spreadsheet export** — activity logs export to `.xlsx` via SheetJS.
@@ -193,9 +234,10 @@ The **Staff Dashboard** shows alerts (inactive members, follow-up flags, upcomin
 | Credential storage | Delegated to Supabase Auth; no passwords stored in the application |
 | Allowlist | `ministry_staff` with `is_active` flag, enforced in the database and at sign-in |
 | Row level security | Enabled on both tables; four policies (Section 3.2) |
-| Re-authentication for protected actions | Restoring data, undoing activity, archiving/removing records, and staff account changes require the staff to re-enter credentials in a confirmation modal |
+| Re-authentication for protected actions | Restoring data, undoing activity, removing a member or an award task, and staff account changes require the staff to re-enter credentials in a labelled modal dialog |
+| Confirmation before deletion | Deleting a donor, document, volunteer, resource, event, reward item, or staff reminder, and deducting points, open a confirmation dialog that names the record and states the effect. It can be cancelled with Escape, the Cancel button, or a click on the scrim, and nothing is written unless the confirmation is accepted |
 | Failed-attempt logging | Denied and failed administrative actions are recorded in the admin log with a `Denied` status and appear in **Admin Actions & Failed Attempts** |
-| Destructive-action safeguards | Safety backup before protected actions; explicit staff confirmation before applying |
+| Destructive-action safeguards | Safety backup before re-authenticated actions; explicit staff confirmation before applying |
 | Published-site restriction | Local password mode is refused unless the page is served from a local host |
 | Secrets handling | Only the public anon key is client-side; no service-role key is shipped |
 
@@ -213,25 +255,27 @@ A read-only verification script is included in the repository so results are rep
 node tests/static-checks.mjs
 ```
 
-It performs three categories of check: element-reference integrity between `app.js` and `index.html`, in-page anchor validity, and demo-dataset integrity (referential integrity, ledger reconciliation, catalog completeness, and a rebranding guard that fails if the original host organization's name appears in any shipped file).
+It performs six groups of check:
 
-The suite distinguishes three outcomes. A **PASS** is a satisfied check. A **WARN** is a known, accepted finding listed in `KNOWN_ISSUES` — reported on every run so it cannot be forgotten, but not treated as a regression. A **FAIL** is a new problem and sets a non-zero exit code, which is what makes the script usable in continuous integration later.
+1. **Element references** — every `#id` selector used in `app.js` exists in `index.html`.
+2. **Page routing** — every hash route appearing in markup or code resolves to a known view, every route has a page container, and every in-page anchor points at an element that exists.
+3. **Rebranding guards** — no shipped file names the original host organization, its city, or its housing complex.
+4. **Sample roster integrity** — referential integrity, ledger reconciliation, catalog completeness, the built-in resource seed matching the demo roster, and inline document data.
+5. **Accessibility affordances** — accessible names on form controls and icon-only buttons, dialog roles and labels, the presence of focus-trap and Escape handling, a defined focus ring, the skip-link target and reveal rule, a focusable route heading, announced error regions, and the list of destructive actions that must confirm first.
+6. **Documentation consistency** — documented routes resolve to real views, the retired navigation idiom is absent, the line counts quoted in Section 2 match the files, and the check total quoted in this document matches the run (the total is verified by the last check, which counts itself).
 
-**Result (September 18, 2026): 10 of 11 checks passed, 1 accepted warning, 0 failures (exit code 0).**
+The suite distinguishes three outcomes. A **PASS** is a satisfied check. A **WARN** is a known, accepted finding listed in `KNOWN_ISSUES` — reported on every run so it cannot be forgotten, but not treated as a regression. A **FAIL** is a new problem and sets a non-zero exit code, which is what makes the script usable in continuous integration later. `KNOWN_ISSUES` is currently empty: the previously accepted `#event-list` warning was resolved when the event list moved into the calendar panel (6.3, finding 1).
 
-| Check | Result | Detail |
+**Result (October 2, 2026): 29 of 29 checks passed, 0 warnings, 0 failures (exit code 0).**
+
+| Group | Checks | Result |
 |---|---|---|
-| `app.js` selectors resolve | **WARN (accepted)** | 148 element ids referenced, 1 missing: `event-list` — see 6.3, finding 1 |
-| All in-page anchors exist | Pass | 13 of 13 links resolve |
-| No original organization name in shipped files | Pass | `index.html`, `app.js`, `styles.css`, `README.md`, `DEPLOYMENT.md` |
-| Backup payload structure | Pass | `state` object present |
-| Member ids unique | Pass | 26 members |
-| Visits reference real members | Pass | 88 visits, 0 orphans |
-| Activity references real members | Pass | 261 entries, 0 orphans |
-| **Point balances reconcile with activity history** | Pass | 0 of 26 mismatched |
-| Redeemed items exist in the catalog | Pass | All names resolve to built-in or custom items |
-| Sample data free of original organization name | Pass | Guard enforced on the dataset |
-| Documents carry inline file data | Pass | 2 of 2 documents |
+| Element references | `app.js` selectors resolve — 191 ids referenced | Pass |
+| Page routing | Hash routes resolve (10 links, 9 routes); every route has a page container (9 pages); in-page anchors resolve (0 broken) | Pass |
+| Rebranding guards | No original organization name, former host city, or former housing complex in `index.html`, `app.js`, `styles.css`, `README.md`, `DEPLOYMENT.md` | Pass |
+| Sample roster integrity | State object present; member ids unique (26); visits reference members (88, 0 orphans); activity references members (261, 0 orphans); **point balances reconcile with activity history (0 of 26 mismatched)**; redeemed items exist in the catalog (33 redemptions); dataset free of the original organization name; default resource seed matches the roster (6 of 6); documents carry inline file data (2 of 2) | Pass |
+| Accessibility | Form controls have accessible names (0 missing); icon-only buttons are named (0 unnamed); dialogs declare role, `aria-modal`, and a label (2 dialogs); focus trap and Escape handlers present; focus ring defined with a single documented exception; skip link targets a real landmark and is revealed on focus; route heading is programmatically focusable; error regions are announced (0 silent); destructive actions confirm first (0 unconfirmed) | Pass |
+| Documentation | Documented routes resolve; retired navigation idiom absent; documented line counts match the three primary files (0 drifted); documented check total matches the run (29) | Pass |
 
 Syntax checks also pass: `node --check app.js` and `node --check sample-data/generate-sample-data.mjs`.
 
@@ -239,20 +283,32 @@ Syntax checks also pass: `node --check app.js` and `node --check sample-data/gen
 
 | Workflow | Verification method | Status |
 |---|---|---|
-| Staff sign-in (Supabase) | Live session on the deployed site | Verified |
+| Staff sign-in and sign-out | Live session on the deployed site, and local password mode during interface work | Verified |
 | Full data restore (`Restore Data`) | Performed against the deployed site with the sample roster; app re-rendered with 26 members and reported the neutral organization name | Verified Sept 18, 2026 |
 | Weekly summary, inactive members, follow-up flags, logs | Observed populated after the sample-data restore | Verified Sept 18, 2026 |
 | Backup export (JSON) | Exported before the restore to preserve prior data | Verified Sept 18, 2026 |
-| Intake, check-in, award, redemption, correction, event, document, and export workflows end-to-end | To be recorded against the milestone plan below | Scheduled |
+| Member intake, edit, profile view, and directory filtering | Exercised against the refreshed 26-member demo roster in a browser session; count line, tag filter, sorts, and the empty state all responded correctly | Verified Oct 2, 2026 |
+| Check-in with note and duplicate guard | Logged a visit with an optional note, then submitted again inside the 60-second guard window and confirmed the app refused the second write | Verified Oct 2, 2026 |
+| Award, deduction, and redemption | Awarded a task (confirm panel showed `before → after`), removed points with a reason, and redeemed items through the cart and its confirmation panel | Verified Oct 2, 2026 |
+| Ledger reconciliation after every flow | Recomputed each member's balance from their `activity` deltas after the flows above; 0 of 26 mismatched | Verified Oct 2, 2026 |
+| Reports | All six figures were recomputed independently from the activity log for the last 30 days and for all time, and every value matched (for example, all time: 88 check-ins, 23 members served, 960 points awarded, 221 points redeemed, 33 redemptions) | Verified Oct 2, 2026 |
+| Calendar and tasks | Month grid, Today, and Next 30 days views; event detail with checklist; staff reminders sorted open-before-done with overdue/due-today labels; event removal through the confirm dialog | Verified Oct 2, 2026 |
+| Confirmation, keyboard, and focus behavior | Drove real Tab, Shift+Tab, and Escape presses: Tab wrapped inside both dialogs in both directions, Escape cancelled without writing any state, focus returned to the triggering control, the skip link was the first Tab stop, and the app behind the sign-in gate was not tab-reachable | Verified Oct 2, 2026 |
+| Responsive sweep | All nine views measured for horizontal overflow at 320, 375, 768, 1024, and 1440 px (findings recorded in 6.3) | Verified Oct 2, 2026 |
+| Printable reports and spreadsheet export | Print documents carry current titles ("Lighthouse Logs Report", "Lighthouse Sign-In Sheets", "Lighthouse Community Resource List", "Lighthouse Ministry Weekly Report"); printed output and `.xlsx` files are to be captured as evidence | Titles verified in code; output capture scheduled |
 
-The manual table is intentionally honest about what has and has not been recorded. The project plan places the remaining workflow verification in the October and November milestones, where results will be logged with date, steps, expected result, and observed result.
+The manual table is intentionally honest about what has and has not been recorded. The project plan places the remaining workflow verification in the November and December milestones, where results will be logged with date, steps, expected result, and observed result.
 
 ### 6.3 Findings and dispositions
 
 | # | Finding | Severity | Disposition |
 |---|---|---|---|
-| 1 | `app.js:463` references `#event-list`, which does not exist in `index.html`. The guard at line 4001 returns early, so the reference is inert and events still render through the calendar panel. | Low — dead code, no user-visible impact | Documented; cleanup queued |
+| 1 | `app.js` referenced `#event-list`, an element that no longer existed in `index.html`. The reference was inert, so the calendar's event list silently never rendered during the redesigned build. | Medium — an entire list was invisible | **Resolved.** The list now renders inside the calendar panel (`#calendar-events`), the orphan id is gone, and the accepted warning was removed from `KNOWN_ISSUES`. Guarded by the element-reference check. |
 | 2 | The sample roster omits `items`, intentionally relying on the app's built-in catalog via the import fallback. The automated check was corrected to model runtime behavior rather than the file literally. | Informational | Resolved in the check |
+| 3 | Event dates stored as `YYYY-MM-DD` were displayed one day early in the calendar grid, the event list, the detail popover, the dashboard panel, and the range filters, because a date-only string parses as UTC midnight while the interface renders local time. | Medium — wrong information shown to staff | **Resolved.** `parseDateOnly`, `eventDateTime`, and `formatEventDate` normalize date-only values to local time, and every render path uses them. |
+| 4 | A boot-order defect — a state variable read by the first render before its declaration — crashed the app on load and, because the sign-in form then submitted natively, could place typed credentials in the page URL. | High — data exposure risk if it recurred | **Resolved.** Runtime state is declared above the first render, and the gate form carries `onsubmit="return false"` so a broken boot cannot leak credentials. |
+| 5 | At 320 px the Calendar & Tasks staff-reminder rows pushed 38 px past the viewport, putting their buttons off-screen, and the newest dashboard panel rendered outside the intended card order. Found by the Phase 8 responsive sweep and the stylesheet's card-order review. | Medium — phone widths only | **Resolved.** Reminder rows wrap at 420 px and below; the panel's order value was corrected. The sweep now reports 0 px horizontal overflow across all nine views and five widths. |
+| 6 | Tooling note: the browser preview used for verification cannot composite frames and never holds OS focus, so screenshots and painted focus rings could not be captured from it. | Informational | **Recorded.** Focus behavior was verified through the DOM (active element, dialog Tab order, focus return) and the ring rules were verified in the parsed stylesheet; visual confirmation of the rings is left to the presenter. |
 
 ### 6.4 Test data
 
@@ -274,9 +330,15 @@ The manual table is intentionally honest about what has and has not been recorde
 
 All names, phone numbers, email addresses, and street addresses are invented, using reserved `555` number ranges and `example.org` domains. The generator is rerunnable so dates can be refreshed before a presentation.
 
-### 6.5 Test cases still to be written
+### 6.5 Verification still to be recorded
 
-Automated browser tests (for example Playwright) covering sign-in, intake validation, insufficient-balance rejection, undo, and backup round-trip; continuous integration to run the checks on push; and an accessibility pass covering modal focus management and keyboard operation.
+The accessibility pass that was scheduled here is complete for the interface itself: modal focus management, keyboard operation, focus visibility, accessible names, validation announcements, and the confirmation model are implemented and covered by the automated checks in 6.1, with the interactive behavior verified as recorded in 6.2.
+
+Still outstanding:
+
+- Automated browser tests (for example Playwright) that repeat the manual checks above on every run, including insufficient-balance rejection, the duplicate-visit guard, and a backup round-trip.
+- Continuous integration to run the checks on push and publish the result.
+- Captured visual evidence: screenshots of the printed reports, the exported workbook, and the focus rings, which the current preview tooling cannot produce (finding 6).
 
 ---
 
@@ -329,6 +391,7 @@ window.LIGHTHOUSE_SUPABASE_CONFIG = {
 8. A JSON backup exports and restores in a sample-data environment.
 9. Logs, reports, and spreadsheet exports open correctly.
 10. No real personal data or old organization branding is present.
+11. The interface is keyboard-operable: the skip link is the first Tab stop, focus rings are visible, both dialogs keep Tab inside them and close with Escape, and deleting a record asks for confirmation.
 
 ---
 
@@ -336,9 +399,11 @@ window.LIGHTHOUSE_SUPABASE_CONFIG = {
 
 **Signing in.** Open the site and sign in with your staff email and password.
 
+**Getting around.** The sidebar lists the eight working sections — Dashboard, Members, Check-In, Points & Rewards, Calendar & Tasks, Resources, Reports, and Admin — and each member also has a profile view, for nine routes in total. The address bar shows the current view (`#/dashboard`, `#/members`, and so on), so any screen can be bookmarked, reloaded, or shared, and the browser back button works. On a phone or narrow window the sidebar becomes a drawer behind the menu button in the top-left corner; press Escape to close it. Links in the dashboard's follow-up queue open the check-in view with that member already selected.
+
 **Adding a member.** Use **Add Member**; expand **Personal Information** for contact and emergency details. Required: first name, last name, and starting points.
 
-**Checking a member in.** Use **Member Check-In**, select the member, review their summary and history, then **Log Visit**. Use **Toggle Follow-Up** to flag someone for a follow-up note.
+**Checking a member in.** Open **Check-In**, type a name, housing tag, or detail in the search box, and select the member. Review the summary (points, last visit, visits logged, follow-up state), add an optional note, then **Log Visit** and confirm in the panel that appears. The result banner offers **Open Profile** or **Check In Another Member**. A second check-in for the same member within a minute is refused, so a double tap cannot double-log a visit. Use **Toggle Follow-Up** to flag someone with a note.
 
 **Awarding points.** Use **Award Points** to pick a preset task, or open **Custom Award** for a one-off award with a written reason. Staff can add new tasks inline with **Add Task**.
 
@@ -346,13 +411,17 @@ window.LIGHTHOUSE_SUPABASE_CONFIG = {
 
 **Editing point costs.** In **All Items and Point Costs**, change a value in the list — it saves automatically. Add new items with **Add New Item**.
 
-**Fixing a mistake.** Use **Corrections → Undo Last** for the most recent point change, or **Remove Points** with a required reason.
+**Fixing a mistake.** In **Admin → Corrections**, use **Undo Last** for the most recent point change, or **Remove Points**. Removing points requires a written reason and then a confirmation dialog that shows the member, the balance before and after, and the reason, so a deduction can never be applied by accident. Both controls ask for staff credentials first.
 
 **Finding someone.** In **Members**, search by name or housing tag, filter by residence tag, and sort by name, regularity, or most recent visit. The **Inactive Members** panel lists anyone unseen for 30 days.
 
-**Reports.** **Weekly Summary** shows the current week at a glance. Print the weekly report, sign-in sheets, resource list, or logs as needed, and export activity logs to Excel.
+**Reports.** Open **Reports** and choose a range (last 7, 30, or 90 days, or all time) and a focus (everything, check-ins, task awards, custom awards, deductions, or redemptions). Six figures recompute immediately and the table below lists the matching ledger entries. The **Weekly Summary** card in the same view shows the current week at a glance. Print the weekly report, sign-in sheets, resource list, or logs as needed, and export activity logs to Excel.
 
-**Backups.** Use **Backup Data (JSON)** before major changes. **Restore Data** replaces current data from a backup file, and **Restore Last Safety Backup** rolls back to the most recent automatic snapshot. Both require staff confirmation.
+**Backups.** Use **Backup Data (JSON)** before major changes. **Restore Data** replaces current data from a backup file, and **Restore Last Safety Backup** rolls back to the most recent automatic snapshot. Both require staff credentials and take a fresh safety backup first; cancelling either dialog with Escape or Cancel leaves the data untouched.
+
+**Removing records.** Deleting a donor, document, volunteer, resource, event, reward item, or staff reminder always opens a confirmation dialog naming the record. Nothing is deleted until **Confirm** is pressed.
+
+**Keyboard use.** A **Skip to main content** link is the first stop when you press Tab from the top of the page. Every control shows a focus ring, the mobile drawer closes with Escape and returns focus to the menu button, and both dialogs keep Tab inside them, close with Escape, and return focus to the button that opened them.
 
 **Changing the display name.** **Settings & Restore Controls** sets the organization name, hub name, and subtitle shown on the sign-in screen and dashboard.
 
@@ -366,6 +435,7 @@ The system handles sensitive personal information: names, housing status, phone 
 
 - Fictional, anonymized, or sample data is used for development, testing, demonstrations, screenshots, and any public deployment of this senior project.
 - The repository's `.gitignore` excludes `Backups/`, `*.json`, `*.csv`, `*.xlsx`, and `*.xls`, so real exports are not committed. A single documented exception allows the fictional `sample-data/*.json` demonstration dataset.
+- Local working artifacts are excluded as well: `preview-tmp/` (the local preview harness) and the `nav-check*.png`, `scale-check*.png`, and `visual-check*.png` verification screenshots.
 - Only the public anon key is shipped client-side; service-role credentials are never placed in the repository.
 - Row level security confines operational data to approved, active staff.
 - Access to destructive or sensitive actions requires re-authentication, and denied attempts are logged.
@@ -400,16 +470,17 @@ A dedicated privacy and security review is scheduled in the milestone plan (Nove
 **Quality and testing**
 8. Add Playwright end-to-end coverage for sign-in, intake, awards, redemption rejection, undo, and backup round-trip.
 9. Run the checks in continuous integration on every push, and publish results.
-10. Resolve the `#event-list` dead reference and evaluate whether the interface should surface a standalone upcoming-events list.
+10. Capture visual evidence — printed reports, exported workbooks, and focus-ring screenshots — as a repeatable step in the documentation milestone.
 
 **Experience and accessibility**
-11. Complete an accessibility pass: modal focus trapping, keyboard-only operation, ARIA live regions for the summary counters, and color-contrast verification.
-12. Split the single long page into focused views (Dashboard, Members, Resources, Admin) with shared quick actions, addressing navigation density as the feature set grew.
-13. Add barcode or quick-lookup check-in for busy service nights.
+11. Extend the accessibility checks into a real browser run (axe-core or Playwright accessibility assertions) so measured contrast, computed focus styles, and the full tab order are machine-verified rather than structurally checked.
+12. Run a screen-reader pass over the four busiest flows (check-in, award, redeem, follow-up) and record it with the November documentation.
+13. Render the month grid as an agenda list below 900 px, where it currently scrolls horizontally inside its own panel.
+14. Add barcode or quick-lookup check-in for busy service nights.
 
 **Reporting and operations**
-14. Add date-range reporting and a member service totals report to complement the weekly summary.
-15. Add CSV import for existing member lists to lower the cost of adopting the system.
+15. Add a member service totals report and saved report presets to complement the range and focus controls.
+16. Add CSV import for existing member lists to lower the cost of adopting the system.
 
 ---
 
@@ -427,12 +498,13 @@ Mapping of the project proposal's feature lists to implementation evidence.
 | Basic check-in / visit log | MVP | Member Check-In; `visits` collection |
 | Sample or anonymized data | MVP | `sample-data/` generator and roster |
 | Basic documentation | MVP | `README.md`; this document |
-| Workflow organized into clear areas | B | Operations Menu navigates 13 sections |
+| Workflow organized into clear areas | B | Sidebar navigates nine hash routes (Section 2) |
+| Accessible, keyboard-operable interface | B | Accessibility and confirmation model (Section 2); accessibility checks (6.1); interactive verification (6.2) |
 | Preset and custom awards tracked in history | B | Award Points; Custom Award; task activity entries |
 | Visits, last visit, follow-up identification | B | Check-in history; Inactive Members (30 days); follow-up flags |
 | Categorized rewards that update balances | B | Grouped items; redemption adjusts points |
 | Searchable directory, profiles, histories | B | Search, tag filter, three sort modes; visit history |
-| Staff coordination (events, checklists, reminders) | B | Staff Dashboard; calendar; shared to-do list |
+| Staff coordination (events, checklists, reminders) | B | Dashboard panels; Calendar & Tasks views; shared staff reminder board |
 | Resource and administrative records | B | Community Resources; volunteers, documents, donors |
 | Validation and documented corrections | B | Required notes; insufficient-balance block; Remove Points; Undo Last |
 | Documented testing of major workflows | B | Section 6; `tests/static-checks.mjs` |
@@ -454,10 +526,10 @@ Mapping of the project proposal's feature lists to implementation evidence.
 |---|---|---|
 | Sep 4 | Review application, confirm scope, identify remaining work, create plan | Complete |
 | Sep 18 | Review database and records, improve member and check-in workflows, prepare safe sample data | Complete — sample dataset generated, validated, and verified on the deployed site |
-| Oct 2 | Test points, inventory, redemption, activity history, follow-up | Planned |
-| Oct 16 | Test dashboard tools, events, checklists, reminders, volunteer, document, resource features | Planned |
-| Oct 30 | Improve reporting, validation, corrections, logs, exports, backups, restore | Planned |
-| Nov 13 | Security and privacy review, interface improvements, full workflow testing, documentation | Planned |
+| Oct 2 | Test points, inventory, redemption, activity history, follow-up | Complete — points, redemption, and follow-up re-verified against a reconciled ledger; the interface was rebuilt into routed views and the accessibility and responsive passes were recorded (Sections 2 and 6) |
+| Oct 16 | Test dashboard tools, events, checklists, reminders, volunteer, document, resource features | In progress — dashboard panels, calendar views, event checklists, and staff reminders verified; volunteer, document, and resource records re-checked |
+| Oct 30 | Improve reporting, validation, corrections, logs, exports, backups, restore | In progress — range and focus reporting, inline validation, corrections confirmations, logs, backups, and restore re-verified; printed and spreadsheet output still to be captured as evidence |
+| Nov 13 | Security and privacy review, interface improvements, full workflow testing, documentation | Planned — the interface work from this milestone is largely delivered; the review, screen-reader pass, and documentation refresh remain |
 | Dec 4 | Final testing, documentation, anonymized demo data, presentation, submission | Planned |
 
 ---
@@ -474,8 +546,9 @@ Mapping of the project proposal's feature lists to implementation evidence.
 | `netlify.toml` | Publish directory and cache headers |
 | `sample-data/generate-sample-data.mjs` | Deterministic fictional dataset generator |
 | `sample-data/sample-roster-backup.json` | Importable fictional dataset |
-| `tests/static-checks.mjs` | Element-reference, anchor, and dataset integrity checks |
-| `README.md` | Project overview and capabilities |
+| `tests/static-checks.mjs` | Element-reference, routing, rebranding, dataset, accessibility, and documentation checks (Section 6.1) |
+| `BUILD-PLAN.md` | Phased build plan and risk register used to drive the interface redesign |
+| `README.md` | Project overview, routes, and capabilities |
 | `DEPLOYMENT.md` | Deployment, Supabase setup, privacy, and verification checklist |
 | `PROJECT-DOCUMENTATION.md` | This document |
 | `xlsx.full.min.js`, `mammoth.browser.min.js` | Vendored third-party libraries |

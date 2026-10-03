@@ -16,7 +16,7 @@ const SUPPORTED_DOCUMENT_ACCEPT =
   ".pdf,.png,.jpg,.jpeg,.gif,.webp,.bmp,.txt,.md,.json,.xml,.csv,.tsv,.xlsx,.xls,.docx";
 const DEFAULT_RESIDENCE_TAGS = [
   "Homeless",
-  "Studio 45",
+  "Studio Apartment",
   "Temp Housing",
   "Shelter",
   "With Family",
@@ -147,89 +147,98 @@ const defaultItems = [
 
 const DEFAULT_RESOURCES = [
   {
-    id: "resource-arm",
-    name: "Area Relief Ministries",
+    id: "resource-riverbend-emergency-shelter",
+    name: "Riverbend Emergency Shelter",
     category: "Housing & Emergency Assistance",
     services:
-      "Homeless and housing services, emergency assistance, transitional support, and employment-focused help.",
-    address: "108 South Church Street, Jackson, TN 38301",
-    phone: "7314239257",
-    email: "",
-    website: "https://www.areareliefministries.org/",
+      "Overnight shelter, showers, laundry, and case management intake.",
+    address: "100 Sample Avenue",
+    phone: "5550150000",
+    email: "info1@example.org",
+    website: "https://example.org/resources/1",
     dropoff:
-      "Call ahead or use the website to ask about donations, partner support, and available assistance.",
+      "Call ahead. Housing & emergency assistance requests are posted weekly.",
     photo: "",
   },
   {
-    id: "resource-rifa",
-    name: "RIFA",
+    id: "resource-harborlight-food-pantry",
+    name: "Harborlight Food Pantry",
     category: "Food & Community Support",
     services:
-      "Food assistance, community support, outreach help, and local volunteer/donation opportunities.",
-    address: "133 Airways Boulevard, Jackson, TN 38301",
-    phone: "",
-    email: "",
-    website: "https://rifajackson.org/",
+      "Weekly food boxes, fresh produce, and infant formula when available.",
+    address: "250 Sample Boulevard",
+    phone: "5550150019",
+    email: "info2@example.org",
+    website: "https://example.org/resources/2",
     dropoff:
-      "Use the website for donation and volunteer information, including current drop-off needs.",
+      "Call ahead. Food support requests are posted weekly.",
     photo: "",
   },
   {
-    id: "resource-jha",
-    name: "Jackson Housing Authority",
+    id: "resource-cornerstone-housing-partners",
+    name: "Cornerstone Housing Partners",
     category: "Housing",
     services:
-      "Public housing support, housing information, and local housing-related assistance.",
-    address: "",
-    phone: "",
-    email: "",
-    website: "https://www.jacksonha.com/",
-    dropoff: "Housing-focused resource. Check website or call for appointments and intake information.",
+      "Transitional housing applications, tenant support, and rental assistance referrals.",
+    address: "18 Sample Court",
+    phone: "5550150038",
+    email: "info3@example.org",
+    website: "https://example.org/resources/3",
+    dropoff:
+      "Call ahead. Housing support requests are posted weekly.",
     photo: "",
   },
   {
-    id: "resource-dream-center",
-    name: "Dream Center Jackson",
-    category: "Ministry & Outreach",
+    id: "resource-brightpath-community-clinic",
+    name: "Brightpath Community Clinic",
+    category: "Health Services",
     services:
-      "Community outreach, service programs, local support ministries, and volunteer-driven help.",
-    address: "",
-    phone: "",
-    email: "",
-    website: "https://dreamcenterjackson.com/contact-us/",
-    dropoff: "Use contact page for outreach details, volunteer needs, and current ministry opportunities.",
+      "Walk-in clinic, prescriptions assistance, and behavioral health referrals.",
+    address: "77 Sample Road",
+    phone: "5550150057",
+    email: "info4@example.org",
+    website: "https://example.org/resources/4",
+    dropoff:
+      "Call ahead. Health services requests are posted weekly.",
     photo: "",
   },
   {
-    id: "resource-salvation-army",
-    name: "The Salvation Army - Jackson",
-    category: "Emergency Assistance",
+    id: "resource-new-day-workforce-center",
+    name: "New Day Workforce Center",
+    category: "Employment",
     services:
-      "Emergency help and community support listed through the city housing resource guide and Salvation Army contacts.",
-    address: "",
-    phone: "",
-    email: "",
-    website: "https://www.jacksontn.gov/UserFiles/Servers/Server_16361603/File/Residents/Love%20Your%20Block/Housing_Resource_Guide_Updated.pdf",
-    dropoff: "Use the housing resource guide for updated local contact and service details.",
+      "Resume help, interview coaching, and job placement referrals.",
+    address: "402 Sample Parkway",
+    phone: "5550150076",
+    email: "info5@example.org",
+    website: "https://example.org/resources/5",
+    dropoff:
+      "Call ahead. Employment services requests are posted weekly.",
     photo: "",
   },
   {
-    id: "resource-st-brigid",
-    name: "St. Brigid Food Pantry",
-    category: "Food Pantry",
+    id: "resource-open-door-legal-aid",
+    name: "Open Door Legal Aid",
+    category: "Legal",
     services:
-      "Food pantry support for individuals and families in need.",
-    address: "",
-    phone: "",
-    email: "",
-    website: "https://www.orthodoxjackson.com/Food-Pantry",
-    dropoff: "See pantry page for current food needs and pantry support information.",
+      "Free consultations for benefits appeals, ID replacement, and housing issues.",
+    address: "9 Sample Lane",
+    phone: "5550150095",
+    email: "info6@example.org",
+    website: "https://example.org/resources/6",
+    dropoff:
+      "Call ahead. Legal aid requests are posted weekly.",
     photo: "",
   },
 ];
 
 // ---- State bootstrap ----
 const state = loadState();
+// Older or hand-authored state payloads may omit whole collections. Default them
+// here so a missing array can never take down the first render.
+if (!Array.isArray(state.people)) state.people = [];
+if (!Array.isArray(state.items)) state.items = defaultItems.map((item) => ({ ...item }));
+if (!Array.isArray(state.activity)) state.activity = [];
 if (!state.customItems) state.customItems = [];
 if (!state.customTasks) state.customTasks = [];
 if (!state.hiddenTasks) state.hiddenTasks = [];
@@ -322,7 +331,6 @@ let editingStaffTodoId = null;
 let editingVolunteerId = null;
 let editingDonorId = null;
 let editingResourceId = null;
-let pageGuideFrame = null;
 let pendingSensitiveAction = null;
 let logSearchTerm = "";
 let logTypeFilter = "";
@@ -335,11 +343,61 @@ let currentStaffUser =
   state.staffUsers.find((entry) => entry.id === sessionStorage.getItem(STAFF_USER_KEY)) ||
   null;
 
+// ---- App shell routing tables (declared before the first render) ----
+const APP_ROUTES = [
+  "dashboard",
+  "members",
+  "member-profile",
+  "check-in",
+  "rewards",
+  "calendar",
+  "resources",
+  "reports",
+  "admin",
+];
+
+const APP_ROUTE_TITLES = {
+  dashboard: "Dashboard",
+  members: "Members",
+  "member-profile": "Member Profile",
+  "check-in": "Member Check-In",
+  rewards: "Points & Rewards",
+  calendar: "Calendar & Tasks",
+  resources: "Community Resources",
+  reports: "Reports",
+  admin: "Admin",
+};
+
+// Which sidebar entry should light up for each page.
+const APP_NAV_ROUTES = {
+  dashboard: "dashboard",
+  members: "members",
+  "member-profile": "members",
+  "check-in": "check-in",
+  rewards: "rewards",
+  calendar: "calendar",
+  resources: "resources",
+  reports: "reports",
+  admin: "admin",
+};
+
+let currentRoute = { page: "dashboard", memberId: "" };
+// Declared above the first renderAll() call so render-time reads never hit the TDZ.
+let lastPresetKey = "";
+let lastCheckinResult = null;
+let checkinSubmitting = false;
+let pendingAward = null;
+let rewardsToastMessage = "";
+let rewardsToastTimer = null;
+
 // ---- Element references ----
 const elements = {
   quickBackup: document.querySelector("#quick-backup"),
   quickReport: document.querySelector("#quick-report"),
   dashboardAlerts: document.querySelector("#dashboard-alerts"),
+  dashboardFollowups: document.querySelector("#dashboard-followups"),
+  dashboardEvents: document.querySelector("#dashboard-events"),
+  dashboardActivity: document.querySelector("#dashboard-activity"),
   personForm: document.querySelector("#person-form"),
   calendarGrid: document.querySelector("#calendar-grid"),
   calendarEvents: document.querySelector("#calendar-events"),
@@ -381,6 +439,11 @@ const elements = {
   checkinHistory: document.querySelector("#checkin-history"),
   checkinLogVisit: document.querySelector("#checkin-log-visit"),
   checkinFollowupToggle: document.querySelector("#checkin-followup-toggle"),
+  checkinSearch: document.querySelector("#checkin-search"),
+  checkinNote: document.querySelector("#checkin-note"),
+  checkinConfirm: document.querySelector("#checkin-confirm"),
+  checkinResult: document.querySelector("#checkin-result"),
+  checkinRedeemLink: document.querySelector("#checkin-redeem-link"),
   inactiveMembersList: document.querySelector("#inactive-members-list"),
   memberTagFilter: document.querySelector("#member-tag-filter"),
   memberSort: document.querySelector("#member-sort"),
@@ -389,7 +452,16 @@ const elements = {
   activityTable: document.querySelector("#activity-table"),
   peopleSelects: document.querySelectorAll("select[name='personId']"),
   redeemItems: document.querySelector("#redeem-items"),
+  redeemSearch: document.querySelector("#redeem-search"),
+  redeemCart: document.querySelector("#redeem-cart"),
+  redeemConfirm: document.querySelector("#redeem-confirm"),
+  awardBalance: document.querySelector("#award-balance"),
+  awardConfirm: document.querySelector("#award-confirm"),
+  rewardsHistory: document.querySelector("#rewards-history"),
+  rewardsToast: document.querySelector("#rewards-toast"),
   memberSearch: document.querySelector("#member-search"),
+  memberCount: document.querySelector("#member-count"),
+  memberClearFilters: document.querySelector("#member-clear-filters"),
   statPeople: document.querySelector("#stat-people"),
   statDate: document.querySelector("#stat-date"),
   statAverage: document.querySelector("#stat-average"),
@@ -444,6 +516,11 @@ const elements = {
   resourceSearch: document.querySelector("#resource-search"),
   resourceForm: document.querySelector("#resource-form"),
   resourceList: document.querySelector("#resource-list"),
+  resourceCount: document.querySelector("#resource-count"),
+  staffTaskDue: document.querySelector("#staff-task-due"),
+  reportRange: document.querySelector("#report-range"),
+  reportType: document.querySelector("#report-type"),
+  reportResults: document.querySelector("#report-results"),
   addResourceToggle: document.querySelector("#add-resource-toggle"),
   resourceCancel: document.querySelector("#resource-cancel"),
   resourceSave: document.querySelector("#resource-save"),
@@ -460,7 +537,8 @@ const elements = {
   resourceError: document.querySelector("#resource-error"),
   printResources: document.querySelector("#print-resources"),
   eventForm: document.querySelector("#event-form"),
-  eventList: document.querySelector("#event-list"),
+  calendarView: document.querySelector("#calendar-view"),
+  calendarNav: document.querySelector("#calendar-nav"),
   staffUserForm: document.querySelector("#staff-user-form"),
   staffUserList: document.querySelector("#staff-user-list"),
   staffUserError: document.querySelector("#staff-user-error"),
@@ -474,6 +552,14 @@ const elements = {
   loginGate: document.querySelector("#login-gate"),
   gateLoginForm: document.querySelector("#gate-login-form"),
   gateLoginError: document.querySelector("#gate-login-error"),
+  gateLoginSubmit: document.querySelector("#gate-login-submit"),
+  pageMain: document.querySelector("#page-main"),
+  confirmModal: document.querySelector("#confirm-modal"),
+  confirmModalTitle: document.querySelector("#confirm-modal-title"),
+  confirmModalMessage: document.querySelector("#confirm-modal-message"),
+  confirmModalDetails: document.querySelector("#confirm-modal-details"),
+  confirmModalCancel: document.querySelector("#confirm-modal-cancel"),
+  confirmModalAccept: document.querySelector("#confirm-modal-accept"),
   sensitiveModal: document.querySelector("#sensitive-modal"),
   sensitiveForm: document.querySelector("#sensitive-form"),
   sensitiveTitle: document.querySelector("#sensitive-title"),
@@ -486,6 +572,19 @@ const elements = {
   sensitiveError: document.querySelector("#sensitive-error"),
   sensitiveSubmit: document.querySelector("#sensitive-submit"),
   sensitiveCancel: document.querySelector("#sensitive-cancel"),
+  appShell: document.querySelector("#app-shell"),
+  appSidebar: document.querySelector("#app-sidebar"),
+  appScrim: document.querySelector("#app-scrim"),
+  appMenuToggle: document.querySelector("#app-menu-toggle"),
+  appPageTitle: document.querySelector("#app-page-title"),
+  kpiServedToday: document.querySelector("#kpi-served-today"),
+  kpiCheckInsWeek: document.querySelector("#kpi-checkins-week"),
+  kpiRedeemedWeek: document.querySelector("#kpi-redeemed-week"),
+  kpiFollowUpsDue: document.querySelector("#kpi-followups-due"),
+  kpiFollowUpsCard: document.querySelector("#kpi-followups-card"),
+  appUserAvatar: document.querySelector(".app-user__avatar"),
+  memberProfileTitle: document.querySelector("#member-profile-title"),
+  memberProfileRoot: document.querySelector("#member-profile-root"),
 };
 
 // ---- Initial render / bindings ----
@@ -495,6 +594,7 @@ setDefaultDateJoined();
 attachPhoneSanitizer();
 attachMemberSearch();
 attachRedeemPointsListener();
+attachRewardsPanels();
 attachMemberPhotoPicker();
 attachVolunteerPhotoPicker();
 attachDocumentPicker();
@@ -504,7 +604,7 @@ attachStaffLogin();
 attachVolunteerSort();
 attachCalendarControls();
 attachResourceSearch();
-attachPageGuideSpy();
+attachRouter();
 attachSensitiveConfirmation();
 ensureDailySafetyBackup();
 renderBackupStatus();
@@ -623,17 +723,54 @@ if (elements.quickReport) {
 if (elements.checkinMember) {
   elements.checkinMember.addEventListener("change", () => {
     selectedCheckinMemberId = elements.checkinMember.value;
+    lastCheckinResult = null;
+    hideCheckinConfirm();
     renderCheckin();
+  });
+}
+
+if (elements.checkinSearch) {
+  elements.checkinSearch.addEventListener("input", () => {
+    lastCheckinResult = null;
+    hideCheckinConfirm();
+    renderCheckin();
+  });
+}
+
+if (elements.checkinNote) {
+  elements.checkinNote.addEventListener("input", () => {
+    hideCheckinConfirm();
   });
 }
 
 if (elements.checkinLogVisit) {
   elements.checkinLogVisit.addEventListener("click", () => {
-    const personId = elements.checkinMember ? elements.checkinMember.value : "";
-    if (!personId) return;
-    logVisit(personId);
-    selectedCheckinMemberId = personId;
-    renderAll();
+    if (!getPendingCheckinMember()) return;
+    showCheckinConfirm();
+  });
+}
+
+if (elements.checkinConfirm) {
+  elements.checkinConfirm.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.hasAttribute("data-checkin-confirm")) {
+      confirmCheckin();
+    } else if (button.hasAttribute("data-checkin-cancel")) {
+      hideCheckinConfirm();
+    }
+  });
+}
+
+if (elements.checkinResult) {
+  elements.checkinResult.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-checkin-again]");
+    if (!button) return;
+    lastCheckinResult = null;
+    hideCheckinConfirm();
+    if (elements.checkinSearch) elements.checkinSearch.value = "";
+    renderCheckin();
+    if (elements.checkinSearch) elements.checkinSearch.focus();
   });
 }
 
@@ -1204,9 +1341,7 @@ elements.awardForm.addEventListener("submit", (event) => {
   setError(elements.awardNoteError, "");
   if (!personId || !Number.isFinite(points) || points <= 0) return;
 
-  adjustPoints(personId, points, "award", note);
-  elements.awardForm.reset();
-  renderAll();
+  showAwardConfirm({ personId, points, type: "award", reason: note, source: "form" });
 });
 
 elements.removeForm.addEventListener("submit", (event) => {
@@ -1222,9 +1357,23 @@ elements.removeForm.addEventListener("submit", (event) => {
   setError(elements.removeNoteError, "");
   if (!personId || !Number.isFinite(points) || points <= 0) return;
 
-  adjustPoints(personId, -points, "remove", note);
-  elements.removeForm.reset();
-  renderAll();
+  const person = state.people.find((entry) => entry.id === personId);
+  const balanceBefore = person ? Number(person.points) || 0 : 0;
+  askConfirm({
+    title: "Remove Points",
+    message: "This subtracts points from the member balance and is written to the activity log.",
+    details: [
+      person ? `${person.firstName} ${person.lastName}` : "Selected member",
+      `Balance: ${balanceBefore} → ${Math.max(0, balanceBefore - points)} points`,
+      `Reason: ${note}`,
+    ].join("\n"),
+    confirmLabel: `Remove ${points} pt${points === 1 ? "" : "s"}`,
+    onConfirm: () => {
+      adjustPoints(personId, -points, "remove", note);
+      elements.removeForm.reset();
+      renderAll();
+    },
+  });
 });
 
 if (elements.volunteerForm) {
@@ -1301,7 +1450,6 @@ if (elements.eventForm) {
     saveState();
     elements.eventForm.reset();
     renderCalendar();
-    renderEvents();
   });
 }
 
@@ -1341,14 +1489,19 @@ if (elements.staffTaskForm) {
     event.preventDefault();
     const title = elements.staffTaskInput ? elements.staffTaskInput.value.trim() : "";
     if (!title) return;
+    const dueDate = elements.staffTaskDue ? elements.staffTaskDue.value : "";
     if (editingStaffTodoId) {
       const todo = state.staffTodosGlobal.find((entry) => entry.id === editingStaffTodoId);
-      if (todo) todo.title = title;
+      if (todo) {
+        todo.title = title;
+        todo.dueDate = dueDate;
+      }
       logAdminAction("Staff Reminder Updated", `Updated staff reminder "${title}"`);
     } else {
       state.staffTodosGlobal.unshift({
         id: crypto.randomUUID(),
         title,
+        dueDate,
         done: false,
         ownerId: currentStaffUser ? currentStaffUser.id : null,
         actor: getCurrentActorName(),
@@ -1542,39 +1695,47 @@ elements.redeemForm.addEventListener("keydown", (event) => {
 
 elements.redeemForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const formData = new FormData(elements.redeemForm);
-  const personId = formData.get("personId");
-  const person = state.people.find((entry) => entry.id === personId);
-  if (!person) return;
-
-  const selections = getRedeemSelections();
-  if (selections.length === 0) {
-    setError(elements.redeemError, "Select at least one item.");
-    return;
-  }
-
-  const totalCost = selections.reduce(
-    (sum, entry) => sum + entry.item.cost * entry.quantity,
-    0
-  );
-
-  if (totalCost > person.points) {
-    setError(
-      elements.redeemError,
-      `Not enough points. Needed ${totalCost}, have ${person.points}.`
-    );
-    return;
-  }
-
-  setError(elements.redeemError, "");
-  const note = selections
-    .map((entry) => `${entry.quantity} x ${entry.item.name}`)
-    .join("; ");
-
-  adjustPoints(personId, -totalCost, "redeem", note);
-  resetRedeemSelections();
-  renderAll();
+  buildRedeemConfirm();
 });
+
+if (elements.redeemSearch) {
+  elements.redeemSearch.addEventListener("input", () => {
+    applyRedeemFilter();
+  });
+}
+
+if (elements.reportRange) {
+  elements.reportRange.addEventListener("change", renderReports);
+}
+
+if (elements.reportType) {
+  elements.reportType.addEventListener("change", renderReports);
+}
+
+if (elements.redeemConfirm) {
+  elements.redeemConfirm.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.hasAttribute("data-redeem-do")) {
+      confirmRedeem();
+    } else if (button.hasAttribute("data-redeem-cancel")) {
+      hideConfirmPanel(elements.redeemConfirm);
+    }
+  });
+}
+
+if (elements.awardConfirm) {
+  elements.awardConfirm.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.hasAttribute("data-award-do")) {
+      confirmAward();
+    } else if (button.hasAttribute("data-award-cancel")) {
+      pendingAward = null;
+      hideConfirmPanel(elements.awardConfirm);
+    }
+  });
+}
 
 function adjustPoints(personId, delta, type, note) {
   const person = state.people.find((entry) => entry.id === personId);
@@ -1610,6 +1771,8 @@ function renderAll() {
   renderItems();
   renderActivity();
   renderStats();
+  renderDashboardStats();
+  renderDashboardHome();
   renderSummary();
   renderLogControls();
   renderStaffTaskBoard();
@@ -1617,7 +1780,6 @@ function renderAll() {
   renderDonors();
   renderDocuments();
   renderResources();
-  renderEvents();
   renderStaffUsers();
   renderRestoreControls();
   renderRedeemPoints();
@@ -1626,84 +1788,396 @@ function renderAll() {
   hydrateTasks();
   updateRedeemTotal();
   updateRedeemGroupCounts();
+  renderRewardsHistory();
+  renderRewardsToast();
+  updateAwardBalance();
+  renderReports();
   updateStaffVisibility();
-  queuePageGuideUpdate();
+  applyRoute();
 }
 
-function getPageGuideEntries() {
-  return Array.from(document.querySelectorAll(".page-guide__link"))
-    .map((link) => {
-      const sectionId = (link.getAttribute("href") || "").replace(/^#/, "");
-      const section = sectionId ? document.getElementById(sectionId) : null;
-      return { link, section };
-    })
-    .filter(({ section }) => Boolean(section));
+// ---- Hash router: app shell page navigation ----
+function parseRouteFromHash() {
+  const raw = String(window.location.hash || "").replace(/^#\/?/, "").trim();
+  if (!raw) return { page: "dashboard", memberId: "" };
+  const segments = raw.split("/").filter(Boolean);
+  const head = segments[0];
+  if (head === "members" && segments[1]) {
+    return { page: "member-profile", memberId: decodeURIComponent(segments[1]) };
+  }
+  if (APP_ROUTES.includes(head)) {
+    const focusId = segments[1] ? decodeURIComponent(segments[1]) : "";
+    return { page: head, memberId: focusId };
+  }
+  return { page: "dashboard", memberId: "" };
 }
 
-function updatePageGuideHighlight() {
-  const entries = getPageGuideEntries();
-  if (entries.length === 0) return;
-  const anchorLine = Math.min(window.innerHeight * 0.28, 220);
-  let activeId = entries[0].section.id;
-  let bestFuture = null;
+function openAppDrawer() {
+  if (!elements.appShell) return;
+  elements.appShell.classList.add("is-drawer-open");
+  if (elements.appScrim) elements.appScrim.hidden = false;
+  if (elements.appMenuToggle) elements.appMenuToggle.setAttribute("aria-expanded", "true");
+}
 
-  entries.forEach(({ section }) => {
-    const rect = section.getBoundingClientRect();
-    if (rect.top <= anchorLine) {
-      activeId = section.id;
-      bestFuture = null;
-      return;
-    }
-    if (!bestFuture || rect.top < bestFuture.top) {
-      bestFuture = { id: section.id, top: rect.top };
+function closeAppDrawer(options = {}) {
+  if (!elements.appShell) return;
+  const wasOpen = elements.appShell.classList.contains("is-drawer-open");
+  elements.appShell.classList.remove("is-drawer-open");
+  if (elements.appScrim) elements.appScrim.hidden = true;
+  if (elements.appMenuToggle) elements.appMenuToggle.setAttribute("aria-expanded", "false");
+  if (wasOpen && options.restoreFocus && elements.appMenuToggle) {
+    elements.appMenuToggle.focus();
+  }
+}
+
+function toggleAppDrawer() {
+  if (!elements.appShell) return;
+  if (elements.appShell.classList.contains("is-drawer-open")) {
+    closeAppDrawer();
+  } else {
+    openAppDrawer();
+  }
+}
+
+function applyRoute(options = {}) {
+  const shouldScroll = Boolean(options.scroll);
+  const route = parseRouteFromHash();
+  currentRoute = route;
+
+  document.querySelectorAll("[data-page]").forEach((pageElement) => {
+    pageElement.hidden = pageElement.dataset.page !== route.page;
+  });
+
+  const navKey = APP_NAV_ROUTES[route.page] || "dashboard";
+  document.querySelectorAll(".app-nav__link").forEach((link) => {
+    const isActive = link.dataset.route === navKey;
+    link.classList.toggle("is-active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
     }
   });
 
-  if (bestFuture && entries[0].section.getBoundingClientRect().top > anchorLine) {
-    activeId = bestFuture.id;
+  const title = APP_ROUTE_TITLES[route.page] || "Dashboard";
+  if (elements.appPageTitle) elements.appPageTitle.textContent = title;
+  document.title = `${title} - Lighthouse Ministry Hub`;
+
+  if (route.page === "member-profile") {
+    renderMemberProfile(route.memberId);
+  } else if (route.page === "check-in" || route.page === "rewards") {
+    applyMemberPreset(route);
   }
 
-  entries.forEach(({ link, section }) => {
-    const isActive = section.id === activeId;
-    link.classList.toggle("is-active", isActive);
-    link.setAttribute("aria-current", isActive ? "location" : "false");
+  closeAppDrawer();
+
+  if (shouldScroll) {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }
+
+  if (options.focusHeading && elements.appPageTitle) {
+    try {
+      elements.appPageTitle.focus({ preventScroll: true });
+    } catch (error) {
+      elements.appPageTitle.focus();
+    }
+  }
+}
+
+function attachRouter() {
+  if (!window.location.hash) {
+    try {
+      window.history.replaceState(null, "", "#/dashboard");
+    } catch (error) {
+      window.location.hash = "#/dashboard";
+    }
+  }
+  window.addEventListener("hashchange", () => applyRoute({ scroll: true, focusHeading: true }));
+
+  if (elements.appMenuToggle) {
+    elements.appMenuToggle.addEventListener("click", toggleAppDrawer);
+  }
+  if (elements.appScrim) {
+    elements.appScrim.addEventListener("click", closeAppDrawer);
+  }
+  window.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (getTopOpenModal()) return;
+    closeAppDrawer({ restoreFocus: true });
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 1024) closeAppDrawer();
+  });
+
+  applyRoute();
+}
+
+
+function applyMemberPreset(route) {
+  const memberId = route.memberId;
+  if (!memberId) {
+    lastPresetKey = "";
+    return;
+  }
+  const key = `${route.page}:${memberId}`;
+  if (key === lastPresetKey) return;
+  const person = (state.people || []).find((entry) => entry.id === memberId);
+  if (!person) return;
+  lastPresetKey = key;
+
+  const selects = document.querySelectorAll(
+    '#checkin-member, #redeem-form select[name="personId"], #task-form select[name="personId"], #award-form select[name="personId"]'
+  );
+  selects.forEach((select) => {
+    const option = Array.from(select.options).find((entry) => entry.value === memberId);
+    if (!option) return;
+    select.value = memberId;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
   });
 }
 
-function syncPageGuideScroll() {
-  const guide = document.querySelector(".page-guide");
-  if (!guide) return;
-  const maxGuideScroll = guide.scrollHeight - guide.clientHeight;
-  if (maxGuideScroll <= 0) {
-    guide.scrollTop = 0;
+function buildProfileEmpty(message) {
+  const empty = document.createElement("p");
+  empty.className = "hint";
+  empty.textContent = message;
+  return empty;
+}
+
+function renderMemberProfile(memberId) {
+  const root = elements.memberProfileRoot;
+  if (!root) return;
+  root.innerHTML = "";
+
+  const person = state.people.find((entry) => entry.id === memberId);
+  if (!person) {
+    if (elements.memberProfileTitle) elements.memberProfileTitle.textContent = "Member Profile";
+    const missing = document.createElement("div");
+    missing.className = "profile-missing";
+    const title = document.createElement("p");
+    title.className = "empty-state__title";
+    title.textContent = "Member not found";
+    const copy = document.createElement("p");
+    copy.className = "hint";
+    copy.textContent =
+      "This member may have been removed. Return to the directory to choose another member.";
+    const back = document.createElement("a");
+    back.className = "btn secondary";
+    back.href = "#/members";
+    back.textContent = "Back to Members";
+    missing.append(title, copy, back);
+    root.append(missing);
     return;
   }
 
-  const doc = document.documentElement;
-  const maxPageScroll = Math.max(doc.scrollHeight - window.innerHeight, 1);
-  const progress = Math.min(Math.max(window.scrollY / maxPageScroll, 0), 1);
-  guide.scrollTop = maxGuideScroll * progress;
-}
+  const fullName = `${person.firstName} ${person.lastName}`;
+  if (elements.memberProfileTitle) elements.memberProfileTitle.textContent = fullName;
 
-function queuePageGuideUpdate() {
-  if (pageGuideFrame) cancelAnimationFrame(pageGuideFrame);
-  pageGuideFrame = requestAnimationFrame(() => {
-    pageGuideFrame = null;
-    updatePageGuideHighlight();
-    syncPageGuideScroll();
+  const points = Number(person.points) || 0;
+  const visits = getVisitEntriesForPerson(person.id);
+  const lastVisit = getLastVisitTimestamp(person.id);
+  const activityEntries = state.activity
+    .filter((entry) => entry.personId === person.id)
+    .slice()
+    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+
+  const header = document.createElement("div");
+  header.className = "profile-header";
+
+  const avatar = document.createElement("div");
+  avatar.className = "profile-header__avatar";
+  if (person.profilePhoto) {
+    const img = document.createElement("img");
+    img.src = person.profilePhoto;
+    img.alt = fullName;
+    avatar.append(img);
+  } else {
+    avatar.textContent = getInitials(person.firstName, person.lastName);
+  }
+
+  const identity = document.createElement("div");
+  identity.className = "profile-header__identity";
+  const nameEl = document.createElement("h3");
+  nameEl.className = "profile-header__name";
+  nameEl.textContent = fullName;
+
+  const badges = document.createElement("div");
+  badges.className = "member-badges";
+  const tagBadge = document.createElement("span");
+  tagBadge.className = "member-badge member-badge--neutral";
+  tagBadge.textContent = person.residenceTag || "No tag";
+  badges.append(tagBadge);
+  if (person.followUpNeeded) {
+    const followBadge = document.createElement("span");
+    followBadge.className = "member-badge";
+    followBadge.textContent = person.followUpNote
+      ? `Needs Follow-Up: ${person.followUpNote}`
+      : "Needs Follow-Up";
+    badges.append(followBadge);
+  }
+
+  const meta = document.createElement("p");
+  meta.className = "hint";
+  meta.textContent = `${visits.length} visit${visits.length === 1 ? "" : "s"} logged${
+    lastVisit ? ` • Last visit ${new Date(lastVisit).toLocaleDateString()}` : " • No visits yet"
+  }`;
+
+  identity.append(nameEl, badges, meta);
+
+  const actions = document.createElement("div");
+  actions.className = "profile-header__actions";
+  const createActionLink = (href, label) => {
+    const link = document.createElement("a");
+    link.className = "btn secondary small";
+    link.href = href;
+    link.textContent = label;
+    return link;
+  };
+  const memberLink = encodeURIComponent(person.id);
+  actions.append(
+    createActionLink("#/members", "Back to Members"),
+    createActionLink(`#/check-in/${memberLink}`, "Check In"),
+    createActionLink(`#/rewards/${memberLink}`, "Award / Redeem")
+  );
+
+  header.append(avatar, identity, actions);
+  root.append(header);
+
+  const stats = document.createElement("div");
+  stats.className = "profile-stats";
+  [
+    { label: "Current Points", value: String(points) },
+    { label: "Visits Logged", value: String(visits.length) },
+    {
+      label: "Last Visit",
+      value: lastVisit ? new Date(lastVisit).toLocaleDateString() : "None yet",
+    },
+    { label: "Point Activity", value: String(activityEntries.length) },
+  ].forEach((definition) => {
+    const card = document.createElement("div");
+    card.className = "stat-card";
+    const label = document.createElement("span");
+    label.className = "stat-card__label";
+    label.textContent = definition.label;
+    const value = document.createElement("strong");
+    value.className = "stat-card__value";
+    value.textContent = definition.value;
+    card.append(label, value);
+    stats.append(card);
   });
+  root.append(stats);
+
+  const historyCard = document.createElement("section");
+  historyCard.className = "profile-panel";
+  const historyHeader = document.createElement("div");
+  historyHeader.className = "profile-panel__header";
+  historyHeader.innerHTML = "<h3>Point History</h3>";
+  historyCard.append(historyHeader);
+
+  if (activityEntries.length === 0) {
+    historyCard.append(buildProfileEmpty("No point activity has been recorded yet."));
+  } else {
+    const table = document.createElement("div");
+    table.className = "table profile-ledger";
+    const headerRow = document.createElement("div");
+    headerRow.className = "table__row header";
+    headerRow.innerHTML =
+      "<div>Date</div><div>Action</div><div>Amount</div><div>Balance</div>";
+    table.append(headerRow);
+
+    activityEntries.forEach((entry) => {
+      const row = document.createElement("div");
+      row.className = "table__row";
+
+      const dateCell = document.createElement("div");
+      dateCell.textContent = new Date(entry.timestamp).toLocaleString();
+
+      const actionCell = document.createElement("div");
+      actionCell.textContent = entry.note || entry.type || "Activity";
+      const metaLine = document.createElement("span");
+      metaLine.className = "hint";
+      metaLine.textContent = [entry.type, entry.actor].filter(Boolean).join(" • ");
+      actionCell.append(document.createElement("br"), metaLine);
+
+      const delta = Number(entry.delta);
+      const amountCell = document.createElement("div");
+      const amount = document.createElement("span");
+      const isDebit = Number.isFinite(delta) && delta < 0;
+      amount.className = `ledger-amount ${isDebit ? "ledger-amount--down" : "ledger-amount--up"}`;
+      amount.textContent = Number.isFinite(delta)
+        ? `${delta > 0 ? "+" : ""}${delta}`
+        : "—";
+      amountCell.append(amount);
+
+      const balanceCell = document.createElement("div");
+      balanceCell.textContent = Number.isFinite(Number(entry.after))
+        ? String(Number(entry.after))
+        : "—";
+
+      row.append(dateCell, actionCell, amountCell, balanceCell);
+      table.append(row);
+    });
+
+    historyCard.append(table);
+  }
+  root.append(historyCard);
+
+  const visitCard = document.createElement("section");
+  visitCard.className = "profile-panel";
+  const visitHeader = document.createElement("div");
+  visitHeader.className = "profile-panel__header";
+  visitHeader.innerHTML = "<h3>Visit History</h3>";
+  visitCard.append(visitHeader);
+  if (visits.length === 0) {
+    visitCard.append(buildProfileEmpty("No visits logged yet. Use Check-In to log the first one."));
+  } else {
+    const list = document.createElement("ul");
+    list.className = "profile-visit-list";
+    visits.forEach((entry) => {
+      const item = document.createElement("li");
+      item.textContent = `${new Date(entry.timestamp).toLocaleString()} — ${
+        entry.actor || "Unknown Staff"
+      }`;
+      list.append(item);
+    });
+    visitCard.append(list);
+  }
+  root.append(visitCard);
+
+  const contactCard = document.createElement("section");
+  contactCard.className = "profile-panel";
+  const contactHeader = document.createElement("div");
+  contactHeader.className = "profile-panel__header";
+  contactHeader.innerHTML = "<h3>Contact &amp; Details</h3>";
+  contactCard.append(contactHeader);
+  const details = document.createElement("div");
+  details.className = "profile-details";
+  [
+    ["Home / Housing", person.home || "Not recorded"],
+    ["Phone", person.phone || "Not recorded"],
+    ["Email", person.email || "Not recorded"],
+    ["Emergency Contact", person.emergencyContactName || "Not recorded"],
+    ["Emergency Phone", person.emergencyContactPhone || "Not recorded"],
+    ["Notes", person.memberNotes || "None"],
+  ].forEach(([label, value]) => {
+    const row = document.createElement("div");
+    row.className = "profile-detail";
+    const labelEl = document.createElement("span");
+    labelEl.className = "profile-detail__label";
+    labelEl.textContent = label;
+    const valueEl = document.createElement("span");
+    valueEl.className = "profile-detail__value";
+    valueEl.textContent = String(value);
+    row.append(labelEl, valueEl);
+    details.append(row);
+  });
+  contactCard.append(details);
+  root.append(contactCard);
 }
 
-function attachPageGuideSpy() {
-  if (!document.querySelector(".page-guide__link")) return;
-  window.addEventListener("scroll", queuePageGuideUpdate, { passive: true });
-  window.addEventListener("resize", queuePageGuideUpdate);
-  queuePageGuideUpdate();
-}
-
-function logVisit(personId) {
+function logVisit(personId, note) {
   const person = state.people.find((entry) => entry.id === personId);
   if (!person) return;
+  const cleanNote = String(note || "").trim();
   state.visits.unshift({
     id: crypto.randomUUID(),
     personId,
@@ -1717,12 +2191,155 @@ function logVisit(personId) {
     delta: 0,
     before: person.points,
     after: person.points,
-    note: "Visit logged",
+    note: cleanNote || "Visit logged",
     actor: getCurrentActorName(),
     timestamp: new Date().toISOString(),
   });
   state.activity = state.activity.slice(0, MAX_ACTIVITY_LOG_ENTRIES);
   saveState();
+}
+
+function getRecentVisitForPerson(personId, withinMs = 60000) {
+  const cutoff = Date.now() - withinMs;
+  return (state.visits || []).find(
+    (entry) => entry.personId === personId && Date.parse(entry.timestamp) >= cutoff
+  );
+}
+
+function getCheckinMatches() {
+  const searchTerm = elements.checkinSearch ? normalizeLabel(elements.checkinSearch.value) : "";
+  return (state.people || []).filter((person) => {
+    if (!searchTerm) return true;
+    return (
+      normalizeLabel(`${person.firstName} ${person.lastName}`).includes(searchTerm) ||
+      normalizeLabel(person.residenceTag || "").includes(searchTerm) ||
+      normalizeLabel(person.home || "").includes(searchTerm)
+    );
+  });
+}
+
+function applyCheckinFilter() {
+  const matches = getCheckinMatches();
+  if (!elements.checkinMember) return matches;
+  const previous = elements.checkinMember.value || selectedCheckinMemberId;
+  elements.checkinMember.innerHTML = "";
+  matches.forEach((person) => {
+    const option = document.createElement("option");
+    option.value = person.id;
+    option.textContent = `${person.firstName} ${person.lastName}`;
+    elements.checkinMember.append(option);
+  });
+  const keep = matches.find((person) => person.id === previous) || matches[0];
+  if (keep) {
+    elements.checkinMember.value = keep.id;
+    selectedCheckinMemberId = keep.id;
+  }
+  return matches;
+}
+
+function getPendingCheckinMember() {
+  const personId = elements.checkinMember ? elements.checkinMember.value : "";
+  return (state.people || []).find((person) => person.id === personId) || null;
+}
+
+function hideCheckinConfirm() {
+  if (!elements.checkinConfirm) return;
+  elements.checkinConfirm.hidden = true;
+  elements.checkinConfirm.innerHTML = "";
+}
+
+function renderCheckinWarning(message) {
+  if (!elements.checkinConfirm) return;
+  const warning = elements.checkinConfirm.querySelector("[data-checkin-warning]");
+  if (!warning) return;
+  warning.textContent = message;
+  warning.hidden = false;
+}
+
+function showCheckinConfirm() {
+  if (!elements.checkinConfirm) return;
+  const person = getPendingCheckinMember();
+  if (!person) return;
+  const note = elements.checkinNote ? elements.checkinNote.value.trim() : "";
+  const visits = getVisitEntriesForPerson(person.id);
+  const lastVisit = visits[0] ? new Date(visits[0].timestamp).toLocaleString() : "No visits yet";
+  const duplicate = getRecentVisitForPerson(person.id);
+  const row = (label, value) =>
+    `<div class="checkin-confirm__row"><span>${escapeHtml(label)}</span><strong>${value}</strong></div>`;
+
+  elements.checkinConfirm.innerHTML = `
+    <p class="checkin-confirm__title">Confirm check-in</p>
+    ${row("Member", escapeHtml(`${person.firstName} ${person.lastName}`))}
+    ${row("Points", escapeHtml(String(Number(person.points) || 0)))}
+    ${row("Last visit", escapeHtml(lastVisit))}
+    ${row(
+      "Follow-up",
+      escapeHtml(person.followUpNeeded ? person.followUpNote || "Flagged" : "Not flagged")
+    )}
+    ${row("Visit note", note ? escapeHtml(note) : "None")}
+    <div class="form-actions compact">
+      <button type="button" class="btn primary" data-checkin-confirm${
+        duplicate ? " disabled" : ""
+      }>Confirm Check-In</button>
+      <button type="button" class="btn secondary" data-checkin-cancel>Cancel</button>
+    </div>
+    <p class="error" data-checkin-warning hidden></p>
+  `;
+  elements.checkinConfirm.hidden = false;
+  if (duplicate) {
+    renderCheckinWarning(
+      `${person.firstName} ${person.lastName} was already checked in within the last minute. Cancel to avoid a duplicate visit.`
+    );
+  }
+  const confirmButton = elements.checkinConfirm.querySelector("[data-checkin-confirm]");
+  if (confirmButton && !duplicate) confirmButton.focus();
+}
+
+function confirmCheckin() {
+  if (checkinSubmitting) return;
+  const person = getPendingCheckinMember();
+  if (!person) return;
+  if (getRecentVisitForPerson(person.id)) {
+    renderCheckinWarning(
+      `${person.firstName} ${person.lastName} was already checked in within the last minute.`
+    );
+    return;
+  }
+  checkinSubmitting = true;
+  const note = elements.checkinNote ? elements.checkinNote.value.trim() : "";
+  logVisit(person.id, note);
+  selectedCheckinMemberId = person.id;
+  lastCheckinResult = {
+    personId: person.id,
+    name: `${person.firstName} ${person.lastName}`,
+    note,
+    timestamp: new Date().toISOString(),
+  };
+  if (elements.checkinNote) elements.checkinNote.value = "";
+  hideCheckinConfirm();
+  checkinSubmitting = false;
+  renderAll();
+}
+
+function renderCheckinResult() {
+  if (!elements.checkinResult) return;
+  if (!lastCheckinResult) {
+    elements.checkinResult.innerHTML = "";
+    elements.checkinResult.hidden = true;
+    return;
+  }
+  const { personId, name, note, timestamp } = lastCheckinResult;
+  elements.checkinResult.hidden = false;
+  elements.checkinResult.innerHTML = `
+    <p class="checkin-result__title">Checked in: ${escapeHtml(name)}</p>
+    <p class="hint">${escapeHtml(new Date(timestamp).toLocaleTimeString())}${
+    note ? ` &middot; Note: ${escapeHtml(note)}` : " &middot; No note added"
+  }</p>
+    <div class="form-actions compact">
+      <a class="btn small primary" href="#/members/${encodeURIComponent(personId)}">Open Profile</a>
+      <button type="button" class="btn small secondary" data-checkin-again>Check In Another Member</button>
+    </div>
+  `;
 }
 
 function refreshAfterPointsChange() {
@@ -1854,7 +2471,7 @@ function getUpcomingEvents(days = 7) {
   const end = new Date(today);
   end.setDate(end.getDate() + days);
   return (state.events || []).filter((eventItem) => {
-    const eventTime = Date.parse(eventItem.date);
+    const eventTime = eventDateTime(eventItem.date);
     return Number.isFinite(eventTime) && eventTime >= today.getTime() && eventTime <= end.getTime();
   });
 }
@@ -1910,6 +2527,94 @@ function renderDashboardAlerts() {
     .join("");
 }
 
+function renderDashboardHome() {
+  if (elements.dashboardFollowups) {
+    const followUps = (state.people || []).filter((person) => person.followUpNeeded);
+    if (!followUps.length) {
+      elements.dashboardFollowups.innerHTML =
+        "<p class='hint'>No follow-ups flagged. Members you mark during check-in appear here.</p>";
+    } else {
+      elements.dashboardFollowups.innerHTML = followUps
+        .slice(0, 6)
+        .map((person) => {
+          const lastVisit = getLastVisitTimestamp(person.id);
+          const meta = lastVisit
+            ? `Last visit ${formatLogDate(lastVisit)}`
+            : "No visits logged yet";
+          return `
+            <a class="person__entry person__entry--link" href="#/members/${encodeURIComponent(person.id)}">
+              <strong>${escapeHtml(`${person.firstName} ${person.lastName}`)}</strong><br />
+              <span class="hint">${escapeHtml(meta)}</span>
+            </a>
+          `;
+        })
+        .join("");
+      if (followUps.length > 6) {
+        elements.dashboardFollowups.insertAdjacentHTML(
+          "beforeend",
+          `<p class="hint">+${followUps.length - 6} more flagged.</p>`
+        );
+      }
+    }
+  }
+
+  if (elements.dashboardEvents) {
+    const upcoming = getUpcomingEvents(14).sort(
+      (a, b) => eventDateTime(a.date) - eventDateTime(b.date)
+    );
+    if (!upcoming.length) {
+      elements.dashboardEvents.innerHTML =
+        "<p class='hint'>No events in the next two weeks. Add one on the Calendar page.</p>";
+    } else {
+      elements.dashboardEvents.innerHTML = upcoming
+        .slice(0, 5)
+        .map((eventItem) => {
+          const detail = eventItem.description ? escapeHtml(eventItem.description) : "Event";
+          return `
+            <div class="person__entry">
+              <strong>${escapeHtml(eventItem.title)}</strong><br />
+              <span class="hint">${escapeHtml(formatEventDate(eventItem.date))} &middot; ${detail}</span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+  }
+
+  if (elements.dashboardActivity) {
+    const recent = (state.activity || [])
+      .slice()
+      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+      .slice(0, 8);
+    if (!recent.length) {
+      elements.dashboardActivity.innerHTML =
+        "<p class='hint'>No activity recorded yet. Check-ins and point changes show up here.</p>";
+    } else {
+      elements.dashboardActivity.innerHTML = recent
+        .map((entry) => {
+          const personName = entry.personId ? getPersonName(entry.personId) : "Unknown";
+          const delta = Number.isFinite(entry.delta) ? entry.delta : null;
+          const deltaLabel = delta === null ? "" : `${delta > 0 ? "+" : ""}${delta} pts`;
+          const deltaClass =
+            delta === null ? "" : delta >= 0 ? " ledger-amount--up" : " ledger-amount--down";
+          const label = entry.note || titleCase(entry.type || "activity");
+          const deltaHtml = deltaLabel
+            ? ` &middot; <span class="ledger-amount${deltaClass}">${escapeHtml(deltaLabel)}</span>`
+            : "";
+          return `
+            <div class="person__entry">
+              <strong>${escapeHtml(personName)}</strong><br />
+              <span class="hint">${escapeHtml(label)}${deltaHtml} &middot; ${escapeHtml(
+            formatLogDate(entry.timestamp)
+          )}</span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+  }
+}
+
 function renderPeople() {
   const searchTerm = elements.memberSearch
     ? normalizeLabel(elements.memberSearch.value)
@@ -1945,9 +2650,28 @@ function renderPeople() {
       return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
     });
 
+  const filtersActive = Boolean(searchTerm) || Boolean(activeTag);
+  if (elements.memberCount) {
+    const total = state.people.length;
+    const filterParts = [];
+    if (searchTerm) filterParts.push(`matching "${elements.memberSearch.value.trim()}"`);
+    if (activeTag) filterParts.push(`tagged ${activeTag}`);
+    elements.memberCount.textContent =
+      total === 0
+        ? "No members yet. Add your first member with the form above."
+        : `Showing ${visiblePeople.length} of ${total} member${total === 1 ? "" : "s"}${
+            filterParts.length ? ` (${filterParts.join(", ")})` : ""
+          }.`;
+  }
+  if (elements.memberClearFilters) {
+    elements.memberClearFilters.hidden = !filtersActive;
+  }
+
   if (visiblePeople.length === 0) {
     elements.peopleList.innerHTML =
-      "<p class='hint'>No matching members found.</p>";
+      state.people.length === 0
+        ? "<p class='hint'>No members yet. Use the Add Member form above to start your roster.</p>"
+        : "<p class='hint'>No members match those filters. Clear the search or tag filter to see everyone again.</p>";
     return;
   }
 
@@ -2014,6 +2738,12 @@ function renderPeople() {
         },
       });
     });
+    const profileLink = document.createElement("a");
+    profileLink.className = "btn small primary";
+    profileLink.href = `#/members/${encodeURIComponent(person.id)}`;
+    profileLink.textContent = "Open Profile";
+    actions.prepend(profileLink);
+
     actions.append(removeButton);
 
     const visitButton = document.createElement("button");
@@ -2887,12 +3617,20 @@ function renderItems() {
       hide.className = "btn small danger";
       hide.textContent = "Hide";
       hide.addEventListener("click", () => {
-        if (!state.hiddenItems.includes(item.name)) {
-          state.hiddenItems.push(item.name);
-        }
-        logAdminAction("Item Hidden", `Hid item ${item.name}`);
-        saveState();
-        renderAll();
+        askConfirm({
+          title: "Hide Reward Item",
+          message: "Hidden items disappear from the redeem list for everyone.",
+          details: item.name || "Unnamed item",
+          confirmLabel: "Hide Item",
+          onConfirm: () => {
+            if (!state.hiddenItems.includes(item.name)) {
+              state.hiddenItems.push(item.name);
+            }
+            logAdminAction("Item Hidden", `Hid item ${item.name}`);
+            saveState();
+            renderAll();
+          },
+        });
       });
       controls.append(input, hide);
 
@@ -3021,6 +3759,54 @@ function renderStats() {
   }
 }
 
+// Start of the trailing 7-day window used by the dashboard tiles.
+function getWeeklyWindowStart(days = 7) {
+  const start = new Date();
+  start.setDate(start.getDate() - (days - 1));
+  start.setHours(0, 0, 0, 0);
+  return start.getTime();
+}
+
+function computeDashboardMetrics() {
+  const servedToday = getTodayVisits().memberIds.size;
+  const weekStart = getWeeklyWindowStart(7);
+
+  let checkInsThisWeek = 0;
+  (state.visits || []).forEach((entry) => {
+    const timestamp = Date.parse(entry.timestamp);
+    if (Number.isFinite(timestamp) && timestamp >= weekStart) checkInsThisWeek += 1;
+  });
+
+  let itemsRedeemedThisWeek = 0;
+  (state.activity || []).forEach((entry) => {
+    if (entry.type !== "redeem") return;
+    const timestamp = Date.parse(entry.timestamp);
+    if (!Number.isFinite(timestamp) || timestamp < weekStart) return;
+    parseRedeemNote(entry.note || "").forEach((item) => {
+      const quantity = Number(item.quantity);
+      if (Number.isFinite(quantity) && quantity > 0) itemsRedeemedThisWeek += quantity;
+    });
+  });
+
+  const followUpsDue = (state.people || []).filter((person) => person.followUpNeeded).length;
+
+  return { servedToday, checkInsThisWeek, itemsRedeemedThisWeek, followUpsDue };
+}
+
+function renderDashboardStats() {
+  const metrics = computeDashboardMetrics();
+  const setValue = (target, value) => {
+    if (target) target.textContent = String(value);
+  };
+  setValue(elements.kpiServedToday, metrics.servedToday);
+  setValue(elements.kpiCheckInsWeek, metrics.checkInsThisWeek);
+  setValue(elements.kpiRedeemedWeek, metrics.itemsRedeemedThisWeek);
+  setValue(elements.kpiFollowUpsDue, metrics.followUpsDue);
+  if (elements.kpiFollowUpsCard) {
+    elements.kpiFollowUpsCard.classList.toggle("stat-card--attention", metrics.followUpsDue > 0);
+  }
+}
+
 function renderAdminLog() {
   if (!elements.adminTable) return;
   elements.adminTable.innerHTML = "";
@@ -3082,15 +3868,26 @@ function renderAdminLog() {
 
 function renderCheckin() {
   if (!elements.checkinMember || !elements.checkinSummary || !elements.checkinHistory) return;
+  renderCheckinResult();
   if (!state.people.length) {
     elements.checkinSummary.innerHTML = "<p class='hint'>Add a member before using check-in.</p>";
     elements.checkinHistory.innerHTML = "<p class='hint'>No member selected.</p>";
     return;
   }
-  if (selectedCheckinMemberId && state.people.some((person) => person.id === selectedCheckinMemberId)) {
+  const matches = applyCheckinFilter();
+  if (elements.checkinFollowupToggle) {
+    elements.checkinFollowupToggle.disabled = matches.length === 0;
+  }
+  if (!matches.length) {
+    elements.checkinSummary.innerHTML =
+      "<p class='hint'>No members match that search. Clear the search box to see everyone.</p>";
+    elements.checkinHistory.innerHTML = "<p class='hint'>No member selected.</p>";
+    return;
+  }
+  if (selectedCheckinMemberId && matches.some((person) => person.id === selectedCheckinMemberId)) {
     elements.checkinMember.value = selectedCheckinMemberId;
   }
-  const personId = elements.checkinMember.value || state.people[0].id;
+  const personId = elements.checkinMember.value || matches[0].id;
   selectedCheckinMemberId = personId;
   const person = state.people.find((entry) => entry.id === personId);
   if (!person) return;
@@ -3105,6 +3902,9 @@ function renderCheckin() {
     elements.checkinFollowupToggle.textContent = person.followUpNeeded
       ? "Clear Follow-Up"
       : "Mark Follow-Up";
+  }
+  if (elements.checkinRedeemLink) {
+    elements.checkinRedeemLink.href = `#/rewards/${encodeURIComponent(person.id)}`;
   }
   const recentActivity = (state.activity || [])
     .filter((entry) => entry.personId === person.id)
@@ -3540,15 +4340,38 @@ function renderMemberTagFilter() {
   }
 }
 
+// Event dates are stored as plain YYYY-MM-DD strings. `new Date("2026-10-04")`
+// parses that as UTC midnight, which renders as the previous day for anyone
+// behind UTC, so date-only values are parsed as local dates here.
+function parseDateOnly(value) {
+  const text = String(value || "").trim();
+  const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function eventDateTime(value) {
+  const parsed = parseDateOnly(value);
+  return parsed ? parsed.getTime() : Number.NaN;
+}
+
+function formatEventDate(value) {
+  const parsed = parseDateOnly(value);
+  return parsed ? parsed.toLocaleDateString() : "No date";
+}
+
 function getEventsForMonth(monthDate) {
   const start = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
   const end = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
   return (state.events || [])
     .filter((eventItem) => {
-      const date = new Date(eventItem.date);
-      return date >= start && date <= end;
+      const date = parseDateOnly(eventItem.date);
+      return date !== null && date >= start && date <= end;
     })
-    .sort((a, b) => Date.parse(a.date || 0) - Date.parse(b.date || 0));
+    .sort((a, b) => eventDateTime(a.date) - eventDateTime(b.date));
 }
 
 function renderCalendar() {
@@ -3560,7 +4383,9 @@ function renderCalendar() {
   const events = getEventsForMonth(calendarMonth);
   const byDay = {};
   events.forEach((eventItem) => {
-    const day = new Date(eventItem.date).getDate();
+    const parsedDate = parseDateOnly(eventItem.date);
+    if (!parsedDate) return;
+    const day = parsedDate.getDate();
     if (!byDay[day]) byDay[day] = [];
     byDay[day].push(eventItem);
   });
@@ -3597,8 +4422,15 @@ function renderCalendar() {
     if (isWeekend) {
       cell.classList.add("calendar-day--weekend");
     }
-    if ((byDay[day] || []).length > 0) {
+    const dayEvents = byDay[day] || [];
+    if (dayEvents.length > 0) {
       cell.classList.add("calendar-day--busy");
+      const busyNote = document.createElement("span");
+      busyNote.className = "sr-only";
+      busyNote.textContent = `${dayEvents.length} scheduled item${
+        dayEvents.length === 1 ? "" : "s"
+      }`;
+      cell.append(busyNote);
     }
     const number = document.createElement("div");
     number.className = "calendar-date";
@@ -3623,7 +4455,7 @@ function renderCalendar() {
 
       const popoverDate = document.createElement("div");
       popoverDate.className = "calendar-popover__date";
-      popoverDate.textContent = new Date(eventItem.date).toLocaleDateString();
+      popoverDate.textContent = formatEventDate(eventItem.date);
 
       const popoverDescription = document.createElement("div");
       popoverDescription.className = "calendar-popover__description";
@@ -3672,7 +4504,11 @@ function renderCalendar() {
     elements.calendarGrid.append(cell);
   }
 
-  elements.calendarEvents.innerHTML = "";
+  const view = elements.calendarView ? elements.calendarView.value : "month";
+  const showGrid = view === "month";
+  elements.calendarGrid.hidden = !showGrid;
+  if (elements.calendarNav) elements.calendarNav.hidden = !showGrid;
+  renderEvents();
 }
 
 function renderStaffTaskBoard() {
@@ -3685,12 +4521,24 @@ function renderStaffTaskBoard() {
     elements.staffTaskList.innerHTML = "<p class='hint'>No staff reminders yet.</p>";
     return;
   }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dueTime = (todo) => {
+    const parsed = Date.parse(todo.dueDate || "");
+    return Number.isFinite(parsed) ? parsed : Number.POSITIVE_INFINITY;
+  };
+  todos.sort((a, b) => {
+    if (Boolean(a.done) !== Boolean(b.done)) return a.done ? 1 : -1;
+    return dueTime(a) - dueTime(b);
+  });
   todos.forEach((todo) => {
     const row = document.createElement("div");
     row.className = "todo-row";
+    if (todo.done) row.classList.add("todo-row--done");
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = Boolean(todo.done);
+    checkbox.setAttribute("aria-label", `Mark "${todo.title}" ${todo.done ? "not done" : "done"}`);
     checkbox.addEventListener("change", () => {
       todo.done = checkbox.checked;
       logAdminAction(
@@ -3698,9 +4546,34 @@ function renderStaffTaskBoard() {
         `${todo.done ? "Completed" : "Reopened"} staff reminder "${todo.title}"`
       );
       saveState();
+      renderStaffTaskBoard();
     });
     const text = document.createElement("span");
     text.textContent = todo.title;
+    const status = document.createElement("span");
+    status.className = "todo-status";
+    if (todo.done) {
+      status.textContent = "Done";
+      status.classList.add("todo-status--done");
+    } else if (todo.dueDate) {
+      const due = Date.parse(todo.dueDate);
+      if (Number.isFinite(due)) {
+        const days = Math.round((due - today.getTime()) / 86400000);
+        if (days < 0) {
+          const late = Math.abs(days);
+          status.textContent = `Overdue by ${late} day${late === 1 ? "" : "s"}`;
+          status.classList.add("todo-status--overdue");
+        } else if (days === 0) {
+          status.textContent = "Due today";
+          status.classList.add("todo-status--soon");
+        } else if (days === 1) {
+          status.textContent = "Due tomorrow";
+          status.classList.add("todo-status--soon");
+        } else {
+          status.textContent = `Due ${new Date(due).toLocaleDateString()}`;
+        }
+      }
+    }
     const remove = document.createElement("button");
     remove.type = "button";
     remove.className = "btn small danger";
@@ -3712,18 +4585,27 @@ function renderStaffTaskBoard() {
     edit.addEventListener("click", () => {
       editingStaffTodoId = todo.id;
       if (elements.staffTaskInput) elements.staffTaskInput.value = todo.title;
+      if (elements.staffTaskDue) elements.staffTaskDue.value = todo.dueDate || "";
       if (elements.staffTaskSave) elements.staffTaskSave.textContent = "Update Task";
       if (elements.staffTaskCancel) elements.staffTaskCancel.hidden = false;
       if (elements.staffTaskInput) elements.staffTaskInput.focus();
     });
     remove.addEventListener("click", () => {
-      state.staffTodosGlobal = state.staffTodosGlobal.filter((entry) => entry.id !== todo.id);
-      logAdminAction("Staff Reminder Removed", `Removed staff reminder "${todo.title}"`);
-      saveState();
-      resetStaffTodoForm();
-      renderStaffTaskBoard();
+      askConfirm({
+        title: "Remove Staff Reminder",
+        message: "This deletes the reminder from the shared staff task board.",
+        details: todo.title || "Untitled reminder",
+        confirmLabel: "Remove Reminder",
+        onConfirm: () => {
+          state.staffTodosGlobal = state.staffTodosGlobal.filter((entry) => entry.id !== todo.id);
+          logAdminAction("Staff Reminder Removed", `Removed staff reminder "${todo.title}"`);
+          saveState();
+          resetStaffTodoForm();
+          renderStaffTaskBoard();
+        },
+      });
     });
-    row.append(checkbox, text, edit, remove);
+    row.append(checkbox, text, status, edit, remove);
     elements.staffTaskList.append(row);
   });
 }
@@ -3765,11 +4647,19 @@ function renderDonors() {
     remove.className = "btn small danger";
     remove.textContent = "Remove";
     remove.addEventListener("click", () => {
-      state.donors = state.donors.filter((entry) => entry.id !== donor.id);
-      logAdminAction("Donor Removed", `Removed donor ${donor.name}`);
-      saveState();
-      resetDonorForm();
-      renderDonors();
+      askConfirm({
+        title: "Remove Donor",
+        message: "This deletes the donor record from this hub.",
+        details: donor.name || "Unnamed donor",
+        confirmLabel: "Remove Donor",
+        onConfirm: () => {
+          state.donors = state.donors.filter((entry) => entry.id !== donor.id);
+          logAdminAction("Donor Removed", `Removed donor ${donor.name}`);
+          saveState();
+          resetDonorForm();
+          renderDonors();
+        },
+      });
     });
     actionWrap.append(edit, remove);
     donation.append(actionWrap);
@@ -3821,13 +4711,19 @@ function renderDocuments() {
     remove.className = "btn small danger";
     remove.textContent = "Remove";
     remove.addEventListener("click", () => {
-      state.documents = state.documents.filter((entry) => entry.id !== documentItem.id);
-      logAdminAction(
-        "Document Removed",
-        `Removed document ${documentItem.title || documentItem.fileName || "Untitled"}`
-      );
-      saveState();
-      renderDocuments();
+      const documentLabel = documentItem.title || documentItem.fileName || "Untitled";
+      askConfirm({
+        title: "Remove Document",
+        message: "This deletes the uploaded document from this hub.",
+        details: documentLabel,
+        confirmLabel: "Remove Document",
+        onConfirm: () => {
+          state.documents = state.documents.filter((entry) => entry.id !== documentItem.id);
+          logAdminAction("Document Removed", `Removed document ${documentLabel}`);
+          saveState();
+          renderDocuments();
+        },
+      });
     });
     actions.append(remove);
     row.append(info, category, actions);
@@ -3881,11 +4777,19 @@ function renderVolunteers() {
     removeButton.className = "btn small danger";
     removeButton.textContent = "Remove";
     removeButton.addEventListener("click", () => {
-      state.volunteers = state.volunteers.filter((entry) => entry.id !== volunteer.id);
-      logAdminAction("Volunteer Removed", `Removed volunteer ${volunteer.name}`);
-      saveState();
-      resetVolunteerForm();
-      renderVolunteers();
+      askConfirm({
+        title: "Remove Volunteer",
+        message: "This deletes the volunteer record from this hub.",
+        details: volunteer.name || "Unnamed volunteer",
+        confirmLabel: "Remove Volunteer",
+        onConfirm: () => {
+          state.volunteers = state.volunteers.filter((entry) => entry.id !== volunteer.id);
+          logAdminAction("Volunteer Removed", `Removed volunteer ${volunteer.name}`);
+          saveState();
+          resetVolunteerForm();
+          renderVolunteers();
+        },
+      });
     });
     const actionWrap = document.createElement("div");
     actionWrap.className = "person__actions";
@@ -3926,12 +4830,37 @@ function renderResources() {
       );
       return haystack.includes(searchTerm);
     })
-    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    .sort((a, b) => {
+      const byCategory = (a.category || "").localeCompare(b.category || "");
+      if (byCategory !== 0) return byCategory;
+      return (a.name || "").localeCompare(b.name || "");
+    });
+  if (elements.resourceCount) {
+    const total = (state.resources || []).length;
+    elements.resourceCount.textContent =
+      total === 0
+        ? "No resources saved yet. Use Add Resource to build the list."
+        : `Showing ${resources.length} of ${total} resource${total === 1 ? "" : "s"}${
+            searchTerm ? ` matching "${elements.resourceSearch.value.trim()}"` : ""
+          }.`;
+  }
   if (resources.length === 0) {
-    elements.resourceList.innerHTML = "<p class='hint'>No matching resources found.</p>";
+    elements.resourceList.innerHTML =
+      (state.resources || []).length === 0
+        ? "<p class='hint'>No resources yet. Use Add Resource to build the list.</p>"
+        : "<p class='hint'>No resources match that search. Clear the search box to see them all.</p>";
     return;
   }
+  let lastCategory = "";
   resources.forEach((resource) => {
+    const category = resource.category || "Uncategorized";
+    if (category !== lastCategory) {
+      const heading = document.createElement("h3");
+      heading.className = "resource-group__title";
+      heading.textContent = category;
+      elements.resourceList.append(heading);
+      lastCategory = category;
+    }
     const card = document.createElement("details");
     card.className = "resource-card";
     const summary = document.createElement("summary");
@@ -3984,10 +4913,18 @@ function renderResources() {
     remove.textContent = "Remove";
     remove.addEventListener("click", (event) => {
       event.preventDefault();
-      state.resources = state.resources.filter((entry) => entry.id !== resource.id);
-      logAdminAction("Resource Removed", `Removed resource ${resource.name}`);
-      saveState();
-      renderResources();
+      askConfirm({
+        title: "Remove Resource",
+        message: "This deletes the resource from the community resource list.",
+        details: resource.name || "Unnamed resource",
+        confirmLabel: "Remove Resource",
+        onConfirm: () => {
+          state.resources = state.resources.filter((entry) => entry.id !== resource.id);
+          logAdminAction("Resource Removed", `Removed resource ${resource.name}`);
+          saveState();
+          renderResources();
+        },
+      });
     });
     actions.append(edit, remove);
     details.append(actions);
@@ -3997,22 +4934,58 @@ function renderResources() {
   });
 }
 
+function getEventsForView(view) {
+  const sorted = [...(state.events || [])]
+    .filter((entry) => Number.isFinite(eventDateTime(entry.date)))
+    .sort((a, b) => eventDateTime(a.date) - eventDateTime(b.date));
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  if (view === "today") {
+    return sorted.filter((entry) => {
+      const date = parseDateOnly(entry.date);
+      if (!date) return false;
+      date.setHours(0, 0, 0, 0);
+      return date.getTime() === startOfToday.getTime();
+    });
+  }
+  if (view === "upcoming") {
+    const end = new Date(startOfToday);
+    end.setDate(end.getDate() + 30);
+    return sorted.filter((entry) => {
+      const date = eventDateTime(entry.date);
+      return date >= startOfToday.getTime() && date <= end.getTime();
+    });
+  }
+  return getEventsForMonth(calendarMonth);
+}
+
 function renderEvents() {
-  if (!elements.eventList) return;
-  elements.eventList.innerHTML = "";
-  const events = [...(state.events || [])].sort(
-    (a, b) => Date.parse(a.date || 0) - Date.parse(b.date || 0)
-  );
+  if (!elements.calendarEvents) return;
+  elements.calendarEvents.innerHTML = "";
+  const view = elements.calendarView ? elements.calendarView.value : "month";
+  const events = getEventsForView(view);
   if (events.length === 0) {
-    elements.eventList.innerHTML = "<p class='hint'>No upcoming events yet.</p>";
+    const message =
+      view === "today"
+        ? "Nothing scheduled today."
+        : view === "upcoming"
+        ? "No events in the next 30 days. Add one below."
+        : "No events in this month. Add one below.";
+    elements.calendarEvents.innerHTML = `<p class='hint'>${message}</p>`;
     return;
   }
 
+  const todayKey = new Date().toDateString();
   events.forEach((eventItem) => {
     const details = document.createElement("details");
     details.className = "event-card";
     const summary = document.createElement("summary");
-    summary.textContent = `${eventItem.title} | ${new Date(eventItem.date).toLocaleDateString()}`;
+    const parsedEventDate = parseDateOnly(eventItem.date);
+    const isToday = parsedEventDate !== null && parsedEventDate.toDateString() === todayKey;
+    if (isToday) details.classList.add("event-card--today");
+    summary.textContent = `${eventItem.title} | ${formatEventDate(eventItem.date)}${
+      isToday ? " (Today)" : ""
+    }`;
     summary.title = buildEventTooltip(eventItem);
     details.append(summary);
     const list = document.createElement("div");
@@ -4047,15 +5020,23 @@ function renderEvents() {
     removeButton.className = "btn small danger";
     removeButton.textContent = "Remove Event";
     removeButton.addEventListener("click", () => {
-      state.events = state.events.filter((entry) => entry.id !== eventItem.id);
-      logAdminAction("Event Removed", `Removed event ${eventItem.title}`);
-      saveState();
-      renderCalendar();
-      renderEvents();
+      askConfirm({
+        title: "Remove Event",
+        message: "This deletes the event from the calendar and the upcoming events list.",
+        details: `${eventItem.title || "Untitled event"} · ${formatEventDate(eventItem.date)}`,
+        confirmLabel: "Remove Event",
+        onConfirm: () => {
+          state.events = state.events.filter((entry) => entry.id !== eventItem.id);
+          logAdminAction("Event Removed", `Removed event ${eventItem.title}`);
+          saveState();
+          renderCalendar();
+          renderEvents();
+        },
+      });
     });
     list.append(removeButton);
     details.append(list);
-    elements.eventList.append(details);
+    elements.calendarEvents.append(details);
   });
 }
 
@@ -4220,12 +5201,16 @@ function parseRedeemNote(note) {
 
 function updateStaffVisibility() {
   updateLoginGate();
+  const staffLabel = staffMode
+    ? currentStaffUser
+      ? currentStaffUser.displayName
+      : "On"
+    : "Off";
   if (elements.staffStatus) {
-    elements.staffStatus.textContent = staffMode
-      ? currentStaffUser
-        ? currentStaffUser.displayName
-        : "On"
-      : "Off";
+    elements.staffStatus.textContent = staffLabel;
+  }
+  if (elements.appUserAvatar) {
+    elements.appUserAvatar.textContent = (staffLabel.trim()[0] || "S").toUpperCase();
   }
   if (elements.staffToggle) {
     elements.staffToggle.textContent = "Sign Out";
@@ -4259,6 +5244,7 @@ async function handleStaffLoginSubmit(form, errorElement) {
       return;
     }
     setError(errorElement, "Signing in...");
+    setSubmitBusy(form, true);
     try {
       const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: username,
@@ -4276,6 +5262,8 @@ async function handleStaffLoginSubmit(form, errorElement) {
       await supabaseClient.auth.signOut();
       currentSupabaseUser = null;
       setError(errorElement, error.message || "Invalid staff email or password.");
+    } finally {
+      setSubmitBusy(form, false);
     }
     return;
   }
@@ -4348,6 +5336,14 @@ function attachMemberFilters() {
       renderPeople();
     });
   }
+  if (elements.memberClearFilters) {
+    elements.memberClearFilters.addEventListener("click", () => {
+      if (elements.memberSearch) elements.memberSearch.value = "";
+      if (elements.memberTagFilter) elements.memberTagFilter.value = "";
+      if (elements.memberSort) elements.memberSort.value = "name";
+      renderPeople();
+    });
+  }
   if (elements.printSignin) {
     elements.printSignin.addEventListener("click", () => {
       printSigninSheet();
@@ -4372,6 +5368,11 @@ function attachVolunteerSort() {
 }
 
 function attachCalendarControls() {
+  if (elements.calendarView) {
+    elements.calendarView.addEventListener("change", () => {
+      renderCalendar();
+    });
+  }
   if (elements.calendarPrev) {
     elements.calendarPrev.addEventListener("click", () => {
       calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
@@ -4393,6 +5394,185 @@ function attachStaffLogin() {
       await handleStaffLoginSubmit(elements.gateLoginForm, elements.gateLoginError);
     });
   }
+}
+
+/* ---------- Phase 8: accessible dialogs (focus trap, Escape, focus return) ---------- */
+
+const MODAL_FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled]):not([type='hidden'])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(", ");
+
+const openModalStack = [];
+const modalCloseHooks = new Map();
+let modalReturnFocus = null;
+let pendingConfirmAction = null;
+let sensitiveSubmitting = false;
+
+function setSubmitBusy(form, busy) {
+  if (!form) return;
+  form.setAttribute("aria-busy", busy ? "true" : "false");
+  form.classList.toggle("is-busy", Boolean(busy));
+  form.querySelectorAll("button[type='submit']").forEach((button) => {
+    button.disabled = Boolean(busy);
+  });
+}
+
+function getModalFocusable(modal) {
+  if (!modal) return [];
+  return Array.from(modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)).filter(
+    (node) => !node.hidden && node.offsetParent !== null
+  );
+}
+
+function getTopOpenModal() {
+  return openModalStack.length ? openModalStack[openModalStack.length - 1] : null;
+}
+
+function handleModalKeydown(event) {
+  const modal = getTopOpenModal();
+  if (!modal) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    if (modal === elements.sensitiveModal) {
+      closeSensitiveConfirmation();
+    } else {
+      closeModalDialog(modal);
+    }
+    return;
+  }
+  if (event.key !== "Tab") return;
+  const focusable = getModalFocusable(modal);
+  if (!focusable.length) {
+    event.preventDefault();
+    return;
+  }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const active = document.activeElement;
+  const inside = modal.contains(active);
+  if (event.shiftKey) {
+    if (!inside || active === first) {
+      event.preventDefault();
+      last.focus();
+    }
+    return;
+  }
+  if (!inside || active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function openModalDialog(modal, options = {}) {
+  if (!modal || openModalStack.includes(modal)) return;
+  modalReturnFocus = document.activeElement;
+  if (typeof options.onClose === "function") {
+    modalCloseHooks.set(modal, options.onClose);
+  }
+  modal.hidden = false;
+  openModalStack.push(modal);
+  document.addEventListener("keydown", handleModalKeydown, true);
+  const focusable = getModalFocusable(modal);
+  const target =
+    options.initialFocus || focusable[0] || modal.querySelector(".sensitive-modal__panel");
+  if (target && typeof target.focus === "function") {
+    try {
+      target.focus();
+    } catch (error) {
+      // Ignore focus failures; the dialog is still usable with a mouse.
+    }
+  }
+}
+
+function restoreModalFocus() {
+  const previous = modalReturnFocus;
+  modalReturnFocus = null;
+  const fallback = elements.appPageTitle || elements.pageMain;
+  const target =
+    previous && document.contains(previous) && previous.offsetParent !== null
+      ? previous
+      : fallback;
+  if (target && typeof target.focus === "function") {
+    try {
+      target.focus({ preventScroll: true });
+    } catch (error) {
+      target.focus();
+    }
+  }
+}
+
+function closeModalDialog(modal) {
+  if (!modal) return;
+  modal.hidden = true;
+  const index = openModalStack.indexOf(modal);
+  if (index >= 0) openModalStack.splice(index, 1);
+  if (!openModalStack.length) {
+    document.removeEventListener("keydown", handleModalKeydown, true);
+  }
+  const hook = modalCloseHooks.get(modal);
+  if (hook) {
+    modalCloseHooks.delete(modal);
+    hook();
+  }
+  restoreModalFocus();
+}
+
+function askConfirm(config = {}) {
+  if (!elements.confirmModal || !elements.confirmModalAccept) {
+    if (typeof config.onConfirm === "function") config.onConfirm();
+    return;
+  }
+  pendingConfirmAction = config;
+  if (elements.confirmModalTitle) {
+    elements.confirmModalTitle.textContent = config.title || "Confirm Action";
+  }
+  if (elements.confirmModalMessage) {
+    elements.confirmModalMessage.textContent =
+      config.message || "This change is recorded in the admin log.";
+  }
+  if (elements.confirmModalDetails) {
+    elements.confirmModalDetails.textContent = config.details || "";
+    elements.confirmModalDetails.hidden = !config.details;
+  }
+  elements.confirmModalAccept.textContent = config.confirmLabel || "Confirm";
+  elements.confirmModalAccept.className =
+    config.tone === "primary" ? "btn primary" : "btn danger";
+  openModalDialog(elements.confirmModal, {
+    initialFocus: elements.confirmModalCancel,
+    onClose: () => {
+      pendingConfirmAction = null;
+    },
+  });
+}
+
+function settleFocusAfterMutation() {
+  const active = document.activeElement;
+  const stillUsable =
+    active && active !== document.body && document.contains(active) && active.getClientRects().length > 0;
+  if (stillUsable) return;
+  const fallback = elements.appPageTitle || elements.pageMain;
+  if (fallback && typeof fallback.focus === "function") {
+    try {
+      fallback.focus({ preventScroll: true });
+    } catch (error) {
+      fallback.focus();
+    }
+  }
+}
+
+function runPendingConfirm() {
+  const action = pendingConfirmAction;
+  pendingConfirmAction = null;
+  closeModalDialog(elements.confirmModal);
+  if (action && typeof action.onConfirm === "function") action.onConfirm();
+  // Rows are re-rendered by the action, so the trigger may be gone; land focus
+  // somewhere predictable instead of dropping it on <body>.
+  settleFocusAfterMutation();
 }
 
 function requestSensitiveConfirmation(config) {
@@ -4418,20 +5598,38 @@ function requestSensitiveConfirmation(config) {
   }
   setError(elements.sensitiveError, "");
   elements.sensitiveForm.reset();
-  elements.sensitiveModal.hidden = false;
-  if (elements.sensitiveUsername) elements.sensitiveUsername.focus();
+  openModalDialog(elements.sensitiveModal, {
+    initialFocus: needsNewPassword ? elements.sensitiveNewPassword : elements.sensitiveUsername,
+    onClose: () => {
+      pendingSensitiveAction = null;
+    },
+  });
+  if (elements.sensitiveUsername) {
+    elements.sensitiveUsername.setAttribute("aria-describedby", "sensitive-message");
+  }
+  if (elements.sensitivePassword) {
+    elements.sensitivePassword.setAttribute("aria-describedby", "sensitive-message");
+  }
 }
 
 function closeSensitiveConfirmation() {
-  pendingSensitiveAction = null;
-  if (!elements.sensitiveModal) return;
-  elements.sensitiveModal.hidden = true;
+  closeModalDialog(elements.sensitiveModal);
 }
 
 function attachSensitiveConfirmation() {
   if (!elements.sensitiveForm) return;
-  elements.sensitiveForm.addEventListener("submit", async (event) => {
+  elements.sensitiveForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (sensitiveSubmitting) return;
+    sensitiveSubmitting = true;
+    setSubmitBusy(elements.sensitiveForm, true);
+    handleSensitiveSubmit().finally(() => {
+      sensitiveSubmitting = false;
+      setSubmitBusy(elements.sensitiveForm, false);
+    });
+  });
+
+async function handleSensitiveSubmit() {
     if (!pendingSensitiveAction) return;
     const formData = new FormData(elements.sensitiveForm);
     const username = isSupabaseMode()
@@ -4468,6 +5666,7 @@ function attachSensitiveConfirmation() {
         setStaffMode(true, confirmingStaffUser);
         if (action.backupReason && !createSafetyBackup(action.backupReason)) return;
         action.onConfirm({ confirmedBy: confirmingStaffUser, newPassword });
+        settleFocusAfterMutation();
       } catch (error) {
         setError(elements.sensitiveError, error.message || "Invalid staff email or password.");
         logAdminAction(
@@ -4501,7 +5700,9 @@ function attachSensitiveConfirmation() {
     closeSensitiveConfirmation();
     if (action.backupReason && !createSafetyBackup(action.backupReason)) return;
     action.onConfirm({ confirmedBy: match, newPassword });
-  });
+    settleFocusAfterMutation();
+}
+
   if (elements.sensitiveCancel) {
     elements.sensitiveCancel.addEventListener("click", closeSensitiveConfirmation);
   }
@@ -4510,6 +5711,22 @@ function attachSensitiveConfirmation() {
       if (event.target && event.target.dataset.closeSensitive === "true") {
         closeSensitiveConfirmation();
       }
+    });
+  }
+  attachConfirmDialog();
+}
+
+function attachConfirmDialog() {
+  if (elements.confirmModalAccept) {
+    elements.confirmModalAccept.addEventListener("click", runPendingConfirm);
+  }
+  const dismiss = () => closeModalDialog(elements.confirmModal);
+  if (elements.confirmModalCancel) {
+    elements.confirmModalCancel.addEventListener("click", dismiss);
+  }
+  if (elements.confirmModal) {
+    elements.confirmModal.addEventListener("click", (event) => {
+      if (event.target && event.target.dataset.closeConfirm === "true") dismiss();
     });
   }
 }
@@ -4523,7 +5740,7 @@ function buildEventTooltip(eventItem) {
   const parts = [];
   if (eventItem.title) parts.push(eventItem.title);
   if (eventItem.date) {
-    parts.push(`Date: ${new Date(eventItem.date).toLocaleDateString()}`);
+    parts.push(`Date: ${formatEventDate(eventItem.date)}`);
   }
   if (eventItem.description) {
     parts.push(`Description: ${eventItem.description}`);
@@ -5294,7 +6511,7 @@ function printResources() {
         </style>
       </head>
       <body>
-        <h1>Jackson Community Resource List</h1>
+        <h1>Lighthouse Community Resource List</h1>
         <p>${new Date().toLocaleDateString()}</p>
         <table>
           <thead>
@@ -5649,15 +6866,13 @@ function hydrateTasks() {
         return;
       }
       setError(elements.taskError, "");
-      adjustPoints(personId, selectedTask.points, "task", selectedTask.label);
-      status.classList.remove("show");
-      status.classList.remove("fade");
-      void status.offsetWidth;
-      status.classList.add("show");
-      setTimeout(() => {
-        status.classList.add("fade");
-      }, 1200);
-      setTimeout(refreshAfterPointsChange, 650);
+      showAwardConfirm({
+        personId,
+        points: selectedTask.points,
+        type: "task",
+        reason: selectedTask.label,
+        source: "task",
+      });
     });
 
     leftGroup.append(button, status);
@@ -5786,6 +7001,8 @@ function resetRedeemSelections() {
 }
 
 function updateRedeemTotal() {
+  applyRedeemFilter();
+  updateRedeemCart();
   if (!elements.redeemButton) return;
   const selections = getRedeemSelections();
   const total = selections.reduce(
@@ -5793,6 +7010,352 @@ function updateRedeemTotal() {
     0
   );
   elements.redeemButton.textContent = `Redeem (${total} pts)`;
+}
+
+function applyRedeemFilter() {
+  if (!elements.redeemItems) return;
+  const term = elements.redeemSearch ? normalizeLabel(elements.redeemSearch.value) : "";
+  elements.redeemItems.querySelectorAll("details").forEach((group) => {
+    let visible = 0;
+    group.querySelectorAll(".redeem-row").forEach((row) => {
+      if (row.classList.contains("redeem-row--header")) return;
+      const matches = !term || normalizeLabel(row.textContent || "").includes(term);
+      row.hidden = !matches;
+      if (matches) visible += 1;
+    });
+    group.hidden = visible === 0;
+  });
+}
+
+function getSelectedRedeemPerson() {
+  if (!elements.redeemForm) return null;
+  const select = elements.redeemForm.querySelector("select[name='personId']");
+  if (!select) return null;
+  return state.people.find((entry) => entry.id === select.value) || null;
+}
+
+function updateRedeemCart() {
+  if (!elements.redeemCart) return;
+  const person = getSelectedRedeemPerson();
+  const selections = getRedeemSelections();
+  if (!selections.length) {
+    elements.redeemCart.innerHTML =
+      "<p class='hint'>Select items to preview the total and the remaining balance.</p>";
+    return;
+  }
+  const total = selections.reduce((sum, entry) => sum + entry.item.cost * entry.quantity, 0);
+  const balance = person ? Number(person.points) || 0 : 0;
+  const remaining = balance - total;
+  const short = remaining < 0;
+  elements.redeemCart.innerHTML = `
+    <div class="redeem-cart__lines">
+      ${selections
+        .map(
+          (entry) =>
+            `<span>${escapeHtml(`${entry.quantity} x ${entry.item.name}`)} — ${
+              entry.item.cost * entry.quantity
+            } pts</span>`
+        )
+        .join("")}
+    </div>
+    ${buildConfirmRow("Total", `${total} pts`)}
+    ${buildConfirmRow("Balance after", `${remaining} pts`)}${
+      short
+        ? `<p class="error">Not enough points. ${escapeHtml(
+            person ? person.firstName : "This member"
+          )} has ${balance}.</p>`
+        : ""
+    }
+  `;
+}
+
+function buildConfirmRow(label, value) {
+  return `<div class="confirm-panel__row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(
+    String(value)
+  )}</strong></div>`;
+}
+
+function hideConfirmPanel(panel) {
+  if (!panel) return;
+  panel.hidden = true;
+  panel.innerHTML = "";
+}
+
+function updateAwardBalance() {
+  if (!elements.awardBalance || !elements.taskForm) return;
+  const select = elements.taskForm.querySelector("select[name='personId']");
+  const person = select ? state.people.find((entry) => entry.id === select.value) : null;
+  elements.awardBalance.textContent = person
+    ? `Current balance: ${Number(person.points) || 0} points.`
+    : "";
+}
+
+function showAwardConfirm(config) {
+  if (!elements.awardConfirm) return;
+  const person = state.people.find((entry) => entry.id === config.personId);
+  const amount = Number(config.points);
+  if (!person || !Number.isFinite(amount) || amount <= 0) return;
+  const before = Number(person.points) || 0;
+  const after = Math.max(0, before + amount);
+  pendingAward = {
+    personId: person.id,
+    points: amount,
+    type: config.type,
+    note: config.reason,
+    source: config.source,
+  };
+  elements.awardConfirm.innerHTML = `
+    <p class="confirm-panel__title">Confirm award</p>
+    ${buildConfirmRow("Member", `${person.firstName} ${person.lastName}`)}
+    ${buildConfirmRow("Reason", config.reason)}
+    ${buildConfirmRow("Points", `+${amount}`)}
+    ${buildConfirmRow("Balance", `${before} → ${after}`)}
+    <div class="form-actions compact">
+      <button type="button" class="btn primary" data-award-do>Confirm Award</button>
+      <button type="button" class="btn secondary" data-award-cancel>Cancel</button>
+    </div>
+  `;
+  elements.awardConfirm.hidden = false;
+  const button = elements.awardConfirm.querySelector("[data-award-do]");
+  if (button) button.focus();
+}
+
+function confirmAward() {
+  if (!pendingAward) return;
+  const { personId, points, type, note, source } = pendingAward;
+  const person = state.people.find((entry) => entry.id === personId);
+  if (!person) return;
+  adjustPoints(personId, points, type, note);
+  if (source === "form" && elements.awardForm) elements.awardForm.reset();
+  pendingAward = null;
+  hideConfirmPanel(elements.awardConfirm);
+  showRewardsToast(
+    `Awarded ${points} point${points === 1 ? "" : "s"} to ${person.firstName} ${person.lastName} for ${note}.`
+  );
+  renderAll();
+}
+
+function buildRedeemConfirm() {
+  if (!elements.redeemConfirm) return;
+  const person = getSelectedRedeemPerson();
+  if (!person) return;
+  const selections = getRedeemSelections();
+  if (!selections.length) {
+    setError(elements.redeemError, "Select at least one item.");
+    return;
+  }
+  const totalCost = selections.reduce((sum, entry) => sum + entry.item.cost * entry.quantity, 0);
+  const balance = Number(person.points) || 0;
+  if (totalCost > balance) {
+    setError(elements.redeemError, `Not enough points. Needed ${totalCost}, have ${balance}.`);
+    return;
+  }
+  setError(elements.redeemError, "");
+  elements.redeemConfirm.innerHTML = `
+    <p class="confirm-panel__title">Confirm redemption</p>
+    ${buildConfirmRow("Member", `${person.firstName} ${person.lastName}`)}
+    <div class="redeem-cart__lines">
+      ${selections
+        .map((entry) => `<span>${escapeHtml(`${entry.quantity} x ${entry.item.name}`)}</span>`)
+        .join("")}
+    </div>
+    ${buildConfirmRow("Total cost", `${totalCost} pts`)}
+    ${buildConfirmRow("Balance", `${balance} → ${Math.max(0, balance - totalCost)}`)}
+    <div class="form-actions compact">
+      <button type="button" class="btn primary" data-redeem-do>Confirm Redemption</button>
+      <button type="button" class="btn secondary" data-redeem-cancel>Cancel</button>
+    </div>
+  `;
+  elements.redeemConfirm.hidden = false;
+  const button = elements.redeemConfirm.querySelector("[data-redeem-do]");
+  if (button) button.focus();
+}
+
+function confirmRedeem() {
+  const person = getSelectedRedeemPerson();
+  if (!person) return;
+  const selections = getRedeemSelections();
+  if (!selections.length) {
+    hideConfirmPanel(elements.redeemConfirm);
+    return;
+  }
+  const totalCost = selections.reduce((sum, entry) => sum + entry.item.cost * entry.quantity, 0);
+  const balance = Number(person.points) || 0;
+  if (totalCost > balance) {
+    setError(elements.redeemError, `Not enough points. Needed ${totalCost}, have ${balance}.`);
+    hideConfirmPanel(elements.redeemConfirm);
+    return;
+  }
+  const note = selections.map((entry) => `${entry.quantity} x ${entry.item.name}`).join("; ");
+  adjustPoints(person.id, -totalCost, "redeem", note);
+  resetRedeemSelections();
+  hideConfirmPanel(elements.redeemConfirm);
+  showRewardsToast(
+    `Redeemed ${totalCost} point${totalCost === 1 ? "" : "s"} for ${person.firstName} ${
+      person.lastName
+    } (${note}).`
+  );
+  renderAll();
+}
+
+function showRewardsToast(message) {
+  rewardsToastMessage = message;
+  renderRewardsToast();
+  if (rewardsToastTimer) clearTimeout(rewardsToastTimer);
+  rewardsToastTimer = setTimeout(() => {
+    rewardsToastMessage = "";
+    renderRewardsToast();
+  }, 5000);
+}
+
+function renderRewardsToast() {
+  if (!elements.rewardsToast) return;
+  elements.rewardsToast.hidden = !rewardsToastMessage;
+  elements.rewardsToast.textContent = rewardsToastMessage;
+}
+
+function reportTypeLabel(type) {
+  const labels = {
+    visit: "Check-ins",
+    task: "Task awards",
+    award: "Custom awards",
+    remove: "Deductions",
+    redeem: "Redemptions",
+  };
+  return labels[type] || titleCase(type || "activity");
+}
+
+function renderReports() {
+  if (!elements.reportResults) return;
+  const rangeValue = elements.reportRange ? elements.reportRange.value : "30";
+  const typeValue = elements.reportType ? elements.reportType.value : "all";
+  const cutoff =
+    rangeValue === "all" ? null : Date.now() - Number(rangeValue) * 24 * 60 * 60 * 1000;
+
+  const inRange = (entry) => {
+    const timestamp = Date.parse(entry.timestamp);
+    if (!Number.isFinite(timestamp)) return false;
+    return cutoff === null || timestamp >= cutoff;
+  };
+
+  const visits = (state.visits || []).filter(inRange);
+  const activity = (state.activity || []).filter(inRange);
+  const servedIds = new Set(visits.map((entry) => entry.personId).filter(Boolean));
+  const awards = activity.filter((entry) => Number(entry.delta) > 0);
+  const redemptions = activity.filter((entry) => entry.type === "redeem");
+  const pointsAwarded = awards.reduce((sum, entry) => sum + (Number(entry.delta) || 0), 0);
+  const pointsRedeemed = redemptions.reduce(
+    (sum, entry) => sum + Math.abs(Number(entry.delta) || 0),
+    0
+  );
+  const followUps = (state.people || []).filter((person) => person.followUpNeeded).length;
+
+  const rangeLabel = rangeValue === "all" ? "all time" : `the last ${rangeValue} days`;
+  const cards = [
+    { label: "Check-Ins", value: visits.length },
+    { label: "Members Served", value: servedIds.size },
+    { label: "Points Awarded", value: pointsAwarded },
+    { label: "Points Redeemed", value: pointsRedeemed },
+    { label: "Redemptions", value: redemptions.length },
+    { label: "Follow-Ups Flagged", value: followUps },
+  ];
+
+  const filtered = (typeValue === "all" ? activity : activity.filter((entry) => entry.type === typeValue))
+    .slice()
+    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+  const shown = filtered.slice(0, 40);
+
+  elements.reportResults.innerHTML = `
+    <p class="hint">Showing ${escapeHtml(rangeLabel)}${
+    typeValue === "all" ? "" : ` &middot; ${escapeHtml(reportTypeLabel(typeValue))}`
+  }. Follow-up count reflects the current roster, not the selected range.</p>
+    <div class="kpi-row report-kpis">
+      ${cards
+        .map(
+          (card) => `
+        <div class="stat-card">
+          <span class="stat-card__label">${escapeHtml(card.label)}</span>
+          <strong class="stat-card__value">${escapeHtml(String(card.value))}</strong>
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+    <div class="report-table">
+      <div class="report-table__row report-table__row--header">
+        <div>Date</div><div>Member</div><div>Action</div><div>Points</div><div>Balance</div>
+      </div>
+      ${
+        shown.length
+          ? shown
+              .map((entry) => {
+                const person = state.people.find(
+                  (candidate) => candidate.id === entry.personId
+                );
+                const name = person ? `${person.firstName} ${person.lastName}` : "Unknown";
+                const delta = Number(entry.delta) || 0;
+                const deltaClass = delta >= 0 ? "ledger-amount--up" : "ledger-amount--down";
+                return `
+          <div class="report-table__row">
+            <div>${escapeHtml(formatLogDate(entry.timestamp))}</div>
+            <div>${escapeHtml(name)}</div>
+            <div>${escapeHtml(entry.note || titleCase(entry.type || "activity"))}<br /><span class="hint">by ${escapeHtml(
+                  entry.actor || "Unknown"
+                )}</span></div>
+            <div><span class="ledger-amount ${deltaClass}">${
+                  delta > 0 ? "+" : ""
+                }${delta}</span></div>
+            <div>${escapeHtml(Number.isFinite(entry.after) ? String(entry.after) : "-")}</div>
+          </div>
+        `;
+              })
+              .join("")
+          : "<div class='report-table__row'><div>No entries in this range.</div><div>-</div><div>-</div><div>-</div><div>-</div></div>"
+      }
+    </div>
+    ${
+      filtered.length > shown.length
+        ? `<p class="hint">Showing the ${shown.length} most recent of ${filtered.length} matching entries. Use the export buttons for the full log.</p>`
+        : ""
+    }
+  `;
+}
+
+function renderRewardsHistory() {
+  if (!elements.rewardsHistory) return;
+  const entries = (state.activity || [])
+    .filter((entry) => Number.isFinite(entry.delta) && entry.delta !== 0)
+    .slice(0, 12);
+  if (!entries.length) {
+    elements.rewardsHistory.innerHTML = "<p class='hint'>No point changes recorded yet.</p>";
+    return;
+  }
+  elements.rewardsHistory.innerHTML = entries
+    .map((entry) => {
+      const person = state.people.find((candidate) => candidate.id === entry.personId);
+      const name = person ? `${person.firstName} ${person.lastName}` : "Unknown";
+      const deltaClass = entry.delta >= 0 ? "ledger-amount--up" : "ledger-amount--down";
+      const label = entry.note || titleCase(entry.type || "activity");
+      return `
+        <div class="person__entry">
+          <strong>${escapeHtml(name)}</strong><br />
+          <span class="hint">${escapeHtml(label)} &middot; <span class="ledger-amount ${deltaClass}">${
+        entry.delta > 0 ? "+" : ""
+      }${entry.delta}</span> &middot; balance ${escapeHtml(String(entry.after))} &middot; ${escapeHtml(
+        formatLogDate(entry.timestamp)
+      )}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function attachRewardsPanels() {
+  if (elements.taskForm) {
+    const select = elements.taskForm.querySelector("select[name='personId']");
+    if (select) select.addEventListener("change", updateAwardBalance);
+  }
+  updateAwardBalance();
 }
 
 function updateRedeemGroupCounts() {
@@ -5827,15 +7390,55 @@ function hydrateAddItemGroups() {
   });
 }
 
-function setError(target, message) {
+function getErrorFields(target, field) {
+  if (field) return [field];
+  const ids = String((target.dataset && target.dataset.errorFor) || "")
+    .split(/[,\s]+/)
+    .filter(Boolean);
+  return ids.map((id) => document.getElementById(id)).filter(Boolean);
+}
+
+function addDescribedBy(control, id) {
+  if (!control || !id) return;
+  const described = String(control.getAttribute("aria-describedby") || "")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (described.includes(id)) return;
+  described.push(id);
+  control.setAttribute("aria-describedby", described.join(" "));
+}
+
+function removeDescribedBy(control, id) {
+  if (!control || !id) return;
+  const described = String(control.getAttribute("aria-describedby") || "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((entry) => entry !== id);
+  if (described.length) {
+    control.setAttribute("aria-describedby", described.join(" "));
+  } else {
+    control.removeAttribute("aria-describedby");
+  }
+}
+
+function setError(target, message, field) {
   if (!target) return;
+  const fields = getErrorFields(target, field);
   if (!message) {
     target.hidden = true;
     target.textContent = "";
+    fields.forEach((control) => {
+      control.removeAttribute("aria-invalid");
+      removeDescribedBy(control, target.id);
+    });
     return;
   }
   target.hidden = false;
   target.textContent = message;
+  fields.forEach((control) => {
+    control.setAttribute("aria-invalid", "true");
+    addDescribedBy(control, target.id);
+  });
 }
 
 if (elements.awardNote) {

@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="styles.css?v=20260721-supabase-auth" />
   </head>
   <body>
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+
     <section id="login-gate" class="login-gate" aria-label="Staff sign in">
       <div class="login-gate__panel">
         <p class="eyebrow">Community Outreach Program</p><!-- neutral branding -->
@@ -14,7 +16,7 @@
         <p class="subhead">
           Sign in to access member records, points, resources, logs, and backups.
         </p>
-        <form id="gate-login-form" class="form login-gate__form">
+        <form id="gate-login-form" class="form login-gate__form" onsubmit="return false">
           <label>
             Email / Username
             <input id="gate-login-username" type="text" name="username" autocomplete="username" required />
@@ -23,53 +25,116 @@
             Password
             <input id="gate-login-password" type="password" name="password" autocomplete="current-password" required />
           </label>
-          <p id="gate-login-error" class="error form-error" hidden></p>
-          <button type="submit" class="btn primary wide">Sign In</button>
+          <p
+            id="gate-login-error"
+            class="error form-error"
+            role="alert"
+            data-error-for="gate-login-username gate-login-password"
+            hidden
+          ></p>
+          <button id="gate-login-submit" type="submit" class="btn primary wide">Sign In</button>
         </form>
       </div>
     </section>
 
     <div class="page">
-      <div class="page-layout">
-        <aside class="page-guide" aria-label="Page guide">
-          <div class="page-guide__card">
-            <p class="page-guide__eyebrow">Operations Menu</p>
-            <h2 class="page-guide__title">Lighthouse Hub</h2>
-            <p class="page-guide__copy">
-              Move through the ministry workflow quickly, from intake to resources to staff records.
-            </p>
-            <nav class="page-guide__nav">
-              <a href="#quick-actions-card" class="page-guide__link">Quick Actions</a>
-              <a href="#staff-dashboard-card" class="page-guide__link">Staff Dashboard</a>
-              <a href="#add-member-card" class="page-guide__link">Add Member</a>
-              <a href="#redeem-card" class="page-guide__link">Redeem Items</a>
-              <a href="#member-checkin-card" class="page-guide__link">Member Check-In</a>
-              <a href="#task-award-card" class="page-guide__link">Award Points</a>
-              <a href="#members-card" class="page-guide__link">Members</a>
-              <a href="#summary-card" class="page-guide__link">Weekly Summary</a>
-              <a href="#admin-records-card" class="page-guide__link">Admin Records</a>
-              <a href="#resources-card" class="page-guide__link">Community Resources</a>
-              <a href="#items-card" class="page-guide__link">Items & Point Costs</a>
-              <a href="#corrections-card" class="page-guide__link">Corrections</a>
-              <a href="#staff-logs" class="page-guide__link">Security & Backups</a>
-            </nav>
+      <div class="app-shell" id="app-shell">
+        <div class="app-scrim" id="app-scrim" hidden></div>
+
+        <aside class="app-sidebar" id="app-sidebar" aria-label="Primary navigation">
+          <div class="app-brand">
+            <span class="app-brand__mark" aria-hidden="true">LH</span>
+            <span class="app-brand__text">
+              <strong>Lighthouse</strong>
+              <small>Ministry Hub</small>
+            </span>
+          </div>
+
+          <nav class="app-nav" aria-label="Sections">
+            <a href="#/dashboard" class="app-nav__link" data-route="dashboard">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/></svg>
+              <span>Dashboard</span>
+            </a>
+            <a href="#/members" class="app-nav__link" data-route="members">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M15.5 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>Members</span>
+            </a>
+            <a href="#/check-in" class="app-nav__link" data-route="check-in">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+              <span>Check-In</span>
+            </a>
+            <a href="#/rewards" class="app-nav__link" data-route="rewards">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+              <span>Points &amp; Rewards</span>
+            </a>
+            <a href="#/calendar" class="app-nav__link" data-route="calendar">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span>Calendar &amp; Tasks</span>
+            </a>
+            <a href="#/resources" class="app-nav__link" data-route="resources">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>
+              <span>Resources</span>
+            </a>
+            <a href="#/reports" class="app-nav__link" data-route="reports">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+              <span>Reports</span>
+            </a>
+            <a href="#/admin" class="app-nav__link" data-route="admin">
+              <svg class="app-nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Admin</span>
+            </a>
+          </nav>
+
+          <div class="app-sidebar__footer">
+            <p class="app-sidebar__note">Community Outreach Program</p>
+            <p class="app-sidebar__meta">Staff operations console</p>
           </div>
         </aside>
 
-        <div class="page-main">
-          <header class="hero">
+        <div class="app-body">
+          <header class="app-topbar">
+            <button
+              id="app-menu-toggle"
+              type="button"
+              class="app-menu-toggle"
+              aria-label="Open navigation"
+              aria-expanded="false"
+              aria-controls="app-sidebar"
+            >
+              <span></span><span></span><span></span>
+            </button>
+
+            <div class="app-topbar__heading">
+              <p class="app-topbar__eyebrow">Operations</p>
+              <h1 class="app-topbar__title" id="app-page-title" tabindex="-1">Dashboard</h1>
+            </div>
+
+            <div class="app-user">
+              <span class="app-user__avatar" aria-hidden="true">S</span>
+              <span class="app-user__meta">
+                <span class="app-user__label">Signed in</span>
+                <span id="staff-status" class="app-user__name">Off</span>
+              </span>
+              <button id="staff-toggle" type="button" class="btn secondary small">
+                Sign Out
+              </button>
+            </div>
+          </header>
+
+          <div class="page-main app-main">
+          <header class="hero" data-page="dashboard">
             <div class="hero__content">
               <div class="hero__banner" aria-hidden="true"></div>
               <p class="eyebrow">Community Outreach Program</p><!-- neutral branding -->
               <h1>Lighthouse Ministry Hub</h1>
               <p class="subhead">
-                A calm, organized command center for member care, resources, events, volunteers, and ministry activity.
+                Member care, points, resources, events, and staff activity in one place.
               </p>
-              <div class="hero__actions" aria-label="Primary sections">
-                <a class="hero__link" href="#add-member-card">Add a member</a>
-                <a class="hero__link" href="#resources-card">Find resources</a>
-                <a class="hero__link" href="#summary-card">View summary</a>
-                <a class="hero__link" href="#staff-logs">Backups</a>
+              <div class="hero__actions" role="group" aria-label="Primary sections">
+                <a class="hero__link" href="#/members">Add a member</a>
+                <a class="hero__link" href="#/check-in">Check in a member</a>
+                <a class="hero__link" href="#/resources">Find resources</a>
+                <a class="hero__link" href="#/admin">Backups &amp; logs</a>
               </div>
             </div>
             <div class="hero__card">
@@ -86,30 +151,43 @@
                 <span class="hero__label">Average Points</span>
                 <span id="stat-average" class="hero__value">0</span>
               </div>
-              <div class="hero__staff">
-                <button id="staff-toggle" type="button" class="btn secondary">
-                  Sign Out
-                </button>
-                <span id="staff-status" class="hint">Off</span>
-              </div>
             </div>
           </header>
 
-          <main class="grid">
-        <section id="quick-actions-card" class="card card--quick span-2">
+          <main class="grid" id="page-main" tabindex="-1">
+        <section id="dashboard-kpis" class="kpi-row span-2" data-page="dashboard" aria-label="Today at a glance">
+          <div class="stat-card">
+            <span class="stat-card__label">Members Served Today</span>
+            <strong class="stat-card__value" id="kpi-served-today">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__label">Check-Ins This Week</span>
+            <strong class="stat-card__value" id="kpi-checkins-week">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__label">Items Redeemed This Week</span>
+            <strong class="stat-card__value" id="kpi-redeemed-week">0</strong>
+          </div>
+          <div class="stat-card" id="kpi-followups-card">
+            <span class="stat-card__label">Follow-Ups Due</span>
+            <strong class="stat-card__value" id="kpi-followups-due">0</strong>
+          </div>
+        </section>
+
+        <section id="quick-actions-card" class="card card--quick span-2" data-page="dashboard">
           <div class="card__header">
             <h2>Quick Actions</h2>
           </div>
           <div class="quick-actions">
-            <a class="quick-action" href="#add-member-card">
+            <a class="quick-action" href="#/members">
               <span>Add Member</span>
               <strong>Start intake</strong>
             </a>
-            <a class="quick-action" href="#member-checkin-card">
+            <a class="quick-action" href="#/check-in">
               <span>Member Check-In</span>
               <strong>Visit, points, follow-up</strong>
             </a>
-            <a class="quick-action" href="#redeem-card">
+            <a class="quick-action" href="#/rewards">
               <span>Redeem Items</span>
               <strong>Use member points</strong>
             </a>
@@ -124,19 +202,63 @@
           </div>
         </section>
 
-        <section id="staff-dashboard-card" class="card span-2">
+        <section id="staff-dashboard-card" class="card span-2" data-page="dashboard">
           <div class="card__header">
-            <h2>Staff Dashboard</h2>
+            <h2>Today&rsquo;s Overview</h2>
           </div>
-          <div id="dashboard-alerts" class="dashboard-alerts" aria-live="polite"></div>
+          <div class="dashboard-panels dashboard-panels--home">
+            <div class="subsection-panel">
+              <div class="subsection-panel__header">
+                <h3>Needs Attention</h3>
+              </div>
+              <div id="dashboard-alerts" class="dashboard-alerts" aria-live="polite"></div>
+            </div>
+            <div class="subsection-panel">
+              <div class="subsection-panel__header">
+                <h3>Follow-Up Queue</h3>
+                <a class="subsection-panel__link" href="#/members">All members</a>
+              </div>
+              <div id="dashboard-followups" class="compact-list"></div>
+            </div>
+            <div class="subsection-panel">
+              <div class="subsection-panel__header">
+                <h3>Upcoming Events</h3>
+                <a class="subsection-panel__link" href="#/calendar">Calendar</a>
+              </div>
+              <div id="dashboard-events" class="compact-list"></div>
+            </div>
+            <div class="subsection-panel">
+              <div class="subsection-panel__header">
+                <h3>Recent Activity</h3>
+                <a class="subsection-panel__link" href="#/admin">View full activity</a>
+              </div>
+              <div id="dashboard-activity" class="compact-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="calendar-tasks-card" class="card span-2" data-page="calendar">
+          <div class="card__header">
+            <h2>Calendar &amp; Tasks</h2>
+          </div>
           <div class="dashboard-panels">
             <div id="calendar-card" class="subsection-panel">
               <div class="subsection-panel__header">
                 <h3>Calendar & Events</h3>
-                <div class="calendar-nav">
-                  <button id="calendar-prev" type="button" class="btn secondary">Previous</button>
-                  <span id="calendar-title" class="calendar-title">Month</span>
-                  <button id="calendar-next" type="button" class="btn secondary">Next</button>
+                <div class="calendar-controls">
+                  <label class="calendar-view">
+                    View
+                    <select id="calendar-view">
+                      <option value="month" selected>Month grid</option>
+                      <option value="today">Today</option>
+                      <option value="upcoming">Next 30 days</option>
+                    </select>
+                  </label>
+                  <div id="calendar-nav" class="calendar-nav">
+                    <button id="calendar-prev" type="button" class="btn secondary">Previous</button>
+                    <span id="calendar-title" class="calendar-title">Month</span>
+                    <button id="calendar-next" type="button" class="btn secondary">Next</button>
+                  </div>
                 </div>
               </div>
               <div id="calendar-grid" class="calendar-grid"></div>
@@ -170,7 +292,18 @@
               </div>
               <div id="staff-task-list" class="todo-list"></div>
               <form id="staff-task-form" class="todo-composer">
-                <input id="staff-task-input" type="text" name="title" placeholder="Add staff reminder or follow-up" required />
+                <input
+                  id="staff-task-input"
+                  type="text"
+                  name="title"
+                  placeholder="Add staff reminder or follow-up"
+                  aria-label="New staff reminder or follow-up"
+                  required
+                />
+                <label class="todo-due">
+                  Due date
+                  <input id="staff-task-due" type="date" name="dueDate" />
+                </label>
                 <div class="form-actions compact">
                   <button id="staff-task-cancel" type="button" class="btn secondary" hidden>Cancel</button>
                   <button id="staff-task-save" type="submit" class="btn secondary">Add Task</button>
@@ -180,7 +313,9 @@
           </div>
         </section>
 
-        <section id="redeem-card" class="card card--action">
+        <div id="rewards-toast" class="rewards-toast" data-page="rewards" role="status" aria-live="polite" hidden></div>
+
+        <section id="redeem-card" class="card card--action" data-page="rewards">
           <h2>Redeem Items</h2>
           <form id="redeem-form" class="form">
             <label>
@@ -189,15 +324,21 @@
             </label>
             <p id="redeem-points" class="hint"></p>
             <label>
+              Search Items
+              <input id="redeem-search" class="search-input" type="search" placeholder="Search rewards and supplies..." autocomplete="off" />
+            </label>
+            <label>
               Items
               <div id="redeem-items" class="redeem-items"></div>
             </label>
+            <div id="redeem-cart" class="redeem-cart" aria-live="polite"></div>
             <button id="redeem-button" type="submit" class="btn accent">Redeem (0 pts)</button>
-            <p id="redeem-error" class="error" hidden></p>
+            <p id="redeem-error" class="error" role="alert" hidden></p>
+            <div id="redeem-confirm" class="confirm-panel" aria-live="polite" hidden></div>
           </form>
         </section>
 
-        <section id="task-award-card" class="card card--action span-2">
+        <section id="task-award-card" class="card card--action span-2" data-page="rewards">
           <div class="card__header">
             <h2>Award Points</h2>
             <div class="header-actions">
@@ -214,6 +355,7 @@
               Member
               <select name="personId" required></select>
             </label>
+            <p id="award-balance" class="hint"></p>
             <div id="add-task-form" class="form item-form">
               <label>
                 Task Name
@@ -223,7 +365,7 @@
                 Points
                 <input id="add-task-points" type="number" name="taskPoints" min="1" required />
               </label>
-              <p id="add-task-error" class="error form-error" hidden></p>
+              <p id="add-task-error" class="error form-error" role="alert" hidden></p>
               <div class="form-actions">
                 <button id="add-task-cancel" type="button" class="btn secondary">Cancel</button>
                 <button id="add-task-save" type="button" class="btn primary">Save Task</button>
@@ -233,7 +375,7 @@
               <span class="field__label">Tasks</span>
               <div id="task-buttons" class="task-buttons"></div>
             </div>
-            <p id="task-error" class="error" hidden></p>
+            <p id="task-error" class="error" role="alert" hidden></p>
           </form>
           <details class="section-collapse section-collapse--nested">
             <summary>Custom Award</summary>
@@ -251,35 +393,61 @@
                   Note
                   <input id="award-note" type="text" name="note" placeholder="Task completed" required />
                 </label>
-                <p id="award-note-error" class="error form-error" hidden>Note is required.</p>
+                <p
+                  id="award-note-error"
+                  class="error form-error"
+                  role="alert"
+                  data-error-for="award-note"
+                  hidden
+                >Note is required.</p>
                 <button type="submit" class="btn primary">Add Points</button>
               </form>
             </div>
           </details>
+          <div id="award-confirm" class="confirm-panel" aria-live="polite" hidden></div>
         </section>
 
-        <section id="member-checkin-card" class="card card--action span-2">
+        <section id="rewards-history-card" class="card span-2" data-page="rewards">
+          <div class="card__header">
+            <h2>Point Activity</h2>
+            <a class="subsection-panel__link" href="#/admin">View full log</a>
+          </div>
+          <p class="hint">Every award, deduction, redemption, and correction with the balance it produced.</p>
+          <div id="rewards-history" class="compact-list"></div>
+        </section>
+
+        <section id="member-checkin-card" class="card card--action span-2" data-page="check-in">
           <div class="card__header">
             <h2>Member Check-In</h2>
           </div>
           <div class="checkin-layout">
-            <form id="checkin-form" class="form checkin-panel">
+            <form id="checkin-form" class="form checkin-panel" novalidate>
+              <label>
+                Find Member
+                <input id="checkin-search" class="search-input" type="search" placeholder="Search name, tag, or housing..." autocomplete="off" />
+              </label>
               <label>
                 Member
                 <select id="checkin-member" name="personId" required></select>
               </label>
               <div id="checkin-summary" class="checkin-summary"></div>
+              <label>
+                Visit Note (optional)
+                <input id="checkin-note" type="text" name="visitNote" placeholder="What happened during this visit?" autocomplete="off" />
+              </label>
               <div class="form-actions compact">
                 <button id="checkin-log-visit" type="button" class="btn primary">Log Visit</button>
                 <button id="checkin-followup-toggle" type="button" class="btn secondary">Toggle Follow-Up</button>
-                <a class="btn secondary" href="#redeem-card">Redeem Items</a>
+                <a id="checkin-redeem-link" class="btn secondary" href="#/rewards">Redeem Items</a>
               </div>
+              <div id="checkin-confirm" class="checkin-confirm" aria-live="polite" hidden></div>
+              <div id="checkin-result" class="checkin-result" aria-live="polite"></div>
             </form>
             <div id="checkin-history" class="checkin-panel"></div>
           </div>
         </section>
 
-        <section id="add-member-card" class="card card--action">
+        <section id="add-member-card" class="card card--action" data-page="members">
           <h2>Add Member</h2>
           <form id="person-form" class="form">
             <label>
@@ -308,7 +476,7 @@
                 Residence Tag
                 <select name="residenceTag">
                   <option value="Homeless">Homeless</option>
-                  <option value="Studio 45">Studio 45</option>
+                  <option value="Studio Apartment">Studio Apartment</option>
                   <option value="Temp Housing">Temp Housing</option>
                   <option value="Shelter">Shelter</option>
                   <option value="With Family">With Family</option>
@@ -335,7 +503,13 @@
                   </label>
                   <span id="member-photo-name" class="hint"></span>
                 </div>
-                <p id="member-photo-error" class="error form-error" hidden></p>
+                <p
+                  id="member-photo-error"
+                  class="error form-error"
+                  role="alert"
+                  data-error-for="member-photo"
+                  hidden
+                ></p>
               </div>
               <div class="form-section-title">Contact Information</div>
               <label>
@@ -367,23 +541,30 @@
           </form>
         </section>
 
-        <section id="members-card" class="card card--directory span-2">
+        <section id="members-card" class="card card--directory span-2" data-page="members">
           <div class="card__header">
             <h2>Members</h2>
             <div class="member-toolbar">
-              <input id="member-search" class="search-input" type="search" placeholder="Search members or tags..." />
-              <select id="member-tag-filter" class="toolbar-select">
+              <input
+                id="member-search"
+                class="search-input"
+                type="search"
+                placeholder="Search members or tags..."
+                aria-label="Search members by name or housing tag"
+              />
+              <select id="member-tag-filter" class="toolbar-select" aria-label="Filter members by residence tag">
                 <option value="">All Tags</option>
               </select>
-              <select id="member-sort" class="toolbar-select">
+              <select id="member-sort" class="toolbar-select" aria-label="Sort members">
                 <option value="name">Sort: A-Z</option>
                 <option value="visits">Sort: Most Regular</option>
                 <option value="recent">Sort: Most Recent Visit</option>
               </select>
+              <button id="member-clear-filters" type="button" class="btn secondary small" hidden>Clear Filters</button>
               <button id="print-signin" type="button" class="btn secondary">Print Sign-In Sheets</button>
             </div>
           </div>
-          <p class="hint">Search by member name or housing tag, then log visits or check profiles.</p>
+          <p id="member-count" class="hint member-count" aria-live="polite">Search by member name or housing tag, then log visits or check profiles.</p>
           <div id="people-list" class="people"></div>
           <details class="section-collapse section-collapse--nested">
             <summary>Inactive Members</summary>
@@ -394,10 +575,9 @@
           </details>
         </section>
 
-        <section id="summary-card" class="card card--summary span-2">
+        <section id="summary-card" class="card card--summary span-2" data-page="reports">
           <div class="card__header">
             <h2>Weekly Summary</h2>
-            <button id="print-report" type="button" class="btn secondary">Print Weekly Report</button>
           </div>
           <div class="summary-grid">
             <div class="summary-item">
@@ -415,7 +595,7 @@
           </div>
         </section>
 
-        <section id="admin-records-card" class="card card--directory span-2">
+        <section id="admin-records-card" class="card card--directory span-2" data-page="admin">
           <div class="card__header">
             <h2>Admin Records</h2>
           </div>
@@ -424,7 +604,7 @@
             <summary>Volunteer Directory</summary>
             <div class="section-collapse__content">
               <div class="member-toolbar">
-                <select id="volunteer-sort" class="toolbar-select">
+                <select id="volunteer-sort" class="toolbar-select" aria-label="Sort volunteers">
                   <option value="name">Sort: A-Z</option>
                   <option value="regular">Sort: Most Regular</option>
                 </select>
@@ -525,7 +705,7 @@
                     <span id="document-file-name" class="hint"></span>
                   </div>
                   <p class="hint">Supported: PDF, images, text files, Excel files, and DOCX.</p>
-                  <p id="document-error" class="error form-error" hidden></p>
+                  <p id="document-error" class="error form-error" role="alert" hidden></p>
                 </div>
                 <button type="submit" class="btn primary">Upload Document</button>
               </form>
@@ -565,11 +745,17 @@
           </details>
         </section>
 
-        <section id="resources-card" class="card card--reference span-2">
+        <section id="resources-card" class="card card--reference span-2" data-page="resources">
           <div class="card__header">
             <h2>Community Resources</h2>
             <div class="member-toolbar">
-              <input id="resource-search" class="search-input" type="search" placeholder="Search resources..." />
+              <input
+                id="resource-search"
+                class="search-input"
+                type="search"
+                placeholder="Search resources..."
+                aria-label="Search community resources"
+              />
               <button id="print-resources" type="button" class="btn secondary">Print Resources</button>
               <button id="add-resource-toggle" type="button" class="btn secondary">Add Resource</button>
             </div>
@@ -625,12 +811,13 @@
               <button id="resource-cancel" type="button" class="btn secondary">Cancel</button>
               <button id="resource-save" type="submit" class="btn primary">Save Resource</button>
             </div>
-            <p id="resource-error" class="error form-error" hidden></p>
+            <p id="resource-error" class="error form-error" role="alert" hidden></p>
           </form>
+          <p id="resource-count" class="hint member-count" aria-live="polite">Browse resources by category or search above.</p>
           <div id="resource-list" class="people"></div>
         </section>
 
-        <section id="items-card" class="card card--reference span-2">
+        <section id="items-card" class="card card--reference span-2" data-page="admin">
           <div class="card__header">
             <h2>All Items and Point Costs</h2>
             <button id="add-item-toggle" type="button" class="btn secondary">
@@ -656,7 +843,7 @@
               Group
               <select id="add-item-group" name="itemGroup" required></select>
             </label>
-            <p id="add-item-error" class="error form-error" hidden></p>
+            <p id="add-item-error" class="error form-error" role="alert" hidden></p>
             <div class="form-actions">
               <button id="add-item-cancel" type="button" class="btn secondary">Cancel</button>
               <button type="submit" class="btn primary">Save Item</button>
@@ -665,7 +852,7 @@
           <div id="items-table" class="table"></div>
         </section>
 
-        <section id="corrections-card" class="card card--admin span-2">
+        <section id="corrections-card" class="card card--admin span-2" data-page="admin">
           <div class="card__header">
             <h2>Corrections</h2>
           </div>
@@ -690,14 +877,20 @@
                   Note
                   <input id="remove-note" type="text" name="note" placeholder="Reason" required />
                 </label>
-                <p id="remove-note-error" class="error form-error" hidden>Note is required.</p>
+                <p
+                  id="remove-note-error"
+                  class="error form-error"
+                  role="alert"
+                  data-error-for="remove-note"
+                  hidden
+                >Note is required.</p>
                 <button type="submit" class="btn danger">Remove Points</button>
               </form>
             </div>
           </div>
         </section>
 
-        <section id="staff-logs" class="card span-2">
+        <section id="staff-logs" class="card span-2" data-page="admin">
           <div class="card__header">
             <h2>Logs, Backups & Security</h2>
           </div>
@@ -708,11 +901,9 @@
                 <button id="export-data" type="button" class="btn secondary">Backup Data (JSON)</button>
                 <button id="import-data" type="button" class="btn secondary">Restore Data</button>
                 <button id="restore-safety-backup" type="button" class="btn secondary">Restore Last Safety Backup</button>
-                <button id="export-logs" type="button" class="btn secondary">Export Logs (Excel)</button>
-                <button id="print-logs" type="button" class="btn secondary">Print Logs Report</button>
               </div>
               <p id="backup-status" class="backup-status">Latest safety backup: checking...</p>
-              <div class="log-metrics" aria-label="Log and backup overview">
+              <div class="log-metrics" role="group" aria-label="Log and backup overview">
                 <div class="log-metric">
                   <span>Activity Entries</span>
                   <strong id="log-count-activity">0</strong>
@@ -726,12 +917,18 @@
                   <strong id="log-count-backups">0</strong>
                 </div>
               </div>
-              <div class="log-toolbar" aria-label="Filter activity logs">
-                <input id="log-search" class="search-input" type="search" placeholder="Search activity logs..." />
-                <select id="log-type-filter" class="toolbar-select">
+              <div class="log-toolbar" role="group" aria-label="Filter activity logs">
+                <input
+                  id="log-search"
+                  class="search-input"
+                  type="search"
+                  placeholder="Search activity logs..."
+                  aria-label="Search activity logs"
+                />
+                <select id="log-type-filter" class="toolbar-select" aria-label="Filter activity logs by type">
                   <option value="">All Activity Types</option>
                 </select>
-                <select id="log-range-filter" class="toolbar-select">
+                <select id="log-range-filter" class="toolbar-select" aria-label="Filter activity logs by date range">
                   <option value="">All Time</option>
                   <option value="7">Last 7 Days</option>
                   <option value="30">Last 30 Days</option>
@@ -746,8 +943,14 @@
           <details id="admin-log" class="section-collapse section-collapse--nested">
             <summary>Admin Actions & Failed Attempts</summary>
             <div class="section-collapse__content">
-              <div class="log-toolbar" aria-label="Filter admin actions">
-                <input id="admin-log-search" class="search-input" type="search" placeholder="Search admin actions..." />
+              <div class="log-toolbar" role="group" aria-label="Filter admin actions">
+                <input
+                  id="admin-log-search"
+                  class="search-input"
+                  type="search"
+                  placeholder="Search admin actions..."
+                  aria-label="Search admin actions"
+                />
               </div>
               <div id="admin-table" class="table"></div>
             </div>
@@ -772,7 +975,7 @@
                   </label>
                 </div>
                 <button type="submit" class="btn primary">Add Staff Account</button>
-                <p id="staff-user-error" class="error form-error" hidden></p>
+                <p id="staff-user-error" class="error form-error" role="alert" hidden></p>
               </form>
               <div id="staff-user-list" class="table"></div>
             </div>
@@ -812,14 +1015,89 @@
             </div>
           </details>
         </section>
+        <section id="member-profile-card" class="card span-2" data-page="member-profile" hidden>
+          <div class="card__header">
+            <h2 id="member-profile-title">Member Profile</h2>
+          </div>
+          <div id="member-profile-root" class="member-profile"></div>
+        </section>
+
+        <section id="reports-card" class="card span-2" data-page="reports">
+          <div class="card__header">
+            <h2>Reports &amp; Exports</h2>
+          </div>
+          <p class="hint">
+            These reports are generated from the data currently loaded in this app. They reflect the
+            demo or local records stored in this browser, not a shared server database.
+          </p>
+          <div class="report-controls">
+            <label>
+              Date range
+              <select id="report-range">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="all">All time</option>
+              </select>
+            </label>
+            <label>
+              Focus
+              <select id="report-type">
+                <option value="all">Everything</option>
+                <option value="visit">Check-ins</option>
+                <option value="task">Task awards</option>
+                <option value="award">Custom awards</option>
+                <option value="remove">Deductions</option>
+                <option value="redeem">Redemptions</option>
+              </select>
+            </label>
+          </div>
+          <div id="report-results" class="report-results" aria-live="polite"></div>
+          <div class="header-actions">
+            <button id="print-report" type="button" class="btn secondary">Print Weekly Report</button>
+            <button id="print-logs" type="button" class="btn secondary">Print Logs Report</button>
+            <button id="export-logs" type="button" class="btn secondary">Export Logs (Excel)</button>
+          </div>
+        </section>
           </main>
+          </div>
         </div>
       </div>
     </div>
 
-    <div id="sensitive-modal" class="sensitive-modal" hidden>
-      <div class="sensitive-modal__scrim" data-close-sensitive="true"></div>
-      <div class="sensitive-modal__panel">
+    <div
+      id="confirm-modal"
+      class="sensitive-modal confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+      aria-describedby="confirm-modal-message"
+      hidden
+    >
+      <div class="sensitive-modal__scrim" data-close-confirm="true" aria-hidden="true"></div>
+      <div class="sensitive-modal__panel" tabindex="-1">
+        <p class="eyebrow">Please Confirm</p>
+        <h2 id="confirm-modal-title">Confirm Action</h2>
+        <p id="confirm-modal-message" class="hint">This change is recorded in the admin log.</p>
+        <div id="confirm-modal-details" class="confirm-modal__details" hidden></div>
+        <div class="form-actions">
+          <button id="confirm-modal-cancel" type="button" class="btn secondary">Cancel</button>
+          <button id="confirm-modal-accept" type="button" class="btn danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="sensitive-modal"
+      class="sensitive-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sensitive-title"
+      aria-describedby="sensitive-message"
+      hidden
+    >
+      <div class="sensitive-modal__scrim" data-close-sensitive="true" aria-hidden="true"></div>
+      <div class="sensitive-modal__panel" tabindex="-1">
         <p class="eyebrow">Protected Action</p>
         <h2 id="sensitive-title">Confirm Staff Login</h2>
         <p id="sensitive-message" class="hint">
@@ -844,7 +1122,13 @@
               <input id="sensitive-confirm-password" type="password" name="confirmPassword" autocomplete="new-password" />
             </label>
           </div>
-          <p id="sensitive-error" class="error form-error" hidden></p>
+          <p
+            id="sensitive-error"
+            class="error form-error"
+            role="alert"
+            data-error-for="sensitive-username sensitive-password sensitive-new-password sensitive-confirm-password"
+            hidden
+          ></p>
           <div class="form-actions">
             <button id="sensitive-cancel" type="button" class="btn secondary">Cancel</button>
             <button id="sensitive-submit" type="submit" class="btn danger">Confirm</button>

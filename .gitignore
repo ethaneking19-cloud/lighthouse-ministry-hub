@@ -13,6 +13,12 @@ Backups/
 Thumbs.db
 desktop.ini
 
+# Local preview harness (generated, never committed)
+preview-tmp/
+
+# Agent workspace metadata
+.freebuff/
+
 # Temporary screenshots/check artifacts
 nav-check*.png
 scale-check*.png

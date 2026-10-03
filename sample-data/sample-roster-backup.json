@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-09-18T18:36:01.835Z",
+  "exportedAt": "2026-10-02T22:34:30.028Z",
   "reason": "Class demonstration sample roster (all records are fictional)",
   "state": {
     "people": [
@@ -8,7 +8,7 @@
         "firstName": "Andre",
         "lastName": "Whitfield",
         "points": 23,
-        "dateJoined": "2026-04-03",
+        "dateJoined": "2026-04-17",
         "home": "Lakeview Family Center",
         "residenceTag": "Temp Housing",
         "phone": "5550110007",
@@ -27,7 +27,7 @@
         "firstName": "Naomi",
         "lastName": "Sterling",
         "points": 28,
-        "dateJoined": "2026-04-17",
+        "dateJoined": "2026-05-01",
         "home": "Lakeview Family Center",
         "residenceTag": "Shelter",
         "phone": "5550110014",
@@ -46,7 +46,7 @@
         "firstName": "Caleb",
         "lastName": "Ortiz",
         "points": 40,
-        "dateJoined": "2026-04-30",
+        "dateJoined": "2026-05-14",
         "home": "Lakeview Family Center",
         "residenceTag": "Homeless",
         "phone": "5550110021",
@@ -65,7 +65,7 @@
         "firstName": "Denise",
         "lastName": "Hartley",
         "points": 12,
-        "dateJoined": "2026-05-09",
+        "dateJoined": "2026-05-23",
         "home": "Independent living, Birch Street",
         "residenceTag": "With Family",
         "phone": "5550110028",
@@ -84,7 +84,7 @@
         "firstName": "Elijah",
         "lastName": "Barnes",
         "points": 23,
-        "dateJoined": "2026-05-20",
+        "dateJoined": "2026-06-03",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "Own Home",
         "phone": "5550110035",
@@ -103,7 +103,7 @@
         "firstName": "Farrah",
         "lastName": "Nkemelu",
         "points": 25,
-        "dateJoined": "2026-05-29",
+        "dateJoined": "2026-06-12",
         "home": "Independent living, Birch Street",
         "residenceTag": "Temp Housing",
         "phone": "5550110042",
@@ -122,7 +122,7 @@
         "firstName": "Gerald",
         "lastName": "Simmons",
         "points": 10,
-        "dateJoined": "2026-06-07",
+        "dateJoined": "2026-06-21",
         "home": "",
         "residenceTag": "Other",
         "phone": "5550110049",
@@ -141,7 +141,7 @@
         "firstName": "Hannah",
         "lastName": "Pike",
         "points": 55,
-        "dateJoined": "2026-06-14",
+        "dateJoined": "2026-06-28",
         "home": "Independent living, Birch Street",
         "residenceTag": "Temp Housing",
         "phone": "5550110056",
@@ -160,7 +160,7 @@
         "firstName": "Isaiah",
         "lastName": "Coleman",
         "points": 42,
-        "dateJoined": "2026-06-22",
+        "dateJoined": "2026-07-06",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "Shelter",
         "phone": "5550110063",
@@ -179,7 +179,7 @@
         "firstName": "Jasmine",
         "lastName": "Reyes",
         "points": 20,
-        "dateJoined": "2026-06-28",
+        "dateJoined": "2026-07-12",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "Homeless",
         "phone": "5550110070",
@@ -198,7 +198,7 @@
         "firstName": "Kevin",
         "lastName": "Duval",
         "points": 31,
-        "dateJoined": "2026-07-04",
+        "dateJoined": "2026-07-18",
         "home": "Cornerstone Transitional Housing",
         "residenceTag": "With Family",
         "phone": "5550110077",
@@ -217,7 +217,7 @@
         "firstName": "Lena",
         "lastName": "Petrova",
         "points": 3,
-        "dateJoined": "2026-07-10",
+        "dateJoined": "2026-07-24",
         "home": "Cornerstone Transitional Housing",
         "residenceTag": "Own Home",
         "phone": "5550110084",
@@ -236,7 +236,7 @@
         "firstName": "Marcus",
         "lastName": "Ellison",
         "points": 30,
-        "dateJoined": "2026-07-16",
+        "dateJoined": "2026-07-30",
         "home": "Staying with sister, Oak Hill",
         "residenceTag": "Temp Housing",
         "phone": "5550110091",
@@ -255,7 +255,7 @@
         "firstName": "Nadia",
         "lastName": "Farouk",
         "points": 15,
-        "dateJoined": "2026-07-22",
+        "dateJoined": "2026-08-05",
         "home": "",
         "residenceTag": "Other",
         "phone": "5550110098",
@@ -274,7 +274,7 @@
         "firstName": "Omar",
         "lastName": "Haddad",
         "points": 20,
-        "dateJoined": "2026-07-28",
+        "dateJoined": "2026-08-11",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "Temp Housing",
         "phone": "5550110105",
@@ -293,7 +293,7 @@
         "firstName": "Paula",
         "lastName": "Kensington",
         "points": 17,
-        "dateJoined": "2026-08-02",
+        "dateJoined": "2026-08-16",
         "home": "Cornerstone Transitional Housing",
         "residenceTag": "Shelter",
         "phone": "5550110112",
@@ -312,7 +312,7 @@
         "firstName": "Quentin",
         "lastName": "Blake",
         "points": 24,
-        "dateJoined": "2026-08-08",
+        "dateJoined": "2026-08-22",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "Homeless",
         "phone": "5550110119",
@@ -331,7 +331,7 @@
         "firstName": "Rosa",
         "lastName": "Villanueva",
         "points": 10,
-        "dateJoined": "2026-08-13",
+        "dateJoined": "2026-08-27",
         "home": "Cornerstone Transitional Housing",
         "residenceTag": "With Family",
         "phone": "5550110126",
@@ -350,7 +350,7 @@
         "firstName": "Samuel",
         "lastName": "Adeyemi",
         "points": 31,
-        "dateJoined": "2026-08-19",
+        "dateJoined": "2026-09-02",
         "home": "Staying with sister, Oak Hill",
         "residenceTag": "Own Home",
         "phone": "5550110133",
@@ -369,7 +369,7 @@
         "firstName": "Tanya",
         "lastName": "Brooks",
         "points": 35,
-        "dateJoined": "2026-08-23",
+        "dateJoined": "2026-09-06",
         "home": "Lakeview Family Center",
         "residenceTag": "Temp Housing",
         "phone": "5550110140",
@@ -388,7 +388,7 @@
         "firstName": "Victor",
         "lastName": "Nguyen",
         "points": 0,
-        "dateJoined": "2026-08-27",
+        "dateJoined": "2026-09-10",
         "home": "",
         "residenceTag": "Other",
         "phone": "5550110147",
@@ -407,7 +407,7 @@
         "firstName": "Wanda",
         "lastName": "Fitzgerald",
         "points": 53,
-        "dateJoined": "2026-08-31",
+        "dateJoined": "2026-09-14",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "Temp Housing",
         "phone": "5550110154",
@@ -426,7 +426,7 @@
         "firstName": "Xavier",
         "lastName": "Landry",
         "points": 73,
-        "dateJoined": "2026-09-05",
+        "dateJoined": "2026-09-19",
         "home": "Staying with sister, Oak Hill",
         "residenceTag": "Shelter",
         "phone": "5550110161",
@@ -445,7 +445,7 @@
         "firstName": "Yolanda",
         "lastName": "Pearson",
         "points": 15,
-        "dateJoined": "2026-09-09",
+        "dateJoined": "2026-09-23",
         "home": "Independent living, Birch Street",
         "residenceTag": "Homeless",
         "phone": "5550110168",
@@ -464,7 +464,7 @@
         "firstName": "Zachary",
         "lastName": "Mills",
         "points": 65,
-        "dateJoined": "2026-09-12",
+        "dateJoined": "2026-09-26",
         "home": "Maple Court Apartments, Unit 4",
         "residenceTag": "With Family",
         "phone": "5550110175",
@@ -483,7 +483,7 @@
         "firstName": "Alina",
         "lastName": "Castellanos",
         "points": 29,
-        "dateJoined": "2026-09-15",
+        "dateJoined": "2026-09-29",
         "home": "Cornerstone Transitional Housing",
         "residenceTag": "Own Home",
         "phone": "5550110182",
@@ -546,7 +546,7 @@
         "detail": "Updated dashboard organization settings",
         "actor": "Marcus Bell",
         "status": "Success",
-        "timestamp": "2026-08-09T21:00:00.000Z"
+        "timestamp": "2026-08-23T21:00:00.000Z"
       },
       {
         "id": "sample-adminlog-02",
@@ -554,7 +554,7 @@
         "detail": "Added Andre Whitfield",
         "actor": "Marcus Bell",
         "status": "Success",
-        "timestamp": "2026-08-10T21:03:00.000Z"
+        "timestamp": "2026-08-24T21:03:00.000Z"
       },
       {
         "id": "sample-adminlog-03",
@@ -562,7 +562,7 @@
         "detail": "Exported full backup JSON",
         "actor": "Marcus Bell",
         "status": "Success",
-        "timestamp": "2026-08-19T21:06:00.000Z"
+        "timestamp": "2026-09-02T21:06:00.000Z"
       },
       {
         "id": "sample-adminlog-04",
@@ -570,7 +570,7 @@
         "detail": "Added task Organize supplies (5 pts)",
         "actor": "Marcus Bell",
         "status": "Success",
-        "timestamp": "2026-08-25T21:09:00.000Z"
+        "timestamp": "2026-09-08T21:09:00.000Z"
       },
       {
         "id": "sample-adminlog-05",
@@ -578,7 +578,7 @@
         "detail": "Changed point cost for Socks to 2 pts",
         "actor": "Priya Raman",
         "status": "Success",
-        "timestamp": "2026-08-30T21:12:00.000Z"
+        "timestamp": "2026-09-13T21:12:00.000Z"
       },
       {
         "id": "sample-adminlog-06",
@@ -586,7 +586,7 @@
         "detail": "Failed sign-in attempt for unknown staff account",
         "actor": "Ethan King",
         "status": "Denied",
-        "timestamp": "2026-09-06T21:15:00.000Z"
+        "timestamp": "2026-09-20T21:15:00.000Z"
       },
       {
         "id": "sample-adminlog-07",
@@ -594,7 +594,7 @@
         "detail": "Restore attempt rejected by staff confirmation",
         "actor": "Priya Raman",
         "status": "Denied",
-        "timestamp": "2026-09-10T21:18:00.000Z"
+        "timestamp": "2026-09-24T21:18:00.000Z"
       },
       {
         "id": "sample-adminlog-08",
@@ -602,7 +602,7 @@
         "detail": "Uploaded document sample-volunteer-notes.txt",
         "actor": "Priya Raman",
         "status": "Success",
-        "timestamp": "2026-09-12T21:21:00.000Z"
+        "timestamp": "2026-09-26T21:21:00.000Z"
       },
       {
         "id": "sample-adminlog-09",
@@ -610,7 +610,7 @@
         "detail": "Added volunteer Grant Holloway",
         "actor": "Dana Whitfield",
         "status": "Success",
-        "timestamp": "2026-09-14T21:24:00.000Z"
+        "timestamp": "2026-09-28T21:24:00.000Z"
       },
       {
         "id": "sample-adminlog-10",
@@ -618,7 +618,7 @@
         "detail": "Automatic safety backup before item cost change",
         "actor": "Marcus Bell",
         "status": "Success",
-        "timestamp": "2026-09-15T21:27:00.000Z"
+        "timestamp": "2026-09-29T21:27:00.000Z"
       },
       {
         "id": "sample-adminlog-11",
@@ -626,7 +626,7 @@
         "detail": "Removed 5 points for duplicate award correction",
         "actor": "Dana Whitfield",
         "status": "Success",
-        "timestamp": "2026-09-16T21:30:00.000Z"
+        "timestamp": "2026-09-30T21:30:00.000Z"
       },
       {
         "id": "sample-adminlog-12",
@@ -634,7 +634,7 @@
         "detail": "Printed weekly ministry snapshot",
         "actor": "Priya Raman",
         "status": "Success",
-        "timestamp": "2026-09-17T21:33:00.000Z"
+        "timestamp": "2026-10-01T21:33:00.000Z"
       }
     ],
     "activity": [
@@ -647,7 +647,7 @@
         "after": 73,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T21:40:00.000Z"
+        "timestamp": "2026-10-01T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0349",
@@ -658,7 +658,7 @@
         "after": 29,
         "note": "Sort donations",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-17T21:40:00.000Z"
+        "timestamp": "2026-10-01T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0329",
@@ -669,7 +669,7 @@
         "after": 38,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T21:30:00.000Z"
+        "timestamp": "2026-10-01T21:30:00.000Z"
       },
       {
         "id": "sample-activity-0343",
@@ -680,7 +680,7 @@
         "after": 19,
         "note": "Organize supplies",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-17T21:20:00.000Z"
+        "timestamp": "2026-10-01T21:20:00.000Z"
       },
       {
         "id": "sample-activity-0305",
@@ -691,7 +691,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T21:00:00.000Z"
+        "timestamp": "2026-10-01T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0330",
@@ -702,7 +702,7 @@
         "after": 53,
         "note": "Clean bathrooms/trashes",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-17T21:00:00.000Z"
+        "timestamp": "2026-10-01T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0306",
@@ -713,7 +713,7 @@
         "after": 15,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T20:20:00.000Z"
+        "timestamp": "2026-10-01T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0327",
@@ -724,7 +724,7 @@
         "after": 38,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T19:15:00.000Z"
+        "timestamp": "2026-10-01T19:15:00.000Z"
       },
       {
         "id": "sample-activity-0347",
@@ -735,7 +735,7 @@
         "after": 26,
         "note": "Organize supplies",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T19:00:00.000Z"
+        "timestamp": "2026-10-01T19:00:00.000Z"
       },
       {
         "id": "sample-activity-0277",
@@ -746,7 +746,7 @@
         "after": 53,
         "note": "1 x Pants; 1 x Granola Bars; 1 x Underwear",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0333",
@@ -757,7 +757,7 @@
         "after": 65,
         "note": "1 x Small Shampoo; 1 x Sandwich Crackers; 1 x Toothbrush; 1 x Pants",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0339",
@@ -768,7 +768,7 @@
         "after": 3,
         "note": "2 x Jelly; 1 x Underwear; 1 x Toothbrush",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0341",
@@ -779,7 +779,7 @@
         "after": 9,
         "note": "1 x Jelly; 1 x Smal Bodywash",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0344",
@@ -790,7 +790,7 @@
         "after": 12,
         "note": "1 x Peanut Butter; 1 x Small Shampoo; 1 x Pudding; 1 x Toothpaste",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0346",
@@ -801,7 +801,7 @@
         "after": 21,
         "note": "1 x Small Conditioner; 1 x Trail Mix; 1 x Sandwich Crackers; 1 x Canned Goods",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0348",
@@ -812,7 +812,7 @@
         "after": 19,
         "note": "1 x Jelly; 1 x Smal Bodywash; 1 x Shirts",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T18:30:00.000Z"
+        "timestamp": "2026-10-01T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0303",
@@ -823,7 +823,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T18:00:00.000Z"
+        "timestamp": "2026-10-01T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0345",
@@ -834,7 +834,7 @@
         "after": 27,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T18:00:00.000Z"
+        "timestamp": "2026-10-01T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0332",
@@ -845,7 +845,7 @@
         "after": 73,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T17:40:00.000Z"
+        "timestamp": "2026-10-01T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0294",
@@ -856,7 +856,7 @@
         "after": 68,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T16:15:00.000Z"
+        "timestamp": "2026-10-01T16:15:00.000Z"
       },
       {
         "id": "sample-activity-0331",
@@ -867,7 +867,7 @@
         "after": 68,
         "note": "Clean bathrooms/trashes",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T16:00:00.000Z"
+        "timestamp": "2026-10-01T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0213",
@@ -878,7 +878,7 @@
         "after": 17,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T15:45:00.000Z"
+        "timestamp": "2026-10-01T15:45:00.000Z"
       },
       {
         "id": "sample-activity-0325",
@@ -889,7 +889,7 @@
         "after": 38,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T15:15:00.000Z"
+        "timestamp": "2026-10-01T15:15:00.000Z"
       },
       {
         "id": "sample-activity-0337",
@@ -900,7 +900,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-09-16T20:20:00.000Z"
+        "timestamp": "2026-09-30T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0342",
@@ -911,7 +911,7 @@
         "after": 14,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-16T19:40:00.000Z"
+        "timestamp": "2026-09-30T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0322",
@@ -922,7 +922,7 @@
         "after": 28,
         "note": "2 x Pudding; 1 x Oatmeal; 1 x Socks",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-16T18:30:00.000Z"
+        "timestamp": "2026-09-30T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0276",
@@ -933,7 +933,7 @@
         "after": 60,
         "note": "Clean bathrooms/trashes",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-16T18:20:00.000Z"
+        "timestamp": "2026-09-30T18:20:00.000Z"
       },
       {
         "id": "sample-activity-0200",
@@ -944,7 +944,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-16T18:15:00.000Z"
+        "timestamp": "2026-09-30T18:15:00.000Z"
       },
       {
         "id": "sample-activity-0338",
@@ -955,7 +955,7 @@
         "after": 10,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-16T17:40:00.000Z"
+        "timestamp": "2026-09-30T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0010",
@@ -966,7 +966,7 @@
         "after": 23,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-16T17:15:00.000Z"
+        "timestamp": "2026-09-30T17:15:00.000Z"
       },
       {
         "id": "sample-activity-0340",
@@ -977,7 +977,7 @@
         "after": 13,
         "note": "Pass out fliers",
         "actor": "Ethan King",
-        "timestamp": "2026-09-16T16:40:00.000Z"
+        "timestamp": "2026-09-30T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0336",
@@ -988,7 +988,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-16T15:45:00.000Z"
+        "timestamp": "2026-09-30T15:45:00.000Z"
       },
       {
         "id": "sample-activity-0032",
@@ -999,7 +999,7 @@
         "after": 28,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T21:20:00.000Z"
+        "timestamp": "2026-09-29T21:20:00.000Z"
       },
       {
         "id": "sample-activity-0080",
@@ -1010,7 +1010,7 @@
         "after": 23,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-15T21:15:00.000Z"
+        "timestamp": "2026-09-29T21:15:00.000Z"
       },
       {
         "id": "sample-activity-0097",
@@ -1021,7 +1021,7 @@
         "after": 25,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-15T21:00:00.000Z"
+        "timestamp": "2026-09-29T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0301",
@@ -1032,7 +1032,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-15T20:40:00.000Z"
+        "timestamp": "2026-09-29T20:40:00.000Z"
       },
       {
         "id": "sample-activity-0231",
@@ -1043,7 +1043,7 @@
         "after": 24,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T20:15:00.000Z"
+        "timestamp": "2026-09-29T20:15:00.000Z"
       },
       {
         "id": "sample-activity-0314",
@@ -1054,7 +1054,7 @@
         "after": 19,
         "note": "1 x Peanut Butter; 1 x Shoes; 1 x Bar of Soap; 1 x Smal Bodywash",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-15T18:30:00.000Z"
+        "timestamp": "2026-09-29T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0316",
@@ -1065,7 +1065,7 @@
         "after": 18,
         "note": "1 x Shirts; 1 x Jelly; 1 x Toothbrush",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-15T18:30:00.000Z"
+        "timestamp": "2026-09-29T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0318",
@@ -1076,7 +1076,7 @@
         "after": 28,
         "note": "1 x Shirts; 1 x Jelly",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-15T18:30:00.000Z"
+        "timestamp": "2026-09-29T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0321",
@@ -1087,7 +1087,7 @@
         "after": 33,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T18:00:00.000Z"
+        "timestamp": "2026-09-29T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0320",
@@ -1098,7 +1098,7 @@
         "after": 28,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T17:00:00.000Z"
+        "timestamp": "2026-09-29T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0323",
@@ -1109,7 +1109,7 @@
         "after": 38,
         "note": "Pass out fliers",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-15T17:00:00.000Z"
+        "timestamp": "2026-09-29T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0275",
@@ -1120,7 +1120,7 @@
         "after": 45,
         "note": "Clean bathrooms/trashes",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T16:00:00.000Z"
+        "timestamp": "2026-09-29T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0262",
@@ -1131,7 +1131,7 @@
         "after": 35,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-15T15:00:00.000Z"
+        "timestamp": "2026-09-29T15:00:00.000Z"
       },
       {
         "id": "sample-activity-0334",
@@ -1142,7 +1142,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-15T14:30:00.000Z"
+        "timestamp": "2026-09-29T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0315",
@@ -1153,7 +1153,7 @@
         "after": 24,
         "note": "Organize supplies",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T21:40:00.000Z"
+        "timestamp": "2026-09-28T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0311",
@@ -1164,7 +1164,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T21:15:00.000Z"
+        "timestamp": "2026-09-28T21:15:00.000Z"
       },
       {
         "id": "sample-activity-0317",
@@ -1175,7 +1175,7 @@
         "after": 33,
         "note": "Clean bathrooms/trashes",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T20:40:00.000Z"
+        "timestamp": "2026-09-28T20:40:00.000Z"
       },
       {
         "id": "sample-activity-0312",
@@ -1186,7 +1186,7 @@
         "after": 15,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T19:20:00.000Z"
+        "timestamp": "2026-09-28T19:20:00.000Z"
       },
       {
         "id": "sample-activity-0309",
@@ -1197,7 +1197,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T19:15:00.000Z"
+        "timestamp": "2026-09-28T19:15:00.000Z"
       },
       {
         "id": "sample-activity-0292",
@@ -1208,7 +1208,7 @@
         "after": 68,
         "note": "Pass out fliers",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T17:40:00.000Z"
+        "timestamp": "2026-09-28T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0313",
@@ -1219,7 +1219,7 @@
         "after": 30,
         "note": "Clean bathrooms/trashes",
         "actor": "Ethan King",
-        "timestamp": "2026-09-14T17:40:00.000Z"
+        "timestamp": "2026-09-28T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0096",
@@ -1230,7 +1230,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T17:00:00.000Z"
+        "timestamp": "2026-09-28T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0274",
@@ -1241,7 +1241,7 @@
         "after": 30,
         "note": "Sort donations",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-14T16:40:00.000Z"
+        "timestamp": "2026-09-28T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0047",
@@ -1252,7 +1252,7 @@
         "after": 40,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T16:30:00.000Z"
+        "timestamp": "2026-09-28T16:30:00.000Z"
       },
       {
         "id": "sample-activity-0064",
@@ -1263,7 +1263,7 @@
         "after": 17,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T16:15:00.000Z"
+        "timestamp": "2026-09-28T16:15:00.000Z"
       },
       {
         "id": "sample-activity-0066",
@@ -1274,7 +1274,7 @@
         "after": 17,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-14T16:15:00.000Z"
+        "timestamp": "2026-09-28T16:15:00.000Z"
       },
       {
         "id": "sample-activity-0253",
@@ -1285,7 +1285,7 @@
         "after": 31,
         "note": "Organize supplies",
         "actor": "Ethan King",
-        "timestamp": "2026-09-13T21:20:00.000Z"
+        "timestamp": "2026-09-27T21:20:00.000Z"
       },
       {
         "id": "sample-activity-0300",
@@ -1296,7 +1296,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-13T20:15:00.000Z"
+        "timestamp": "2026-09-27T20:15:00.000Z"
       },
       {
         "id": "sample-activity-0229",
@@ -1307,7 +1307,7 @@
         "after": 24,
         "note": "1 x Pants; 1 x Socks",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-13T18:30:00.000Z"
+        "timestamp": "2026-09-27T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0094",
@@ -1318,7 +1318,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-13T17:45:00.000Z"
+        "timestamp": "2026-09-27T17:45:00.000Z"
       },
       {
         "id": "sample-activity-0031",
@@ -1329,7 +1329,7 @@
         "after": 18,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-13T16:15:00.000Z"
+        "timestamp": "2026-09-27T16:15:00.000Z"
       },
       {
         "id": "sample-activity-0260",
@@ -1340,7 +1340,7 @@
         "after": 35,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-12T21:20:00.000Z"
+        "timestamp": "2026-09-26T21:20:00.000Z"
       },
       {
         "id": "sample-activity-0228",
@@ -1351,7 +1351,7 @@
         "after": 30,
         "note": "Pass out fliers",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T21:00:00.000Z"
+        "timestamp": "2026-09-26T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0045",
@@ -1362,7 +1362,7 @@
         "after": 40,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T19:45:00.000Z"
+        "timestamp": "2026-09-26T19:45:00.000Z"
       },
       {
         "id": "sample-activity-0298",
@@ -1373,7 +1373,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T19:15:00.000Z"
+        "timestamp": "2026-09-26T19:15:00.000Z"
       },
       {
         "id": "sample-activity-0289",
@@ -1384,7 +1384,7 @@
         "after": 58,
         "note": "2 x Small Conditioner; 1 x Trail Mix; 1 x Underwear",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-12T18:30:00.000Z"
+        "timestamp": "2026-09-26T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0291",
@@ -1395,7 +1395,7 @@
         "after": 58,
         "note": "1 x Socks; 1 x Granola Bars; 1 x Jelly",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-12T18:30:00.000Z"
+        "timestamp": "2026-09-26T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0029",
@@ -1406,7 +1406,7 @@
         "after": 18,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-12T17:00:00.000Z"
+        "timestamp": "2026-09-26T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0227",
@@ -1417,7 +1417,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T16:15:00.000Z"
+        "timestamp": "2026-09-26T16:15:00.000Z"
       },
       {
         "id": "sample-activity-0273",
@@ -1428,7 +1428,7 @@
         "after": 20,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-12T16:00:00.000Z"
+        "timestamp": "2026-09-26T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0307",
@@ -1439,7 +1439,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T14:30:00.000Z"
+        "timestamp": "2026-09-26T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0225",
@@ -1450,7 +1450,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-11T19:30:00.000Z"
+        "timestamp": "2026-09-25T19:30:00.000Z"
       },
       {
         "id": "sample-activity-0290",
@@ -1461,7 +1461,7 @@
         "after": 63,
         "note": "Organize supplies",
         "actor": "Ethan King",
-        "timestamp": "2026-09-11T17:40:00.000Z"
+        "timestamp": "2026-09-25T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0160",
@@ -1472,7 +1472,7 @@
         "after": 31,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-11T17:30:00.000Z"
+        "timestamp": "2026-09-25T17:30:00.000Z"
       },
       {
         "id": "sample-activity-0259",
@@ -1483,7 +1483,7 @@
         "after": 30,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-09-11T17:20:00.000Z"
+        "timestamp": "2026-09-25T17:20:00.000Z"
       },
       {
         "id": "sample-activity-0272",
@@ -1494,7 +1494,7 @@
         "after": 15,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-11T17:00:00.000Z"
+        "timestamp": "2026-09-25T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0288",
@@ -1505,7 +1505,7 @@
         "after": 65,
         "note": "Pass out fliers",
         "actor": "Ethan King",
-        "timestamp": "2026-09-11T16:00:00.000Z"
+        "timestamp": "2026-09-25T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0223",
@@ -1516,7 +1516,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-10T21:45:00.000Z"
+        "timestamp": "2026-09-24T21:45:00.000Z"
       },
       {
         "id": "sample-activity-0284",
@@ -1527,7 +1527,7 @@
         "after": 20,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-10T21:40:00.000Z"
+        "timestamp": "2026-09-24T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0285",
@@ -1538,7 +1538,7 @@
         "after": 35,
         "note": "Clean bathrooms/trashes",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-10T21:40:00.000Z"
+        "timestamp": "2026-09-24T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0198",
@@ -1549,7 +1549,7 @@
         "after": 20,
         "note": "Pass out fliers",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-10T20:40:00.000Z"
+        "timestamp": "2026-09-24T20:40:00.000Z"
       },
       {
         "id": "sample-activity-0283",
@@ -1560,7 +1560,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-10T19:45:00.000Z"
+        "timestamp": "2026-09-24T19:45:00.000Z"
       },
       {
         "id": "sample-activity-0158",
@@ -1571,7 +1571,7 @@
         "after": 31,
         "note": "Pass out fliers",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-10T18:00:00.000Z"
+        "timestamp": "2026-09-24T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0270",
@@ -1582,7 +1582,7 @@
         "after": 15,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-09-10T18:00:00.000Z"
+        "timestamp": "2026-09-24T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0269",
@@ -1593,7 +1593,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-10T17:40:00.000Z"
+        "timestamp": "2026-09-24T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0287",
@@ -1604,7 +1604,7 @@
         "after": 55,
         "note": "Clean bathrooms/trashes",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-10T16:20:00.000Z"
+        "timestamp": "2026-09-24T16:20:00.000Z"
       },
       {
         "id": "sample-activity-0286",
@@ -1615,7 +1615,7 @@
         "after": 40,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-10T16:00:00.000Z"
+        "timestamp": "2026-09-24T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0221",
@@ -1626,7 +1626,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-09T18:00:00.000Z"
+        "timestamp": "2026-09-23T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0296",
@@ -1637,7 +1637,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-09T14:30:00.000Z"
+        "timestamp": "2026-09-23T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0118",
@@ -1648,7 +1648,7 @@
         "after": 55,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-08T20:00:00.000Z"
+        "timestamp": "2026-09-22T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0281",
@@ -1659,7 +1659,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-08T19:40:00.000Z"
+        "timestamp": "2026-09-22T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0157",
@@ -1670,7 +1670,7 @@
         "after": 21,
         "note": "Clean bathrooms/trashes",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-08T16:40:00.000Z"
+        "timestamp": "2026-09-22T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0191",
@@ -1681,7 +1681,7 @@
         "after": 15,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-07T20:20:00.000Z"
+        "timestamp": "2026-09-21T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0067",
@@ -1692,7 +1692,7 @@
         "after": 12,
         "note": "Duplicate award corrected by staff",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-07T20:10:00.000Z"
+        "timestamp": "2026-09-21T20:10:00.000Z"
       },
       {
         "id": "sample-activity-0027",
@@ -1703,7 +1703,7 @@
         "after": 18,
         "note": "1 x Shoes; 1 x Trail Mix",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-07T18:30:00.000Z"
+        "timestamp": "2026-09-21T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0156",
@@ -1714,7 +1714,7 @@
         "after": 6,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-07T18:30:00.000Z"
+        "timestamp": "2026-09-21T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0252",
@@ -1725,7 +1725,7 @@
         "after": 26,
         "note": "1 x Apple Sauce; 1 x Peanut Butter; 1 x Smal Bodywash",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-07T18:30:00.000Z"
+        "timestamp": "2026-09-21T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0197",
@@ -1736,7 +1736,7 @@
         "after": 10,
         "note": "Sort donations",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-07T18:00:00.000Z"
+        "timestamp": "2026-09-21T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0236",
@@ -1747,7 +1747,7 @@
         "after": 10,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-07T17:00:00.000Z"
+        "timestamp": "2026-09-21T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0219",
@@ -1758,7 +1758,7 @@
         "after": 20,
         "note": "Sort donations",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-07T16:40:00.000Z"
+        "timestamp": "2026-09-21T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0268",
@@ -1769,7 +1769,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-07T16:00:00.000Z"
+        "timestamp": "2026-09-21T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0280",
@@ -1780,7 +1780,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-07T15:45:00.000Z"
+        "timestamp": "2026-09-21T15:45:00.000Z"
       },
       {
         "id": "sample-activity-0211",
@@ -1791,7 +1791,7 @@
         "after": 17,
         "note": "Sort donations",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-06T21:00:00.000Z"
+        "timestamp": "2026-09-20T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0258",
@@ -1802,7 +1802,7 @@
         "after": 25,
         "note": "Pass out fliers",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-06T21:00:00.000Z"
+        "timestamp": "2026-09-20T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0180",
@@ -1813,7 +1813,7 @@
         "after": 3,
         "note": "Duplicate award corrected by staff",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-06T20:10:00.000Z"
+        "timestamp": "2026-09-20T20:10:00.000Z"
       },
       {
         "id": "sample-activity-0251",
@@ -1824,7 +1824,7 @@
         "after": 31,
         "note": "Sort donations",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-06T19:00:00.000Z"
+        "timestamp": "2026-09-20T19:00:00.000Z"
       },
       {
         "id": "sample-activity-0248",
@@ -1835,7 +1835,7 @@
         "after": 21,
         "note": "1 x Granola Bars; 1 x Oatmeal; 1 x Trail Mix",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-06T18:30:00.000Z"
+        "timestamp": "2026-09-20T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0026",
@@ -1846,7 +1846,7 @@
         "after": 24,
         "note": "Clean bathrooms/trashes",
         "actor": "Ethan King",
-        "timestamp": "2026-09-06T18:20:00.000Z"
+        "timestamp": "2026-09-20T18:20:00.000Z"
       },
       {
         "id": "sample-activity-0129",
@@ -1857,7 +1857,7 @@
         "after": 42,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-09-06T18:00:00.000Z"
+        "timestamp": "2026-09-20T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0210",
@@ -1868,7 +1868,7 @@
         "after": 7,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-06T17:30:00.000Z"
+        "timestamp": "2026-09-20T17:30:00.000Z"
       },
       {
         "id": "sample-activity-0250",
@@ -1879,7 +1879,7 @@
         "after": 21,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-06T15:30:00.000Z"
+        "timestamp": "2026-09-20T15:30:00.000Z"
       },
       {
         "id": "sample-activity-0208",
@@ -1890,7 +1890,7 @@
         "after": 7,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-09-05T21:15:00.000Z"
+        "timestamp": "2026-09-19T21:15:00.000Z"
       },
       {
         "id": "sample-activity-0247",
@@ -1901,7 +1901,7 @@
         "after": 24,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-05T21:00:00.000Z"
+        "timestamp": "2026-09-19T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0246",
@@ -1912,7 +1912,7 @@
         "after": 19,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-05T20:00:00.000Z"
+        "timestamp": "2026-09-19T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0245",
@@ -1923,7 +1923,7 @@
         "after": 14,
         "note": "1 x Canned Goods; 2 x Toothpaste; 1 x Socks",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-05T18:30:00.000Z"
+        "timestamp": "2026-09-19T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0278",
@@ -1934,7 +1934,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-05T14:30:00.000Z"
+        "timestamp": "2026-09-19T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0218",
@@ -1945,7 +1945,7 @@
         "after": 10,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-04T17:20:00.000Z"
+        "timestamp": "2026-09-18T17:20:00.000Z"
       },
       {
         "id": "sample-activity-0244",
@@ -1956,7 +1956,7 @@
         "after": 22,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-09-04T17:00:00.000Z"
+        "timestamp": "2026-09-18T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0257",
@@ -1967,7 +1967,7 @@
         "after": 15,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-03T18:00:00.000Z"
+        "timestamp": "2026-09-17T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0266",
@@ -1978,7 +1978,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-03T18:00:00.000Z"
+        "timestamp": "2026-09-17T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0179",
@@ -1989,7 +1989,7 @@
         "after": 8,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-02T21:45:00.000Z"
+        "timestamp": "2026-09-16T21:45:00.000Z"
       },
       {
         "id": "sample-activity-0243",
@@ -2000,7 +2000,7 @@
         "after": 12,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-02T18:20:00.000Z"
+        "timestamp": "2026-09-16T18:20:00.000Z"
       },
       {
         "id": "sample-activity-0196",
@@ -2011,7 +2011,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-01T21:15:00.000Z"
+        "timestamp": "2026-09-15T21:15:00.000Z"
       },
       {
         "id": "sample-activity-0189",
@@ -2022,7 +2022,7 @@
         "after": 30,
         "note": "Sort donations",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-31T20:20:00.000Z"
+        "timestamp": "2026-09-14T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0177",
@@ -2033,7 +2033,7 @@
         "after": 8,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-08-31T20:00:00.000Z"
+        "timestamp": "2026-09-14T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0043",
@@ -2044,7 +2044,7 @@
         "after": 40,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-31T17:00:00.000Z"
+        "timestamp": "2026-09-14T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0242",
@@ -2055,7 +2055,7 @@
         "after": 7,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-31T15:45:00.000Z"
+        "timestamp": "2026-09-14T15:45:00.000Z"
       },
       {
         "id": "sample-activity-0264",
@@ -2066,7 +2066,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-08-31T14:30:00.000Z"
+        "timestamp": "2026-09-14T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0175",
@@ -2077,7 +2077,7 @@
         "after": 8,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-28T18:45:00.000Z"
+        "timestamp": "2026-09-11T18:45:00.000Z"
       },
       {
         "id": "sample-activity-0025",
@@ -2088,7 +2088,7 @@
         "after": 9,
         "note": "1 x Underwear; 1 x Oatmeal; 1 x Bar of Soap; 1 x Pudding",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-28T18:30:00.000Z"
+        "timestamp": "2026-09-11T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0235",
@@ -2099,7 +2099,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-27T16:30:00.000Z"
+        "timestamp": "2026-09-10T16:30:00.000Z"
       },
       {
         "id": "sample-activity-0024",
@@ -2110,7 +2110,7 @@
         "after": 15,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-27T16:00:00.000Z"
+        "timestamp": "2026-09-10T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0263",
@@ -2121,7 +2121,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-27T14:30:00.000Z"
+        "timestamp": "2026-09-10T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0206",
@@ -2132,7 +2132,7 @@
         "after": 7,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-26T18:00:00.000Z"
+        "timestamp": "2026-09-09T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0128",
@@ -2143,7 +2143,7 @@
         "after": 32,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-08-26T15:00:00.000Z"
+        "timestamp": "2026-09-09T15:00:00.000Z"
       },
       {
         "id": "sample-activity-0255",
@@ -2154,7 +2154,7 @@
         "after": 15,
         "note": "Clean bathrooms/trashes",
         "actor": "Ethan King",
-        "timestamp": "2026-08-25T19:20:00.000Z"
+        "timestamp": "2026-09-08T19:20:00.000Z"
       },
       {
         "id": "sample-activity-0078",
@@ -2165,7 +2165,7 @@
         "after": 23,
         "note": "1 x Pants; 1 x Sandwich Crackers; 1 x Belt; 1 x Shirts",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-25T18:30:00.000Z"
+        "timestamp": "2026-09-08T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0204",
@@ -2176,7 +2176,7 @@
         "after": 7,
         "note": "1 x Canned Goods; 1 x Candy Chicken; 1 x Toothpaste; 1 x Underwear",
         "actor": "Ethan King",
-        "timestamp": "2026-08-25T18:30:00.000Z"
+        "timestamp": "2026-09-08T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0173",
@@ -2187,7 +2187,7 @@
         "after": 8,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-25T17:45:00.000Z"
+        "timestamp": "2026-09-08T17:45:00.000Z"
       },
       {
         "id": "sample-activity-0126",
@@ -2198,7 +2198,7 @@
         "after": 32,
         "note": "1 x Canned Tuna; 1 x Small Conditioner; 1 x Socks; 1 x Candy Chicken",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-24T18:30:00.000Z"
+        "timestamp": "2026-09-07T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0240",
@@ -2209,7 +2209,7 @@
         "after": 7,
         "note": "1 x Underwear; 1 x Small Conditioner; 1 x Toothpaste; 1 x Smal Bodywash",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-24T18:30:00.000Z"
+        "timestamp": "2026-09-07T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0077",
@@ -2220,7 +2220,7 @@
         "after": 33,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-24T18:00:00.000Z"
+        "timestamp": "2026-09-07T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0203",
@@ -2231,7 +2231,7 @@
         "after": 15,
         "note": "Clean closet",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-24T16:00:00.000Z"
+        "timestamp": "2026-09-07T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0233",
@@ -2242,7 +2242,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-23T18:40:00.000Z"
+        "timestamp": "2026-09-06T18:40:00.000Z"
       },
       {
         "id": "sample-activity-0239",
@@ -2253,7 +2253,7 @@
         "after": 15,
         "note": "Pass out fliers",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-23T18:00:00.000Z"
+        "timestamp": "2026-09-06T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0125",
@@ -2264,7 +2264,7 @@
         "after": 40,
         "note": "Clean bathrooms/trashes",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-23T16:40:00.000Z"
+        "timestamp": "2026-09-06T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0254",
@@ -2275,7 +2275,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-08-23T14:30:00.000Z"
+        "timestamp": "2026-09-06T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0092",
@@ -2286,7 +2286,7 @@
         "after": 20,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-21T21:45:00.000Z"
+        "timestamp": "2026-09-04T21:45:00.000Z"
       },
       {
         "id": "sample-activity-0238",
@@ -2297,7 +2297,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-08-21T18:00:00.000Z"
+        "timestamp": "2026-09-04T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0171",
@@ -2308,7 +2308,7 @@
         "after": 8,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-21T17:15:00.000Z"
+        "timestamp": "2026-09-04T17:15:00.000Z"
       },
       {
         "id": "sample-activity-0154",
@@ -2319,7 +2319,7 @@
         "after": 6,
         "note": "Organize supplies",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-20T19:40:00.000Z"
+        "timestamp": "2026-09-03T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0062",
@@ -2330,7 +2330,7 @@
         "after": 17,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-19T18:45:00.000Z"
+        "timestamp": "2026-09-02T18:45:00.000Z"
       },
       {
         "id": "sample-activity-0135",
@@ -2341,7 +2341,7 @@
         "after": 20,
         "note": "Organize supplies",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-19T16:20:00.000Z"
+        "timestamp": "2026-09-02T16:20:00.000Z"
       },
       {
         "id": "sample-activity-0237",
@@ -2352,7 +2352,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-19T14:30:00.000Z"
+        "timestamp": "2026-09-02T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0134",
@@ -2363,7 +2363,7 @@
         "after": 15,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-18T18:00:00.000Z"
+        "timestamp": "2026-09-01T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0153",
@@ -2374,7 +2374,7 @@
         "after": 1,
         "note": "1 x Canned Goods; 1 x Belt; 1 x Bar of Soap; 1 x Toothpaste",
         "actor": "Ethan King",
-        "timestamp": "2026-08-17T18:30:00.000Z"
+        "timestamp": "2026-08-31T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0217",
@@ -2385,7 +2385,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-17T17:15:00.000Z"
+        "timestamp": "2026-08-31T17:15:00.000Z"
       },
       {
         "id": "sample-activity-0152",
@@ -2396,7 +2396,7 @@
         "after": 9,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-16T19:20:00.000Z"
+        "timestamp": "2026-08-30T19:20:00.000Z"
       },
       {
         "id": "sample-activity-0215",
@@ -2407,7 +2407,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Ethan King",
-        "timestamp": "2026-08-15T19:20:00.000Z"
+        "timestamp": "2026-08-29T19:20:00.000Z"
       },
       {
         "id": "sample-activity-0151",
@@ -2418,7 +2418,7 @@
         "after": 4,
         "note": "1 x Small Shampoo; 1 x Canned Goods; 1 x Oatmeal; 1 x Canned Tuna",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-15T18:30:00.000Z"
+        "timestamp": "2026-08-29T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0149",
@@ -2429,7 +2429,7 @@
         "after": 6,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-14T21:45:00.000Z"
+        "timestamp": "2026-08-28T21:45:00.000Z"
       },
       {
         "id": "sample-activity-0150",
@@ -2440,7 +2440,7 @@
         "after": 11,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-14T18:20:00.000Z"
+        "timestamp": "2026-08-28T18:20:00.000Z"
       },
       {
         "id": "sample-activity-0169",
@@ -2451,7 +2451,7 @@
         "after": 8,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-14T16:15:00.000Z"
+        "timestamp": "2026-08-28T16:15:00.000Z"
       },
       {
         "id": "sample-activity-0042",
@@ -2462,7 +2462,7 @@
         "after": 25,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-13T21:30:00.000Z"
+        "timestamp": "2026-08-27T21:30:00.000Z"
       },
       {
         "id": "sample-activity-0232",
@@ -2473,7 +2473,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-08-13T14:30:00.000Z"
+        "timestamp": "2026-08-27T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0202",
@@ -2484,7 +2484,7 @@
         "after": 10,
         "note": "Pass out fliers",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-10T20:20:00.000Z"
+        "timestamp": "2026-08-24T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0132",
@@ -2495,7 +2495,7 @@
         "after": 15,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-08-10T18:40:00.000Z"
+        "timestamp": "2026-08-24T18:40:00.000Z"
       },
       {
         "id": "sample-activity-0117",
@@ -2506,7 +2506,7 @@
         "after": 50,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-08-10T17:40:00.000Z"
+        "timestamp": "2026-08-24T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0090",
@@ -2517,7 +2517,7 @@
         "after": 20,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-08-09T21:40:00.000Z"
+        "timestamp": "2026-08-23T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0214",
@@ -2528,7 +2528,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-08T14:30:00.000Z"
+        "timestamp": "2026-08-22T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0099",
@@ -2539,7 +2539,7 @@
         "after": 10,
         "note": "Pass out fliers",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-07T21:20:00.000Z"
+        "timestamp": "2026-08-21T21:20:00.000Z"
       },
       {
         "id": "sample-activity-0124",
@@ -2550,7 +2550,7 @@
         "after": 25,
         "note": "Pass out fliers",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-07T20:20:00.000Z"
+        "timestamp": "2026-08-21T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0023",
@@ -2561,7 +2561,7 @@
         "after": 10,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-07T17:45:00.000Z"
+        "timestamp": "2026-08-21T17:45:00.000Z"
       },
       {
         "id": "sample-activity-0194",
@@ -2572,7 +2572,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-05T20:30:00.000Z"
+        "timestamp": "2026-08-19T20:30:00.000Z"
       },
       {
         "id": "sample-activity-0116",
@@ -2583,7 +2583,7 @@
         "after": 40,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-08-05T15:45:00.000Z"
+        "timestamp": "2026-08-19T15:45:00.000Z"
       },
       {
         "id": "sample-activity-0114",
@@ -2594,7 +2594,7 @@
         "after": 40,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-04T19:00:00.000Z"
+        "timestamp": "2026-08-18T19:00:00.000Z"
       },
       {
         "id": "sample-activity-0147",
@@ -2605,7 +2605,7 @@
         "after": 6,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-08-03T21:00:00.000Z"
+        "timestamp": "2026-08-17T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0060",
@@ -2616,7 +2616,7 @@
         "after": 17,
         "note": "Pass out fliers",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-03T19:20:00.000Z"
+        "timestamp": "2026-08-17T19:20:00.000Z"
       },
       {
         "id": "sample-activity-0188",
@@ -2627,7 +2627,7 @@
         "after": 20,
         "note": "Clean closet",
         "actor": "Ethan King",
-        "timestamp": "2026-08-03T16:40:00.000Z"
+        "timestamp": "2026-08-17T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0187",
@@ -2638,7 +2638,7 @@
         "after": 15,
         "note": "Pass out fliers",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-02T16:40:00.000Z"
+        "timestamp": "2026-08-16T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0201",
@@ -2649,7 +2649,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-02T14:30:00.000Z"
+        "timestamp": "2026-08-16T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0145",
@@ -2660,7 +2660,7 @@
         "after": 6,
         "note": "1 x Underwear; 1 x Trail Mix; 1 x Apple Sauce",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-31T18:30:00.000Z"
+        "timestamp": "2026-08-14T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0144",
@@ -2671,7 +2671,7 @@
         "after": 10,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-30T21:20:00.000Z"
+        "timestamp": "2026-08-13T21:20:00.000Z"
       },
       {
         "id": "sample-activity-0186",
@@ -2682,7 +2682,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-28T20:00:00.000Z"
+        "timestamp": "2026-08-11T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0021",
@@ -2693,7 +2693,7 @@
         "after": 10,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-07-28T18:45:00.000Z"
+        "timestamp": "2026-08-11T18:45:00.000Z"
       },
       {
         "id": "sample-activity-0167",
@@ -2704,7 +2704,7 @@
         "after": 8,
         "note": "1 x Canned Goods; 1 x Shirts; 1 x Jelly",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-28T18:30:00.000Z"
+        "timestamp": "2026-08-11T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0185",
@@ -2715,7 +2715,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-28T18:15:00.000Z"
+        "timestamp": "2026-08-11T18:15:00.000Z"
       },
       {
         "id": "sample-activity-0183",
@@ -2726,7 +2726,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-28T16:45:00.000Z"
+        "timestamp": "2026-08-11T16:45:00.000Z"
       },
       {
         "id": "sample-activity-0192",
@@ -2737,7 +2737,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-07-28T14:30:00.000Z"
+        "timestamp": "2026-08-11T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0143",
@@ -2748,7 +2748,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-27T18:40:00.000Z"
+        "timestamp": "2026-08-10T18:40:00.000Z"
       },
       {
         "id": "sample-activity-0166",
@@ -2759,7 +2759,7 @@
         "after": 15,
         "note": "Clean closet",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-27T18:20:00.000Z"
+        "timestamp": "2026-08-10T18:20:00.000Z"
       },
       {
         "id": "sample-activity-0142",
@@ -2770,7 +2770,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-07-26T18:45:00.000Z"
+        "timestamp": "2026-08-09T18:45:00.000Z"
       },
       {
         "id": "sample-activity-0165",
@@ -2781,7 +2781,7 @@
         "after": 10,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-24T21:15:00.000Z"
+        "timestamp": "2026-08-07T21:15:00.000Z"
       },
       {
         "id": "sample-activity-0040",
@@ -2792,7 +2792,7 @@
         "after": 25,
         "note": "Pass out fliers",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-22T21:40:00.000Z"
+        "timestamp": "2026-08-05T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0112",
@@ -2803,7 +2803,7 @@
         "after": 40,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-22T17:20:00.000Z"
+        "timestamp": "2026-08-05T17:20:00.000Z"
       },
       {
         "id": "sample-activity-0190",
@@ -2814,7 +2814,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-07-22T14:30:00.000Z"
+        "timestamp": "2026-08-05T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0089",
@@ -2825,7 +2825,7 @@
         "after": 15,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-07-21T19:40:00.000Z"
+        "timestamp": "2026-08-04T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0123",
@@ -2836,7 +2836,7 @@
         "after": 15,
         "note": "Organize supplies",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-20T19:40:00.000Z"
+        "timestamp": "2026-08-03T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0163",
@@ -2847,7 +2847,7 @@
         "after": 10,
         "note": "Organize supplies",
         "actor": "Ethan King",
-        "timestamp": "2026-07-20T17:20:00.000Z"
+        "timestamp": "2026-08-03T17:20:00.000Z"
       },
       {
         "id": "sample-activity-0039",
@@ -2858,7 +2858,7 @@
         "after": 15,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-20T15:30:00.000Z"
+        "timestamp": "2026-08-03T15:30:00.000Z"
       },
       {
         "id": "sample-activity-0008",
@@ -2869,7 +2869,7 @@
         "after": 23,
         "note": "1 x Shirts; 1 x Trail Mix; 1 x Toothpaste; 1 x Toothbrush",
         "actor": "Ethan King",
-        "timestamp": "2026-07-19T18:30:00.000Z"
+        "timestamp": "2026-08-02T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0111",
@@ -2880,7 +2880,7 @@
         "after": 35,
         "note": "1 x Pants; 1 x Belt; 1 x Bar of Soap; 1 x Canned Tuna",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-19T18:30:00.000Z"
+        "timestamp": "2026-08-02T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0140",
@@ -2891,7 +2891,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-07-19T18:00:00.000Z"
+        "timestamp": "2026-08-02T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0110",
@@ -2902,7 +2902,7 @@
         "after": 45,
         "note": "Clean bathrooms/trashes",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-18T19:20:00.000Z"
+        "timestamp": "2026-08-01T19:20:00.000Z"
       },
       {
         "id": "sample-activity-0007",
@@ -2913,7 +2913,7 @@
         "after": 30,
         "note": "Clean bathrooms/trashes",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-18T17:40:00.000Z"
+        "timestamp": "2026-08-01T17:40:00.000Z"
       },
       {
         "id": "sample-activity-0122",
@@ -2924,7 +2924,7 @@
         "after": 10,
         "note": "Pass out fliers",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-16T20:40:00.000Z"
+        "timestamp": "2026-07-30T20:40:00.000Z"
       },
       {
         "id": "sample-activity-0088",
@@ -2935,7 +2935,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-16T18:30:00.000Z"
+        "timestamp": "2026-07-30T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0037",
@@ -2946,7 +2946,7 @@
         "after": 15,
         "note": "Clean closet",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-16T16:20:00.000Z"
+        "timestamp": "2026-07-30T16:20:00.000Z"
       },
       {
         "id": "sample-activity-0181",
@@ -2957,7 +2957,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-16T14:30:00.000Z"
+        "timestamp": "2026-07-30T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0162",
@@ -2968,7 +2968,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-15T21:00:00.000Z"
+        "timestamp": "2026-07-29T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0138",
@@ -2979,7 +2979,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-15T19:45:00.000Z"
+        "timestamp": "2026-07-29T19:45:00.000Z"
       },
       {
         "id": "sample-activity-0059",
@@ -2990,7 +2990,7 @@
         "after": 7,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-15T17:15:00.000Z"
+        "timestamp": "2026-07-29T17:15:00.000Z"
       },
       {
         "id": "sample-activity-0036",
@@ -3001,7 +3001,7 @@
         "after": 10,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-15T15:30:00.000Z"
+        "timestamp": "2026-07-29T15:30:00.000Z"
       },
       {
         "id": "sample-activity-0161",
@@ -3012,7 +3012,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-10T14:30:00.000Z"
+        "timestamp": "2026-07-24T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0109",
@@ -3023,7 +3023,7 @@
         "after": 30,
         "note": "Organize supplies",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-09T20:00:00.000Z"
+        "timestamp": "2026-07-23T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0131",
@@ -3034,7 +3034,7 @@
         "after": 10,
         "note": "Pass out fliers",
         "actor": "Ethan King",
-        "timestamp": "2026-07-09T20:00:00.000Z"
+        "timestamp": "2026-07-23T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0121",
@@ -3045,7 +3045,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-09T19:45:00.000Z"
+        "timestamp": "2026-07-23T19:45:00.000Z"
       },
       {
         "id": "sample-activity-0034",
@@ -3056,7 +3056,7 @@
         "after": 10,
         "note": "Pass out fliers",
         "actor": "Ethan King",
-        "timestamp": "2026-07-09T19:40:00.000Z"
+        "timestamp": "2026-07-23T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0086",
@@ -3067,7 +3067,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-08T15:30:00.000Z"
+        "timestamp": "2026-07-22T15:30:00.000Z"
       },
       {
         "id": "sample-activity-0136",
@@ -3078,7 +3078,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-07-04T14:30:00.000Z"
+        "timestamp": "2026-07-18T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0057",
@@ -3089,7 +3089,7 @@
         "after": 7,
         "note": "1 x Trail Mix; 1 x Peanut Butter; 1 x Granola Bars; 1 x Pants",
         "actor": "Ethan King",
-        "timestamp": "2026-07-03T18:30:00.000Z"
+        "timestamp": "2026-07-17T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0056",
@@ -3100,7 +3100,7 @@
         "after": 15,
         "note": "Sort donations",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-02T21:40:00.000Z"
+        "timestamp": "2026-07-16T21:40:00.000Z"
       },
       {
         "id": "sample-activity-0055",
@@ -3111,7 +3111,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Priya Raman",
-        "timestamp": "2026-06-30T16:00:00.000Z"
+        "timestamp": "2026-07-14T16:00:00.000Z"
       },
       {
         "id": "sample-activity-0108",
@@ -3122,7 +3122,7 @@
         "after": 25,
         "note": "1 x Pudding; 1 x Underwear; 1 x Sandwich Crackers; 1 x Apple Sauce",
         "actor": "Ethan King",
-        "timestamp": "2026-06-28T18:30:00.000Z"
+        "timestamp": "2026-07-12T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0130",
@@ -3133,7 +3133,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-28T14:30:00.000Z"
+        "timestamp": "2026-07-12T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0106",
@@ -3144,7 +3144,7 @@
         "after": 15,
         "note": "Sort donations",
         "actor": "Priya Raman",
-        "timestamp": "2026-06-27T17:20:00.000Z"
+        "timestamp": "2026-07-11T17:20:00.000Z"
       },
       {
         "id": "sample-activity-0107",
@@ -3155,7 +3155,7 @@
         "after": 30,
         "note": "Clean bathrooms/trashes",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-27T16:40:00.000Z"
+        "timestamp": "2026-07-11T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0084",
@@ -3166,7 +3166,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-26T20:00:00.000Z"
+        "timestamp": "2026-07-10T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0076",
@@ -3177,7 +3177,7 @@
         "after": 18,
         "note": "Sort donations",
         "actor": "Priya Raman",
-        "timestamp": "2026-06-25T16:40:00.000Z"
+        "timestamp": "2026-07-09T16:40:00.000Z"
       },
       {
         "id": "sample-activity-0075",
@@ -3188,7 +3188,7 @@
         "after": 8,
         "note": "1 x Small Conditioner; 1 x Toothpaste; 1 x Jelly",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-24T18:30:00.000Z"
+        "timestamp": "2026-07-08T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0105",
@@ -3199,7 +3199,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-24T15:15:00.000Z"
+        "timestamp": "2026-07-08T15:15:00.000Z"
       },
       {
         "id": "sample-activity-0103",
@@ -3210,7 +3210,7 @@
         "after": 5,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-06-23T17:15:00.000Z"
+        "timestamp": "2026-07-07T17:15:00.000Z"
       },
       {
         "id": "sample-activity-0074",
@@ -3221,7 +3221,7 @@
         "after": 14,
         "note": "Organize supplies",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-23T16:20:00.000Z"
+        "timestamp": "2026-07-07T16:20:00.000Z"
       },
       {
         "id": "sample-activity-0119",
@@ -3232,7 +3232,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Priya Raman",
-        "timestamp": "2026-06-22T14:30:00.000Z"
+        "timestamp": "2026-07-06T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0054",
@@ -3243,7 +3243,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-06-19T19:00:00.000Z"
+        "timestamp": "2026-07-03T19:00:00.000Z"
       },
       {
         "id": "sample-activity-0101",
@@ -3254,7 +3254,7 @@
         "after": 5,
         "note": "Clean closet",
         "actor": "Priya Raman",
-        "timestamp": "2026-06-18T21:00:00.000Z"
+        "timestamp": "2026-07-02T21:00:00.000Z"
       },
       {
         "id": "sample-activity-0073",
@@ -3265,7 +3265,7 @@
         "after": 9,
         "note": "1 x Underwear; 1 x Pants",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-18T18:30:00.000Z"
+        "timestamp": "2026-07-02T18:30:00.000Z"
       },
       {
         "id": "sample-activity-0019",
@@ -3276,7 +3276,7 @@
         "after": 10,
         "note": "Clean closet",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-17T20:00:00.000Z"
+        "timestamp": "2026-07-01T20:00:00.000Z"
       },
       {
         "id": "sample-activity-0072",
@@ -3287,7 +3287,7 @@
         "after": 15,
         "note": "Organize supplies",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-17T17:00:00.000Z"
+        "timestamp": "2026-07-01T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0100",
@@ -3298,7 +3298,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-06-14T14:30:00.000Z"
+        "timestamp": "2026-06-28T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0018",
@@ -3309,7 +3309,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-13T18:00:00.000Z"
+        "timestamp": "2026-06-27T18:00:00.000Z"
       },
       {
         "id": "sample-activity-0071",
@@ -3320,7 +3320,7 @@
         "after": 10,
         "note": "Visit logged",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-12T17:45:00.000Z"
+        "timestamp": "2026-06-26T17:45:00.000Z"
       },
       {
         "id": "sample-activity-0006",
@@ -3331,7 +3331,7 @@
         "after": 15,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-06-09T19:15:00.000Z"
+        "timestamp": "2026-06-23T19:15:00.000Z"
       },
       {
         "id": "sample-activity-0098",
@@ -3342,7 +3342,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-07T14:30:00.000Z"
+        "timestamp": "2026-06-21T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0082",
@@ -3353,7 +3353,7 @@
         "after": 5,
         "note": "Organize supplies",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-05T20:20:00.000Z"
+        "timestamp": "2026-06-19T20:20:00.000Z"
       },
       {
         "id": "sample-activity-0052",
@@ -3364,7 +3364,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Ethan King",
-        "timestamp": "2026-06-03T15:15:00.000Z"
+        "timestamp": "2026-06-17T15:15:00.000Z"
       },
       {
         "id": "sample-activity-0050",
@@ -3375,7 +3375,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-02T17:00:00.000Z"
+        "timestamp": "2026-06-16T17:00:00.000Z"
       },
       {
         "id": "sample-activity-0069",
@@ -3386,7 +3386,7 @@
         "after": 10,
         "note": "Sort donations",
         "actor": "Ethan King",
-        "timestamp": "2026-05-29T17:20:00.000Z"
+        "timestamp": "2026-06-12T17:20:00.000Z"
       },
       {
         "id": "sample-activity-0081",
@@ -3397,7 +3397,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-05-29T14:30:00.000Z"
+        "timestamp": "2026-06-12T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0017",
@@ -3408,7 +3408,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-05-28T21:15:00.000Z"
+        "timestamp": "2026-06-11T21:15:00.000Z"
       },
       {
         "id": "sample-activity-0068",
@@ -3419,7 +3419,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-05-20T14:30:00.000Z"
+        "timestamp": "2026-06-03T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0015",
@@ -3430,7 +3430,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-05-13T16:45:00.000Z"
+        "timestamp": "2026-05-27T16:45:00.000Z"
       },
       {
         "id": "sample-activity-0048",
@@ -3441,7 +3441,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-05-09T14:30:00.000Z"
+        "timestamp": "2026-05-23T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0004",
@@ -3452,7 +3452,7 @@
         "after": 15,
         "note": "Visit logged",
         "actor": "Marcus Bell",
-        "timestamp": "2026-04-30T20:30:00.000Z"
+        "timestamp": "2026-05-14T20:30:00.000Z"
       },
       {
         "id": "sample-activity-0033",
@@ -3463,7 +3463,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Ethan King",
-        "timestamp": "2026-04-30T14:30:00.000Z"
+        "timestamp": "2026-05-14T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0013",
@@ -3474,7 +3474,7 @@
         "after": 0,
         "note": "Visit logged",
         "actor": "Priya Raman",
-        "timestamp": "2026-04-22T20:30:00.000Z"
+        "timestamp": "2026-05-06T20:30:00.000Z"
       },
       {
         "id": "sample-activity-0002",
@@ -3485,7 +3485,7 @@
         "after": 15,
         "note": "Clean bathrooms/trashes",
         "actor": "Priya Raman",
-        "timestamp": "2026-04-17T19:40:00.000Z"
+        "timestamp": "2026-05-01T19:40:00.000Z"
       },
       {
         "id": "sample-activity-0011",
@@ -3496,7 +3496,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Priya Raman",
-        "timestamp": "2026-04-17T14:30:00.000Z"
+        "timestamp": "2026-05-01T14:30:00.000Z"
       },
       {
         "id": "sample-activity-0001",
@@ -3507,7 +3507,7 @@
         "after": 0,
         "note": "Member added",
         "actor": "Priya Raman",
-        "timestamp": "2026-04-03T14:30:00.000Z"
+        "timestamp": "2026-04-17T14:30:00.000Z"
       }
     ],
     "visits": [
@@ -3515,529 +3515,529 @@
         "id": "sample-visit-0328",
         "personId": "sample-person-25",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T21:30:00.000Z"
+        "timestamp": "2026-10-01T21:30:00.000Z"
       },
       {
         "id": "sample-visit-0304",
         "personId": "sample-person-24",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T21:00:00.000Z"
+        "timestamp": "2026-10-01T21:00:00.000Z"
       },
       {
         "id": "sample-visit-0326",
         "personId": "sample-person-25",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T19:15:00.000Z"
+        "timestamp": "2026-10-01T19:15:00.000Z"
       },
       {
         "id": "sample-visit-0302",
         "personId": "sample-person-24",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-17T18:00:00.000Z"
+        "timestamp": "2026-10-01T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0293",
         "personId": "sample-person-23",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T16:15:00.000Z"
+        "timestamp": "2026-10-01T16:15:00.000Z"
       },
       {
         "id": "sample-visit-0212",
         "personId": "sample-person-16",
         "actor": "Ethan King",
-        "timestamp": "2026-09-17T15:45:00.000Z"
+        "timestamp": "2026-10-01T15:45:00.000Z"
       },
       {
         "id": "sample-visit-0324",
         "personId": "sample-person-25",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-17T15:15:00.000Z"
+        "timestamp": "2026-10-01T15:15:00.000Z"
       },
       {
         "id": "sample-visit-0199",
         "personId": "sample-person-15",
         "actor": "Ethan King",
-        "timestamp": "2026-09-16T18:15:00.000Z"
+        "timestamp": "2026-09-30T18:15:00.000Z"
       },
       {
         "id": "sample-visit-0009",
         "personId": "sample-person-01",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-16T17:15:00.000Z"
+        "timestamp": "2026-09-30T17:15:00.000Z"
       },
       {
         "id": "sample-visit-0335",
         "personId": "sample-person-26",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-16T15:45:00.000Z"
+        "timestamp": "2026-09-30T15:45:00.000Z"
       },
       {
         "id": "sample-visit-0079",
         "personId": "sample-person-05",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-09-15T21:15:00.000Z"
+        "timestamp": "2026-09-29T21:15:00.000Z"
       },
       {
         "id": "sample-visit-0230",
         "personId": "sample-person-17",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T20:15:00.000Z"
+        "timestamp": "2026-09-29T20:15:00.000Z"
       },
       {
         "id": "sample-visit-0319",
         "personId": "sample-person-25",
         "actor": "Ethan King",
-        "timestamp": "2026-09-15T17:00:00.000Z"
+        "timestamp": "2026-09-29T17:00:00.000Z"
       },
       {
         "id": "sample-visit-0261",
         "personId": "sample-person-20",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-15T15:00:00.000Z"
+        "timestamp": "2026-09-29T15:00:00.000Z"
       },
       {
         "id": "sample-visit-0310",
         "personId": "sample-person-25",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T21:15:00.000Z"
+        "timestamp": "2026-09-28T21:15:00.000Z"
       },
       {
         "id": "sample-visit-0308",
         "personId": "sample-person-25",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T19:15:00.000Z"
+        "timestamp": "2026-09-28T19:15:00.000Z"
       },
       {
         "id": "sample-visit-0095",
         "personId": "sample-person-06",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-14T17:00:00.000Z"
+        "timestamp": "2026-09-28T17:00:00.000Z"
       },
       {
         "id": "sample-visit-0046",
         "personId": "sample-person-03",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T16:30:00.000Z"
+        "timestamp": "2026-09-28T16:30:00.000Z"
       },
       {
         "id": "sample-visit-0063",
         "personId": "sample-person-04",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-14T16:15:00.000Z"
+        "timestamp": "2026-09-28T16:15:00.000Z"
       },
       {
         "id": "sample-visit-0065",
         "personId": "sample-person-04",
         "actor": "Ethan King",
-        "timestamp": "2026-09-14T16:15:00.000Z"
+        "timestamp": "2026-09-28T16:15:00.000Z"
       },
       {
         "id": "sample-visit-0299",
         "personId": "sample-person-24",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-13T20:15:00.000Z"
+        "timestamp": "2026-09-27T20:15:00.000Z"
       },
       {
         "id": "sample-visit-0093",
         "personId": "sample-person-06",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-13T17:45:00.000Z"
+        "timestamp": "2026-09-27T17:45:00.000Z"
       },
       {
         "id": "sample-visit-0030",
         "personId": "sample-person-02",
         "actor": "Ethan King",
-        "timestamp": "2026-09-13T16:15:00.000Z"
+        "timestamp": "2026-09-27T16:15:00.000Z"
       },
       {
         "id": "sample-visit-0044",
         "personId": "sample-person-03",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T19:45:00.000Z"
+        "timestamp": "2026-09-26T19:45:00.000Z"
       },
       {
         "id": "sample-visit-0297",
         "personId": "sample-person-24",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T19:15:00.000Z"
+        "timestamp": "2026-09-26T19:15:00.000Z"
       },
       {
         "id": "sample-visit-0028",
         "personId": "sample-person-02",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-12T17:00:00.000Z"
+        "timestamp": "2026-09-26T17:00:00.000Z"
       },
       {
         "id": "sample-visit-0226",
         "personId": "sample-person-17",
         "actor": "Ethan King",
-        "timestamp": "2026-09-12T16:15:00.000Z"
+        "timestamp": "2026-09-26T16:15:00.000Z"
       },
       {
         "id": "sample-visit-0224",
         "personId": "sample-person-17",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-11T19:30:00.000Z"
+        "timestamp": "2026-09-25T19:30:00.000Z"
       },
       {
         "id": "sample-visit-0159",
         "personId": "sample-person-11",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-11T17:30:00.000Z"
+        "timestamp": "2026-09-25T17:30:00.000Z"
       },
       {
         "id": "sample-visit-0271",
         "personId": "sample-person-22",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-11T17:00:00.000Z"
+        "timestamp": "2026-09-25T17:00:00.000Z"
       },
       {
         "id": "sample-visit-0222",
         "personId": "sample-person-17",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-10T21:45:00.000Z"
+        "timestamp": "2026-09-24T21:45:00.000Z"
       },
       {
         "id": "sample-visit-0282",
         "personId": "sample-person-23",
         "actor": "Ethan King",
-        "timestamp": "2026-09-10T19:45:00.000Z"
+        "timestamp": "2026-09-24T19:45:00.000Z"
       },
       {
         "id": "sample-visit-0220",
         "personId": "sample-person-17",
         "actor": "Ethan King",
-        "timestamp": "2026-09-09T18:00:00.000Z"
+        "timestamp": "2026-09-23T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0155",
         "personId": "sample-person-11",
         "actor": "Ethan King",
-        "timestamp": "2026-09-07T18:30:00.000Z"
+        "timestamp": "2026-09-21T18:30:00.000Z"
       },
       {
         "id": "sample-visit-0267",
         "personId": "sample-person-22",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-07T16:00:00.000Z"
+        "timestamp": "2026-09-21T16:00:00.000Z"
       },
       {
         "id": "sample-visit-0279",
         "personId": "sample-person-23",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-07T15:45:00.000Z"
+        "timestamp": "2026-09-21T15:45:00.000Z"
       },
       {
         "id": "sample-visit-0209",
         "personId": "sample-person-16",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-06T17:30:00.000Z"
+        "timestamp": "2026-09-20T17:30:00.000Z"
       },
       {
         "id": "sample-visit-0249",
         "personId": "sample-person-19",
         "actor": "Ethan King",
-        "timestamp": "2026-09-06T15:30:00.000Z"
+        "timestamp": "2026-09-20T15:30:00.000Z"
       },
       {
         "id": "sample-visit-0207",
         "personId": "sample-person-16",
         "actor": "Ethan King",
-        "timestamp": "2026-09-05T21:15:00.000Z"
+        "timestamp": "2026-09-19T21:15:00.000Z"
       },
       {
         "id": "sample-visit-0256",
         "personId": "sample-person-20",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-03T18:00:00.000Z"
+        "timestamp": "2026-09-17T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0265",
         "personId": "sample-person-22",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-03T18:00:00.000Z"
+        "timestamp": "2026-09-17T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0178",
         "personId": "sample-person-12",
         "actor": "Marcus Bell",
-        "timestamp": "2026-09-02T21:45:00.000Z"
+        "timestamp": "2026-09-16T21:45:00.000Z"
       },
       {
         "id": "sample-visit-0195",
         "personId": "sample-person-15",
         "actor": "Priya Raman",
-        "timestamp": "2026-09-01T21:15:00.000Z"
+        "timestamp": "2026-09-15T21:15:00.000Z"
       },
       {
         "id": "sample-visit-0176",
         "personId": "sample-person-12",
         "actor": "Ethan King",
-        "timestamp": "2026-08-31T20:00:00.000Z"
+        "timestamp": "2026-09-14T20:00:00.000Z"
       },
       {
         "id": "sample-visit-0241",
         "personId": "sample-person-19",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-31T15:45:00.000Z"
+        "timestamp": "2026-09-14T15:45:00.000Z"
       },
       {
         "id": "sample-visit-0174",
         "personId": "sample-person-12",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-28T18:45:00.000Z"
+        "timestamp": "2026-09-11T18:45:00.000Z"
       },
       {
         "id": "sample-visit-0234",
         "personId": "sample-person-18",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-27T16:30:00.000Z"
+        "timestamp": "2026-09-10T16:30:00.000Z"
       },
       {
         "id": "sample-visit-0205",
         "personId": "sample-person-16",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-26T18:00:00.000Z"
+        "timestamp": "2026-09-09T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0127",
         "personId": "sample-person-09",
         "actor": "Ethan King",
-        "timestamp": "2026-08-26T15:00:00.000Z"
+        "timestamp": "2026-09-09T15:00:00.000Z"
       },
       {
         "id": "sample-visit-0172",
         "personId": "sample-person-12",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-25T17:45:00.000Z"
+        "timestamp": "2026-09-08T17:45:00.000Z"
       },
       {
         "id": "sample-visit-0091",
         "personId": "sample-person-06",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-21T21:45:00.000Z"
+        "timestamp": "2026-09-04T21:45:00.000Z"
       },
       {
         "id": "sample-visit-0170",
         "personId": "sample-person-12",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-21T17:15:00.000Z"
+        "timestamp": "2026-09-04T17:15:00.000Z"
       },
       {
         "id": "sample-visit-0061",
         "personId": "sample-person-04",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-19T18:45:00.000Z"
+        "timestamp": "2026-09-02T18:45:00.000Z"
       },
       {
         "id": "sample-visit-0133",
         "personId": "sample-person-10",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-18T18:00:00.000Z"
+        "timestamp": "2026-09-01T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0216",
         "personId": "sample-person-17",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-17T17:15:00.000Z"
+        "timestamp": "2026-08-31T17:15:00.000Z"
       },
       {
         "id": "sample-visit-0148",
         "personId": "sample-person-11",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-14T21:45:00.000Z"
+        "timestamp": "2026-08-28T21:45:00.000Z"
       },
       {
         "id": "sample-visit-0168",
         "personId": "sample-person-12",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-14T16:15:00.000Z"
+        "timestamp": "2026-08-28T16:15:00.000Z"
       },
       {
         "id": "sample-visit-0041",
         "personId": "sample-person-03",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-08-13T21:30:00.000Z"
+        "timestamp": "2026-08-27T21:30:00.000Z"
       },
       {
         "id": "sample-visit-0022",
         "personId": "sample-person-02",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-07T17:45:00.000Z"
+        "timestamp": "2026-08-21T17:45:00.000Z"
       },
       {
         "id": "sample-visit-0193",
         "personId": "sample-person-15",
         "actor": "Priya Raman",
-        "timestamp": "2026-08-05T20:30:00.000Z"
+        "timestamp": "2026-08-19T20:30:00.000Z"
       },
       {
         "id": "sample-visit-0115",
         "personId": "sample-person-08",
         "actor": "Ethan King",
-        "timestamp": "2026-08-05T15:45:00.000Z"
+        "timestamp": "2026-08-19T15:45:00.000Z"
       },
       {
         "id": "sample-visit-0113",
         "personId": "sample-person-08",
         "actor": "Marcus Bell",
-        "timestamp": "2026-08-04T19:00:00.000Z"
+        "timestamp": "2026-08-18T19:00:00.000Z"
       },
       {
         "id": "sample-visit-0146",
         "personId": "sample-person-11",
         "actor": "Ethan King",
-        "timestamp": "2026-08-03T21:00:00.000Z"
+        "timestamp": "2026-08-17T21:00:00.000Z"
       },
       {
         "id": "sample-visit-0020",
         "personId": "sample-person-02",
         "actor": "Ethan King",
-        "timestamp": "2026-07-28T18:45:00.000Z"
+        "timestamp": "2026-08-11T18:45:00.000Z"
       },
       {
         "id": "sample-visit-0184",
         "personId": "sample-person-13",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-28T18:15:00.000Z"
+        "timestamp": "2026-08-11T18:15:00.000Z"
       },
       {
         "id": "sample-visit-0182",
         "personId": "sample-person-13",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-28T16:45:00.000Z"
+        "timestamp": "2026-08-11T16:45:00.000Z"
       },
       {
         "id": "sample-visit-0141",
         "personId": "sample-person-11",
         "actor": "Ethan King",
-        "timestamp": "2026-07-26T18:45:00.000Z"
+        "timestamp": "2026-08-09T18:45:00.000Z"
       },
       {
         "id": "sample-visit-0164",
         "personId": "sample-person-12",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-24T21:15:00.000Z"
+        "timestamp": "2026-08-07T21:15:00.000Z"
       },
       {
         "id": "sample-visit-0038",
         "personId": "sample-person-03",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-20T15:30:00.000Z"
+        "timestamp": "2026-08-03T15:30:00.000Z"
       },
       {
         "id": "sample-visit-0139",
         "personId": "sample-person-11",
         "actor": "Ethan King",
-        "timestamp": "2026-07-19T18:00:00.000Z"
+        "timestamp": "2026-08-02T18:00:00.000Z"
       },
       {
         "id": "sample-visit-0087",
         "personId": "sample-person-06",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-16T18:30:00.000Z"
+        "timestamp": "2026-07-30T18:30:00.000Z"
       },
       {
         "id": "sample-visit-0137",
         "personId": "sample-person-11",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-07-15T19:45:00.000Z"
+        "timestamp": "2026-07-29T19:45:00.000Z"
       },
       {
         "id": "sample-visit-0058",
         "personId": "sample-person-04",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-15T17:15:00.000Z"
+        "timestamp": "2026-07-29T17:15:00.000Z"
       },
       {
         "id": "sample-visit-0035",
         "personId": "sample-person-03",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-15T15:30:00.000Z"
+        "timestamp": "2026-07-29T15:30:00.000Z"
       },
       {
         "id": "sample-visit-0120",
         "personId": "sample-person-09",
         "actor": "Marcus Bell",
-        "timestamp": "2026-07-09T19:45:00.000Z"
+        "timestamp": "2026-07-23T19:45:00.000Z"
       },
       {
         "id": "sample-visit-0085",
         "personId": "sample-person-06",
         "actor": "Priya Raman",
-        "timestamp": "2026-07-08T15:30:00.000Z"
+        "timestamp": "2026-07-22T15:30:00.000Z"
       },
       {
         "id": "sample-visit-0083",
         "personId": "sample-person-06",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-26T20:00:00.000Z"
+        "timestamp": "2026-07-10T20:00:00.000Z"
       },
       {
         "id": "sample-visit-0104",
         "personId": "sample-person-08",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-24T15:15:00.000Z"
+        "timestamp": "2026-07-08T15:15:00.000Z"
       },
       {
         "id": "sample-visit-0102",
         "personId": "sample-person-08",
         "actor": "Ethan King",
-        "timestamp": "2026-06-23T17:15:00.000Z"
+        "timestamp": "2026-07-07T17:15:00.000Z"
       },
       {
         "id": "sample-visit-0053",
         "personId": "sample-person-04",
         "actor": "Ethan King",
-        "timestamp": "2026-06-19T19:00:00.000Z"
+        "timestamp": "2026-07-03T19:00:00.000Z"
       },
       {
         "id": "sample-visit-0070",
         "personId": "sample-person-05",
         "actor": "Dana Whitfield",
-        "timestamp": "2026-06-12T17:45:00.000Z"
+        "timestamp": "2026-06-26T17:45:00.000Z"
       },
       {
         "id": "sample-visit-0005",
         "personId": "sample-person-01",
         "actor": "Ethan King",
-        "timestamp": "2026-06-09T19:15:00.000Z"
+        "timestamp": "2026-06-23T19:15:00.000Z"
       },
       {
         "id": "sample-visit-0051",
         "personId": "sample-person-04",
         "actor": "Ethan King",
-        "timestamp": "2026-06-03T15:15:00.000Z"
+        "timestamp": "2026-06-17T15:15:00.000Z"
       },
       {
         "id": "sample-visit-0049",
         "personId": "sample-person-04",
         "actor": "Marcus Bell",
-        "timestamp": "2026-06-02T17:00:00.000Z"
+        "timestamp": "2026-06-16T17:00:00.000Z"
       },
       {
         "id": "sample-visit-0016",
         "personId": "sample-person-02",
         "actor": "Marcus Bell",
-        "timestamp": "2026-05-28T21:15:00.000Z"
+        "timestamp": "2026-06-11T21:15:00.000Z"
       },
       {
         "id": "sample-visit-0014",
         "personId": "sample-person-02",
         "actor": "Priya Raman",
-        "timestamp": "2026-05-13T16:45:00.000Z"
+        "timestamp": "2026-05-27T16:45:00.000Z"
       },
       {
         "id": "sample-visit-0003",
         "personId": "sample-person-01",
         "actor": "Marcus Bell",
-        "timestamp": "2026-04-30T20:30:00.000Z"
+        "timestamp": "2026-05-14T20:30:00.000Z"
       },
       {
         "id": "sample-visit-0012",
         "personId": "sample-person-02",
         "actor": "Priya Raman",
-        "timestamp": "2026-04-22T20:30:00.000Z"
+        "timestamp": "2026-05-06T20:30:00.000Z"
       }
     ],
     "volunteers": [
@@ -4153,7 +4153,7 @@
         "fileName": "sample-intake-checklist.txt",
         "mimeType": "text/plain",
         "dataUrl": "data:text/plain;base64,U2FtcGxlIGludGFrZSBjaGVja2xpc3QKCjEuIENvbGxlY3QgbmFtZSBhbmQgY29udGFjdCBwcmVmZXJlbmNlcwoyLiBSZXZpZXcgaG91c2luZyBhbmQgZm9sbG93LXVwIG5vdGVzCjMuIEV4cGxhaW4gdGhlIHBvaW50IGFuZCBpdGVtIHByb2dyYW0KNC4gTG9nIHRoZSB2aXNpdCBpbiBMaWdodGhvdXNlIE1pbmlzdHJ5IEh1Ygo=",
-        "uploadedAt": "2026-08-24T19:05:00.000Z"
+        "uploadedAt": "2026-09-07T19:05:00.000Z"
       },
       {
         "id": "sample-document-02",
@@ -4162,14 +4162,14 @@
         "fileName": "sample-volunteer-notes.txt",
         "mimeType": "text/plain",
         "dataUrl": "data:text/plain;base64,U2FtcGxlIHZvbHVudGVlciBzaGlmdCBub3RlcwoKLSBHcmVldGluZyB0YWJsZSBjb3ZlcmVkIDk6MDAtMTE6MDAKLSBUd28gbmV3IHZvbHVudGVlcnMgc2hhZG93ZWQgaW50YWtlCi0gUmVzdG9jayByZXF1ZXN0IHN1Ym1pdHRlZCBmb3Igc29ja3MgYW5kIHNvYXAK",
-        "uploadedAt": "2026-08-24T19:05:00.000Z"
+        "uploadedAt": "2026-09-07T19:05:00.000Z"
       }
     ],
     "events": [
       {
         "id": "sample-event-01",
         "title": "Community Meal Night",
-        "date": "2026-09-20",
+        "date": "2026-10-04",
         "description": "Shared meal, prayer cards, and volunteer sign-ups.",
         "checklist": [
           {
@@ -4197,7 +4197,7 @@
       {
         "id": "sample-event-02",
         "title": "Winter Coat Distribution",
-        "date": "2026-09-27",
+        "date": "2026-10-11",
         "description": "Coat and blanket giveaway for members and neighbors.",
         "checklist": [
           {
@@ -4220,7 +4220,7 @@
       {
         "id": "sample-event-03",
         "title": "Volunteer Training",
-        "date": "2026-10-04",
+        "date": "2026-10-18",
         "description": "Ministry Safe refresher and intake procedure walkthrough.",
         "checklist": [
           {
@@ -4243,7 +4243,7 @@
       {
         "id": "sample-event-04",
         "title": "Resource Fair",
-        "date": "2026-09-12",
+        "date": "2026-09-26",
         "description": "Partner organizations shared services with members.",
         "checklist": [
           {
@@ -4383,6 +4383,6 @@
       }
     ],
     "staffUsers": [],
-    "lastSafetyBackupAt": "2026-09-17T13:45:00.000Z"
+    "lastSafetyBackupAt": "2026-10-01T13:45:00.000Z"
   }
 }
