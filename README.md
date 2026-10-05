@@ -60,6 +60,7 @@ By default, data is stored locally when opened from this computer. A deployed si
 - `PROJECT-DOCUMENTATION.md` — purpose, system overview, database design, key workflows, interface and accessibility model, testing results, deployment, user instructions, privacy considerations, and future improvements.
 - `sample-data/` — a fictional dataset and generator for development, testing, and demonstrations. Never use real member records in demos.
 - `tests/static-checks.mjs` — rerunnable checks (29 of 29 passing as of this revision) for element references, hash routes and in-page anchors, rebranding guards, demo-dataset integrity, accessibility affordances, and documentation consistency: `node tests/static-checks.mjs`.
+- `tests/browser-checks.mjs` — drives the app in headless Chromium (15 of 15 passing): sign-in, every route rendering, a 5-width responsive sweep, the phone-actions-above-the-fold assertion, focus-ring measurement, the confirmation dialog's keyboard contract, an axe-core WCAG scan, and capture of the printable PDFs and exported workbook. Needs a one-time `npm install` and `npx playwright install chromium` inside `tests/`; see Section 6.1 of the project documentation.
 - `BUILD-PLAN.md` — the phased build plan and risk register used to drive the redesign work.
 
 ## Senior-project milestones

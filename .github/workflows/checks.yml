@@ -1,0 +1,55 @@
+name: Checks
+
+# The published site has no build step, so this workflow does not build or
+# deploy anything. It runs the two test suites so a regression is caught on the
+# commit rather than in the next demonstration.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static-checks:
+    name: Static checks (fast)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify syntax
+        run: |
+          node --check app.js
+          node --check sample-data/generate-sample-data.mjs
+          node --check tests/static-checks.mjs
+      - name: Run static checks
+        run: node tests/static-checks.mjs
+
+  browser-checks:
+    name: Browser checks (Playwright + axe)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - name: Install test dependencies
+        working-directory: tests
+        run: npm ci
+      - name: Install Chromium
+        working-directory: tests
+        run: npx playwright install --with-deps chromium
+      - name: Run browser checks
+        working-directory: tests
+        run: node browser-checks.mjs
+      - name: Upload evidence (screenshots, print PDFs, exported workbook)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-check-evidence
+          path: tests/evidence/
+          if-no-files-found: warn

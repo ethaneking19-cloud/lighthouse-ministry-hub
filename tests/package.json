@@ -1,0 +1,15 @@
+{
+  "name": "lighthouse-ministry-hub-tests",
+  "private": true,
+  "description": "Dev-only test harness for Lighthouse Ministry Hub. The deployed site itself has no build step; this manifest exists only to run automated browser checks locally and in CI.",
+  "type": "module",
+  "scripts": {
+    "check": "node static-checks.mjs",
+    "browser": "node browser-checks.mjs",
+    "install-browser": "playwright install chromium"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.2",
+    "playwright": "^1.49.0"
+  }
+}

@@ -3518,3 +3518,62 @@ textarea[aria-invalid="true"],
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Phase 9 — Phone-sized dashboard: actions reachable above the fold.
+
+   Before this block, a 390x844 viewport pushed the Quick Actions card to
+   1157px (313px below the fold): the hero shortcuts stacked one per row, the
+   KPI row stacked four tall cards, and the KPI row sorted ahead of the
+   actions. These rules keep every card, shorten the pre-fold stack, and put
+   the actions a phone user needs first.
+   ========================================================================== */
+
+@media (max-width: 700px) {
+  /* Actions before statistics on a phone: the first thing a volunteer needs
+     at the door is a way to check someone in, not the weekly totals. Both
+     cards keep their place in the page and stay one swipe apart. */
+  #dashboard-kpis {
+    order: 2;
+  }
+
+  #quick-actions-card {
+    order: 1;
+  }
+
+  .hero {
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Two shortcut buttons per row instead of four full-width rows. */
+  .hero__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .hero__link {
+    min-width: 0;
+    padding-inline: 10px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Two KPI cards per row: four now read in a 2x2 block rather than a
+     400px-tall column. */
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px 14px;
+  }
+
+  .stat-card__label {
+    font-size: 0.78rem;
+    overflow-wrap: anywhere;
+  }
+}

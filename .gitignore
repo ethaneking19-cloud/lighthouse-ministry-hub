@@ -23,3 +23,10 @@ preview-tmp/
 nav-check*.png
 scale-check*.png
 visual-check*.png
+
+# Dev-only browser test harness (the deployed site has no dependencies)
+tests/node_modules/
+tests/evidence/
+tests/*.log
+!tests/package.json
+!tests/package-lock.json

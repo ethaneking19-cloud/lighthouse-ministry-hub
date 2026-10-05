@@ -33,7 +33,7 @@ Lighthouse Ministry Hub is a **static single-page application** with an optional
 | Layer | Technology | Notes |
 |---|---|---|
 | Markup | `index.html` (1,149 lines) | One page holds every view; a hash router shows one view at a time |
-| Styling | `styles.css` (3,520 lines) | Custom design system; no CSS framework |
+| Styling | `styles.css` (3,579 lines) | Custom design system; no CSS framework |
 | Application logic | `app.js` (7,514 lines) | Plain JavaScript, no build step, no bundler |
 | Spreadsheet export | `xlsx.full.min.js` (vendored SheetJS) | Client-side `.xlsx` generation |
 | DOCX extraction | `mammoth.browser.min.js` (vendored) | Reads uploaded Word documents |
@@ -279,6 +279,41 @@ The suite distinguishes three outcomes. A **PASS** is a satisfied check. A **WAR
 
 Syntax checks also pass: `node --check app.js` and `node --check sample-data/generate-sample-data.mjs`.
 
+A second suite drives the real application in a real browser engine, because a source scan cannot prove that a route renders, that nothing overflows, or that the printed output contains the right data:
+
+```bash
+cd tests
+npm install
+npx playwright install chromium
+node browser-checks.mjs
+```
+
+It signs in through local password mode, seeds the fictional roster, and then checks:
+
+1. **Sign-in** — the local staff account unlocks the app and the gate disappears.
+2. **Routes** — each of the eight navigation routes renders at least one visible section and sets its page title (the member profile is reached by deep link, so it is exercised through the members view).
+3. **Responsive sweep** — 8 navigation routes x 5 widths (320, 375, 768, 1024, 1440) with the page never scrolling sideways, plus an explicit assertion that two quick actions stay above the fold on a 390x844 phone.
+4. **Keyboard** — the first Tab stop shows a focus ring at least 2 px wide, that ring is measured for contrast against the surface behind it (4.98:1), and it is matched by `:focus-visible`.
+5. **Dialogs** — the confirmation dialog declares `role="dialog"`, `aria-modal`, and a label, takes focus, and Escape cancels without changing any record (verified by comparing the reminder count before and after).
+6. **axe-core** — a WCAG 2.0/2.1 A and AA scan of all eight views at phone and desktop widths.
+7. **Evidence capture** — the four printable documents are written to PDF and the activity export to `.xlsx`, which is what closed the last open row of 6.2.
+8. **Console hygiene** — no console errors or uncaught exceptions during the run.
+
+The browser suite needs its own dev-only dependencies, kept out of the deployed tree: `tests/node_modules/` and the generated `tests/evidence/` folder are ignored, and the published site still has no dependencies and no build step.
+
+**Result (October 5, 2026): 15 of 15 browser checks passed (exit code 0).**
+
+| Group | Checks | Result |
+|---|---|---|
+| Sign-in | Local staff account unlocks the app | Pass |
+| Routes | Every navigation route renders with a title (8 routes) | Pass |
+| Responsive | No horizontal overflow across 5 widths x 8 navigation routes; two quick actions above the fold at 390x844 | Pass |
+| Keyboard | First Tab stop shows a focus ring (3 px solid, `:focus-visible` matched); ring contrasts 4.98:1 against its surface | Pass |
+| Dialogs | Confirmation dialog is labelled, modal, and takes focus; Escape cancels and changes nothing (rows 6 -> 6, focus returned to the triggering button) | Pass |
+| Accessibility | axe-core reports no new serious or critical violations across 16 scans | Pass — 6 contrast findings tracked in 6.3, finding 7 |
+| Evidence | Weekly Report, Logs Report, Sign-In Sheets, and Resource List each print to a PDF; activity log exports a 153.7 KB workbook | Pass |
+| Console | Zero console errors | Pass |
+
 ### 6.2 Manual workflow verification
 
 | Workflow | Verification method | Status |
@@ -295,7 +330,7 @@ Syntax checks also pass: `node --check app.js` and `node --check sample-data/gen
 | Calendar and tasks | Month grid, Today, and Next 30 days views; event detail with checklist; staff reminders sorted open-before-done with overdue/due-today labels; event removal through the confirm dialog | Verified Oct 2, 2026 |
 | Confirmation, keyboard, and focus behavior | Drove real Tab, Shift+Tab, and Escape presses: Tab wrapped inside both dialogs in both directions, Escape cancelled without writing any state, focus returned to the triggering control, the skip link was the first Tab stop, and the app behind the sign-in gate was not tab-reachable | Verified Oct 2, 2026 |
 | Responsive sweep | All nine views measured for horizontal overflow at 320, 375, 768, 1024, and 1440 px (findings recorded in 6.3) | Verified Oct 2, 2026 |
-| Printable reports and spreadsheet export | Print documents carry current titles ("Lighthouse Logs Report", "Lighthouse Sign-In Sheets", "Lighthouse Community Resource List", "Lighthouse Ministry Weekly Report"); printed output and `.xlsx` files are to be captured as evidence | Titles verified in code; output capture scheduled |
+| Printable reports and spreadsheet export | Captured as artifacts by `tests/browser-checks.mjs`: the weekly report, logs report, sign-in sheets, and resource list are written to PDF in print media, and the activity export is downloaded as a 153.7 KB `.xlsx` workbook. Titles confirmed: "Lighthouse Weekly Report", "Lighthouse Logs Report", "Sign-In Sheets", "Community Resource List" | Verified Oct 5, 2026 |
 
 The manual table is intentionally honest about what has and has not been recorded. The project plan places the remaining workflow verification in the November and December milestones, where results will be logged with date, steps, expected result, and observed result.
 
@@ -308,7 +343,9 @@ The manual table is intentionally honest about what has and has not been recorde
 | 3 | Event dates stored as `YYYY-MM-DD` were displayed one day early in the calendar grid, the event list, the detail popover, the dashboard panel, and the range filters, because a date-only string parses as UTC midnight while the interface renders local time. | Medium — wrong information shown to staff | **Resolved.** `parseDateOnly`, `eventDateTime`, and `formatEventDate` normalize date-only values to local time, and every render path uses them. |
 | 4 | A boot-order defect — a state variable read by the first render before its declaration — crashed the app on load and, because the sign-in form then submitted natively, could place typed credentials in the page URL. | High — data exposure risk if it recurred | **Resolved.** Runtime state is declared above the first render, and the gate form carries `onsubmit="return false"` so a broken boot cannot leak credentials. |
 | 5 | At 320 px the Calendar & Tasks staff-reminder rows pushed 38 px past the viewport, putting their buttons off-screen, and the newest dashboard panel rendered outside the intended card order. Found by the Phase 8 responsive sweep and the stylesheet's card-order review. | Medium — phone widths only | **Resolved.** Reminder rows wrap at 420 px and below; the panel's order value was corrected. The sweep now reports 0 px horizontal overflow across all nine views and five widths. |
-| 6 | Tooling note: the browser preview used for verification cannot composite frames and never holds OS focus, so screenshots and painted focus rings could not be captured from it. | Informational | **Recorded.** Focus behavior was verified through the DOM (active element, dialog Tab order, focus return) and the ring rules were verified in the parsed stylesheet; visual confirmation of the rings is left to the presenter. |
+| 6 | Tooling note: the browser preview used for verification cannot composite frames and never holds OS focus, so screenshots and painted focus rings could not be captured from it. | Informational | **Superseded.** A headless Chromium harness (`tests/browser-checks.mjs`) now captures screenshots, print PDFs, and the exported workbook, and measures painted focus rings and their contrast. Visual review of the captured images is still a human step. |
+| 7 | axe-core reports `color-contrast` as a serious violation in three places: the redeem-cart hint text (measured 3.47:1 against the required 4.5:1), the hero statistics that sit over the banner photo, and the tinted report KPI labels. | Medium — readability for low-vision staff | **Open, tracked.** The first is a real measurement and needs a darker muted color; changing it recolors secondary text across the app, so it waits for the owner's sign-off. The other two are backdrops axe cannot resolve (a photo under a multi-stop gradient, and a tinted card), so they need a human look at the rendered pixels. All three are listed in the test suite's `CONTRAST_REVIEW` block, so they stay visible on every run and any *new* contrast regression still fails the suite. |
+| 8 | On a 390x844 phone the Quick Actions card began 1157 px down the page — 313 px below the fold — because the hero shortcuts stacked one per row, the four KPI cards stacked into a 449 px column, and the KPI row sorted ahead of the actions. | Medium — the primary phone task needed scrolling before it was reachable | **Resolved.** Below 700 px the actions sort ahead of the statistics; below 560 px the hero shortcuts and the KPI cards each use two columns. Quick Actions now begins at 610 px with two actions inside the first screen, measured by the browser suite's fold assertion. |
 
 ### 6.4 Test data
 
